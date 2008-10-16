@@ -12,7 +12,7 @@ class User
   include DataMapper::Resource
   
   property :id,    Serial
-  property :login, String, :nullable => false, :length => 1..255, :unique_index => true, :unique => true, :format => /^[\w\-\_]+$/i
+  property :login, String, :nullable => false, :size => 255, :length => 1..255, :unique_index => true, :unique => true, :format => /^[\w\-\_]+$/i
 
   has n, :mappings
 
