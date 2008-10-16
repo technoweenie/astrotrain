@@ -19,3 +19,4 @@ src/*
 .svn/*
 doc
 config/database.yml
+merb/custom.rb

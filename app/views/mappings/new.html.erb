@@ -1,7 +1,7 @@
 <h1>Create a Mapping</h1>
 
 <%= form_for @mapping, :action => url(:mappings) do %>
-  <p><%= text_field :email_user, :label => "Email" %>@astrotrain.com</p>
+  <p><%= text_field :email_user, :label => "Email" %>@<%= text_field :email_domain %></p>
   <p><%= text_field :post_url, :label => "Destination" %></p>
   <p><%= submit "Create" %></p>
 <% end =%>
