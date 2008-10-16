@@ -29,7 +29,8 @@ describe Message do
 
     describe "basic, single sender/recipient" do
       before :all do
-        @message = Message.parse(mail(:basic))
+        @raw     = mail(:basic)
+        @message = Message.parse(@raw)
       end
 
       it "#parse parses TMail::Mail object from raw text" do
@@ -52,6 +53,10 @@ describe Message do
         @message.body.should == @body
       end
 
+      it "retains raw message" do
+        @message.raw.should == @raw
+      end
+
       it "knows it uses the default domain" do
         @message.should be_default_domain
       end
@@ -59,7 +64,8 @@ describe Message do
 
     describe "multiple senders/recipients" do
       before :all do
-        @message = Message.parse(mail(:multiple))
+        @raw     = mail(:multiple)
+        @message = Message.parse(@raw)
       end
 
       it "#parse parses TMail::Mail object from raw text" do
@@ -82,6 +88,10 @@ describe Message do
         @message.body.should == @body
       end
 
+      it "retains raw message" do
+        @message.raw.should == @raw
+      end
+
       it "knows it uses the default domain" do
         @message.should be_default_domain
       end
@@ -89,7 +99,8 @@ describe Message do
 
     describe "with x-original-to header" do
       before :all do
-        @message = Message.parse(mail(:custom))
+        @raw     = mail(:custom)
+        @message = Message.parse(@raw)
       end
 
       it "#parse parses TMail::Mail object from raw text" do
@@ -110,6 +121,10 @@ describe Message do
 
       it "recognizes message body" do
         @message.body.should == @body
+      end
+
+      it "retains raw message" do
+        @message.raw.should == @raw
       end
 
       it "knows it does not use the default domain" do

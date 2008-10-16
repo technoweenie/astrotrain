@@ -34,6 +34,10 @@ class Message
     @mail.body
   end
 
+  def raw
+    @mail.port.to_s
+  end
+
   def default_domain?
     @default_domain.nil? ? (@default_domain = recipient =~ /\@#{Mapping.default_domain}$/) : @default_domain
   end
@@ -43,5 +47,12 @@ class Message
       name, domain = recipient.split("@")
       Mapping.first :email_user => name
     end
+  end
+
+  def log_to(mapping)
+    logged = LoggedMail.from(self)
+    mapping.logged_mails << logged
+    logged.save
+    logged
   end
 end

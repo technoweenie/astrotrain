@@ -7,9 +7,10 @@ class Mapping
   self.default_domain = 'astrotrain.com'
 
   property :id,         Serial
+  property :user_id,    Integer, :nullable => false, :index => true
   property :email_user, String, :length => 1..255, :unique_index => true, :unique => true, :format => /^[\w\.\_\%\+\-]+$/
   property :post_url,   String, :length => 1..255, :unique_index => true, :unique => true, :format => /^https?:\/\/([\w\-\_\.]+)+(\/[\w\-\ \.\/\?\%\&\=\[\]]*)?$/
-  property :user_id,    Integer, :nullable => false, :index => true
 
   belongs_to :user
+  has n, :logged_mails
 end
