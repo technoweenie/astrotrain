@@ -37,4 +37,11 @@ class Message
   def default_domain?
     @default_domain.nil? ? (@default_domain = recipient =~ /\@#{Mapping.default_domain}$/) : @default_domain
   end
+
+  def mapping
+    @mapping ||= begin
+      name, domain = recipient.split("@")
+      Mapping.first :email_user => name
+    end
+  end
 end
