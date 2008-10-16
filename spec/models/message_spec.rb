@@ -29,6 +29,10 @@ describe Message do
     it "recognizes message body" do
       @message.body.should == @body
     end
+
+    it "knows it uses the default domain" do
+      @message.should be_default_domain
+    end
   end
 
   describe "(multiple senders/recipients)" do
@@ -55,11 +59,15 @@ describe Message do
     it "recognizes message body" do
       @message.body.should == @body
     end
+
+    it "knows it uses the default domain" do
+      @message.should be_default_domain
+    end
   end
 
   describe "(with x-original-to header)" do
     before :all do
-      @message = Message.parse(mail(:original_to))
+      @message = Message.parse(mail(:custom))
     end
 
     it "#parse parses TMail::Mail object from raw text" do
@@ -67,7 +75,7 @@ describe Message do
     end
 
     it "recognizes Delivered-to: header as recipient" do
-      @message.recipient.should == 'processor-reply-57@astrotrain.com'
+      @message.recipient.should == 'processor-reply-57@custom.com'
     end
 
     it "recognizes From: header as senders" do
@@ -80,6 +88,10 @@ describe Message do
 
     it "recognizes message body" do
       @message.body.should == @body
+    end
+
+    it "knows it does not use the default domain" do
+      @message.should_not be_default_domain
     end
   end
 end

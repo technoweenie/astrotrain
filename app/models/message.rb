@@ -7,6 +7,7 @@ class Message
 
   def initialize(mail)
     @mail = mail
+    @default_domain = nil
   end
 
   def recipient
@@ -31,5 +32,9 @@ class Message
 
   def body
     @mail.body
+  end
+
+  def default_domain?
+    @default_domain.nil? ? (@default_domain = recipient =~ /\@#{Mapping.default_domain}$/) : @default_domain
   end
 end
