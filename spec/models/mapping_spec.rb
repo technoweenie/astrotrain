@@ -5,6 +5,41 @@ describe Mapping do
     Mapping.new.email_domain.should == Mapping.default_domain
   end
 
+  describe "matching" do
+    before :all do
+      User.transaction do
+        User.all.destroy!
+        Mapping.all.destroy!
+        @user     = User.create!(:login => 'user')
+        @mapping  = @user.mappings.create!(:email_user => 'abc')
+        @mapping2 = @user.mappings.create!(:email_user => 'abc*')
+        @mapping3 = @user.mappings.create!(:email_user => '*',    :email_domain => 'wildcard.com')
+        @mapping4 = @user.mappings.create!(:email_user => 'abc*', :email_domain => 'wildcard.com')
+        @mapping5 = @user.mappings.create!(:email_user => 'abc',  :email_domain => 'wildcard.com')
+      end
+    end
+
+    it "matches email user on default domain" do
+      Mapping.match("abc@#{Mapping.default_domain}").should == @mapping
+    end
+
+    it "matches email user on custom domain" do
+      Mapping.match("abc@wildcard.com").should == @mapping5
+    end
+
+    it "matches email partial wildcard on custom domain" do
+      Mapping.match("abc1@wildcard.com").should == @mapping4
+    end
+
+    it "matches email partial wildcard on custom domain" do
+      Mapping.match("def@wildcard.com").should == @mapping3
+    end
+
+    it "skips email wildcard on default domain" do
+      Mapping.match("abc1@#{Mapping.default_domain}").should be_nil
+    end
+  end
+
   describe "validation" do
     before :all do
       User.transaction do
@@ -15,17 +50,18 @@ describe Mapping do
       end
     end
 
-    %w(abc abc_def abc-123 abc+def abc%def).each do |valid|
+    %w(abc abc_def abc-123 abc+def abc%def foo* *).each do |valid|
       it "allows #email_user == #{valid.inspect}" do
         valid_mapping(:email_user => valid).should be_valid
       end
     end
 
-    %w(a\ b abc! abc?).each do |valid|
+    %w(a\ b abc! abc? foo*bar *foo).each do |valid|
       it "rejects #email_user == #{valid.inspect}" do
         valid_mapping(:email_user => valid).should_not be_valid
       end
     end
+
     %w(abc abc_def abc-123 abc.def).each do |valid|
       it "allows #email_domain == #{valid.inspect}" do
         valid_mapping(:email_domain => valid).should be_valid
