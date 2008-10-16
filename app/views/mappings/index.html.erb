@@ -1,0 +1,22 @@
+<h1>Mappings for <%=h session.user.login %></h1>
+
+<% if @mappings.empty? -%>
+<p>No mappings defined.</p>
+<% else -%>
+<table>
+  <tr>
+    <th>Email</th>
+    <th>Destination</th>
+    <th>&nbsp;</th>
+  </tr>
+<% @mappings.each do |mapping| -%>
+  <td>
+    <%=h mapping.email_user %>@astrotrain.com
+  </td>
+  <td><%=h mapping.post_url %></td>
+  <td>blah</td>
+<% end -%>
+</table>
+<% end -%>
+
+<p><%= link_to 'Create', url(:new_mapping) %> a new @astrotrain.com mapping.</p>
