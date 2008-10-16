@@ -17,6 +17,10 @@ describe Message do
     it "recognizes From: header as senders" do
       @message.senders.should == %w(user@example.com)
     end
+
+    it "recognizes Subject: header" do
+      @message.subject.should == 'Fwd: blah blah'
+    end
   end
 
   describe "(multiple senders/recipients)" do
@@ -35,6 +39,10 @@ describe Message do
     it "recognizes From: header as senders" do
       @message.senders.should == %w(user@example.com boss@example.com)
     end
+
+    it "recognizes Subject: header" do
+      @message.subject.should == 'Fwd: blah blah'
+    end
   end
 
   describe "(with x-original-to header)" do
@@ -52,6 +60,10 @@ describe Message do
 
     it "recognizes From: header as senders" do
       @message.senders.should == %w(user@example.com boss@example.com)
+    end
+
+    it "recognizes Subject: header" do
+      @message.subject.should == 'Fwd: blah blah'
     end
   end
 end

@@ -24,4 +24,8 @@ class Message
   def senders
     @senders ||= @mail.from.map { |f| f.to_s }
   end
+
+  def subject
+    @subject ||= @mail.subject
+  end
 end
