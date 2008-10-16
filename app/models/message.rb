@@ -14,7 +14,7 @@ class Message
 
   def initialize(mail)
     @mail = mail
-    @default_domain = nil
+    @default_domain = @mapping = nil
   end
 
   def recipient
@@ -50,10 +50,11 @@ class Message
   end
 
   def mapping
-    @mapping ||= begin
+    if @mapping.nil?
       name, domain = recipient.split("@")
-      Mapping.first :email_user => name
+      @mapping = find_mapping_by_email name, domain
     end
+    @mapping
   end
 
   def log_to(mapping)
@@ -61,5 +62,10 @@ class Message
     mapping.logged_mails << logged
     logged.save
     logged
+  end
+
+protected
+  def find_mapping_by_email(name, domain)
+    Mapping.first :email_user => name, :email_domain => domain
   end
 end
