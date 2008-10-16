@@ -7,8 +7,8 @@ describe Message do
         User.transaction do
           User.all.destroy!
           Mapping.all.destroy!
-          @user    = User.create(:login => 'user')
-          @mapping = Mapping.create(:email_user => 'abc', :user => @user)
+          @user    = User.create!(:login => 'user')
+          @mapping = @user.mappings.create!(:email_user => 'xyz')
         end
       end
 

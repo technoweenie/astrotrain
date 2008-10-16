@@ -22,3 +22,9 @@ Spec::Runner.configure do |config|
     IO.read(File.join(File.dirname(__FILE__), 'fixtures', "#{filename}.txt"))
   end
 end
+
+begin
+  require 'ruby-debug'
+  Debugger.start
+rescue LoadError
+end
