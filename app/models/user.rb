@@ -15,5 +15,5 @@ class User
   property :login, String, :nullable => false, :length => 1..255, :unique_index => true, :unique => true, :format => /^[\w\-\_]+$/i
 
   has n, :mappings
-  
+
 end

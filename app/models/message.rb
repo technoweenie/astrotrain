@@ -1,6 +1,13 @@
 class Message
   attr_reader :mail
 
+  def self.receive(raw)
+    message = parse(raw)
+    if message.mapping
+      message.log_to message.mapping
+    end
+  end
+
   def self.parse(raw)
     new TMail::Mail.parse(raw)
   end

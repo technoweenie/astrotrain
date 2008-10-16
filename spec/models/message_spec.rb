@@ -19,6 +19,14 @@ describe Message do
       it "finds mapping for mapped address" do
         Message.parse(mail(:mapped)).mapping.should == @mapping
       end
+
+      it "doesn't log message without mapping" do
+        lambda { Message.receive(mail(:basic)) }.should_not change(LoggedMail, :count)
+      end
+
+      it "doesn't log message without mapping" do
+        lambda { Message.receive(mail(:mapped)) }.should change(LoggedMail, :count).by(1)
+      end
     end
   end
 
