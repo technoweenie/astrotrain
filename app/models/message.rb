@@ -26,6 +26,10 @@ class Message
   end
 
   def subject
-    @subject ||= @mail.subject
+    @mail.subject
+  end
+
+  def body
+    @mail.body
   end
 end

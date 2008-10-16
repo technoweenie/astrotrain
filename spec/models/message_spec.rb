@@ -1,6 +1,10 @@
 require File.join( File.dirname(__FILE__), '..', "spec_helper" )
 
 describe Message do
+  before :all do
+    @body = "---------- Forwarded message ----------\nblah blah"
+  end
+
   describe "(basic, single sender/recipient)" do
     before :all do
       @message = Message.parse(mail(:basic))
@@ -20,6 +24,10 @@ describe Message do
 
     it "recognizes Subject: header" do
       @message.subject.should == 'Fwd: blah blah'
+    end
+
+    it "recognizes message body" do
+      @message.body.should == @body
     end
   end
 
@@ -43,6 +51,10 @@ describe Message do
     it "recognizes Subject: header" do
       @message.subject.should == 'Fwd: blah blah'
     end
+
+    it "recognizes message body" do
+      @message.body.should == @body
+    end
   end
 
   describe "(with x-original-to header)" do
@@ -64,6 +76,10 @@ describe Message do
 
     it "recognizes Subject: header" do
       @message.subject.should == 'Fwd: blah blah'
+    end
+
+    it "recognizes message body" do
+      @message.body.should == @body
     end
   end
 end
