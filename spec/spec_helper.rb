@@ -17,4 +17,8 @@ Spec::Runner.configure do |config|
   config.include(Merb::Test::ViewHelper)
   config.include(Merb::Test::RouteHelper)
   config.include(Merb::Test::ControllerHelper)
+
+  def mail(filename)
+    IO.read(File.join(File.dirname(__FILE__), 'fixtures', "#{filename}.txt"))
+  end
 end
