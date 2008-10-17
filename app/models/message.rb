@@ -3,9 +3,7 @@ class Message
 
   def self.receive(raw)
     message = parse(raw)
-    if message.mapping
-      message.log_to message.mapping
-    end
+    Mapping.process(message)
   end
 
   def self.parse(raw)
@@ -14,7 +12,7 @@ class Message
 
   def initialize(mail)
     @mail = mail
-    @default_domain = @mapping = nil
+    @mapping = nil
   end
 
   def recipient
@@ -43,23 +41,5 @@ class Message
 
   def raw
     @mail.port.to_s
-  end
-
-  def default_domain?
-    @default_domain.nil? ? (@default_domain = recipient =~ /\@#{Mapping.default_domain}$/) : @default_domain
-  end
-
-  def mapping
-    if @mapping.nil?
-      @mapping = Mapping.match(recipient) || false
-    end
-    @mapping ? @mapping : nil
-  end
-
-  def log_to(mapping)
-    logged = LoggedMail.from(self)
-    mapping.logged_mails << logged
-    logged.save
-    logged
   end
 end

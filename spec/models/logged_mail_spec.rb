@@ -30,7 +30,7 @@ describe LoggedMail do
         Mapping.all.destroy!
         @user    = User.create!(:login => 'user')
         @mapping = @user.mappings.create!(:email_user => 'xyz')
-        @logged  = @message.log_to @mapping
+        @logged  = @mapping.log_message @message
       end
       @logged.reload
     end

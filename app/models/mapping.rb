@@ -21,13 +21,39 @@ class Mapping
     email_address.strip!
     email_address.downcase!
     name, domain = email_address.split("@")
-    if mapping = first(:email_user => name, :email_domain => domain)
-      mapping
-    elsif domain != default_domain
-      wildcards = all(:email_domain => domain, :email_user.like => "%*")
-      wildcards.sort! { |x, y| y.email_user.size <=> x.email_user.size }
-      wildcards.detect { |w| w.match?(name) }
+    match_by_address(name, domain) || match_by_wildcard(name, domain)
+  end
+
+  def self.process(message)
+    if mapping = match(message.recipient)
+      mapping.process(message)
     end
+  end
+
+  def process(message)
+    log_message(message)
+  end
+
+  def log_message(message)
+    logged = LoggedMail.from(message)
+    logged_mails << logged
+    logged.save
+    logged
+  end
+
+  def match?(name)
+    name =~ email_user_regex
+  end
+
+protected
+  def self.match_by_address(name, domain)
+    first(:email_user => name, :email_domain => domain)
+  end
+
+  def self.match_by_wildcard(name, domain)
+    wildcards = all(:email_domain => domain, :email_user.like => "%*")
+    wildcards.sort! { |x, y| y.email_user.size <=> x.email_user.size }
+    wildcards.detect { |w| w.match?(name) }
   end
 
   def email_user_regex
@@ -38,9 +64,5 @@ class Mapping
         /^#{email_user}$/
       end
     end
-  end
-
-  def match?(name)
-    name =~ email_user_regex
   end
 end

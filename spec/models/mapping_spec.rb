@@ -11,32 +11,22 @@ describe Mapping do
         User.all.destroy!
         Mapping.all.destroy!
         @user     = User.create!(:login => 'user')
-        @mapping  = @user.mappings.create!(:email_user => 'abc')
+        @mapping1 = @user.mappings.create!(:email_user => '*')
         @mapping2 = @user.mappings.create!(:email_user => 'abc*')
-        @mapping3 = @user.mappings.create!(:email_user => '*',    :email_domain => 'wildcard.com')
-        @mapping4 = @user.mappings.create!(:email_user => 'abc*', :email_domain => 'wildcard.com')
-        @mapping5 = @user.mappings.create!(:email_user => 'abc',  :email_domain => 'wildcard.com')
+        @mapping3 = @user.mappings.create!(:email_user => 'abc')
       end
     end
 
-    it "matches email user on default domain" do
-      Mapping.match("abc@#{Mapping.default_domain}").should == @mapping
+    it "matches email user" do
+      Mapping.match("abc@#{Mapping.default_domain}").should == @mapping3
     end
 
-    it "matches email user on custom domain" do
-      Mapping.match("abc@wildcard.com").should == @mapping5
+    it "matches email partial wildcard" do
+      Mapping.match("abc1@#{Mapping.default_domain}").should == @mapping2
     end
 
-    it "matches email partial wildcard on custom domain" do
-      Mapping.match("abc1@wildcard.com").should == @mapping4
-    end
-
-    it "matches email partial wildcard on custom domain" do
-      Mapping.match("def@wildcard.com").should == @mapping3
-    end
-
-    it "skips email wildcard on default domain" do
-      Mapping.match("abc1@#{Mapping.default_domain}").should be_nil
+    it "matches email partial wildcard" do
+      Mapping.match("def@#{Mapping.default_domain}").should == @mapping1
     end
   end
 

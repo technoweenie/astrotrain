@@ -13,14 +13,6 @@ describe Message do
         end
       end
 
-      it "finds no mapping for unmapped address" do
-        Message.parse(mail(:basic)).mapping.should be_nil
-      end
-
-      it "finds mapping for mapped address" do
-        Message.parse(mail(:mapped)).mapping.should == @mapping
-      end
-
       it "doesn't log message without mapping" do
         lambda { Message.receive(mail(:basic)) }.should_not change(LoggedMail, :count)
       end
@@ -65,10 +57,6 @@ describe Message do
       it "retains raw message" do
         @message.raw.should == @raw
       end
-
-      it "knows it uses the default domain" do
-        @message.should be_default_domain
-      end
     end
 
     describe "multiple senders/recipients" do
@@ -100,10 +88,6 @@ describe Message do
       it "retains raw message" do
         @message.raw.should == @raw
       end
-
-      it "knows it uses the default domain" do
-        @message.should be_default_domain
-      end
     end
 
     describe "with x-original-to header" do
@@ -134,10 +118,6 @@ describe Message do
 
       it "retains raw message" do
         @message.raw.should == @raw
-      end
-
-      it "knows it does not use the default domain" do
-        @message.should_not be_default_domain
       end
     end
   end
