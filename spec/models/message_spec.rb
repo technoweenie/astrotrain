@@ -17,7 +17,7 @@ describe Message do
         lambda { Message.receive(mail(:basic)) }.should_not change(LoggedMail, :count)
       end
 
-      it "doesn't log message without mapping" do
+      it "logs message with mapping" do
         lambda { Message.receive(mail(:mapped)) }.should change(LoggedMail, :count).by(1)
       end
     end

@@ -31,6 +31,7 @@ class Mapping
   end
 
   def process(message)
+    HttpPost.process(message, self)
     log_message(message)
   end
 
