@@ -20,7 +20,7 @@ Scans incoming emails for mapped recipients and sends an HTTP POST somewhere.
 
   # set it up in postfix (master.cf, ymmv)
   astrotrain unix  -       n       n       -       -       pipe
-  flags= user=www-data argv=/var/www/astrotrain/merb.sh
+  flags=O user=www-data argv=/var/www/astrotrain/merb.sh
 
 This is still highly experimental.  Don't even bother with the web UI yet,
 there's no protection against anyone signing up and creating mappings on your server.
