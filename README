@@ -8,7 +8,7 @@ Scans incoming emails for mapped recipients and sends an HTTP POST somewhere.
   @user.save
 
   # set a mapping to accept email for support@example.com
-  @mapping = @user.mappings.build(:email_user => 'support', :email_domain => 'example.com', :post_url => '...')
+  @mapping = @user.mappings.build(:email_user => 'support', :email_domain => 'example.com', :destination => '...')
   @mapping.save
   
   # you can also create wildcards for users:

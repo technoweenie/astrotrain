@@ -2,6 +2,6 @@
 
 <%= form_for @mapping, :action => url(:mappings) do %>
   <p><%= text_field :email_user, :label => "Email" %>@<%= text_field :email_domain %></p>
-  <p><%= text_field :post_url, :label => "Destination" %></p>
+  <p><%= text_field :destination, :label => "Destination" %></p>
   <p><%= submit "Create" %></p>
 <% end =%>

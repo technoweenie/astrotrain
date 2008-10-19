@@ -4,7 +4,7 @@ describe Mapping::HttpPost do
   before :all do
     @post    = 'http://example.com'
     @message = Message.parse(mail(:basic))
-    @trans   = Mapping::HttpPost.new(@message, Mapping.new(:post_url => @post))
+    @trans   = Mapping::HttpPost.new(@message, Mapping.new(:destination => @post))
   end
 
   it "sets #post_fields" do
@@ -31,7 +31,7 @@ describe Mapping::Jabber do
   before :all do
     @dest    = 'foo@bar.com'
     @message = Message.parse(mail(:basic))
-    @trans   = Mapping::Jabber.new(@message, Mapping.new(:post_url => @dest))
+    @trans   = Mapping::Jabber.new(@message, Mapping.new(:destination => @dest))
   end
 
   it "sets #content" do

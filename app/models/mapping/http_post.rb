@@ -12,7 +12,7 @@ class Mapping
     end
 
     def request
-      @request ||= Curl::Easy.new(@mapping.post_url)
+      @request ||= Curl::Easy.new(@mapping.destination)
     end
 
     def post_fields

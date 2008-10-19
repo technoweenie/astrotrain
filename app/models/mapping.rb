@@ -10,7 +10,8 @@ class Mapping
   property :user_id,      Integer, :nullable => false, :index => true
   property :email_user,   String, :size => 255, :length => 1..255, :index => :email, :format => /^[\w\.\_\%\+\-]*\*?$/
   property :email_domain, String, :size => 255, :lenght => 1..255, :index => :email, :format => /^[\w\-\_\.]+$/, :default => lambda { default_domain }
-  property :post_url,     String, :size => 255, :length => 1..255, :unique_index => true, :unique => true, :format => /^https?:\/\/([\w\-\_\.]+)+(\/[\w\-\ \.\/\?\%\&\=\[\]]*)?$/
+  property :destination,  String, :size => 255, :length => 1..255, :unique_index => true, :unique => true, :format => /^https?:\/\/([\w\-\_\.]+)+(\/[\w\-\ \.\/\?\%\&\=\[\]]*)?$/
+  property :transport,    String, :size => 255, :set => %w(http_post jabber), :default => 'http_post'
 
   validates_is_unique :email_user, :scope => :email_domain
 
@@ -31,7 +32,7 @@ class Mapping
   end
 
   def process(message)
-    HttpPost.process(message, self)
+    Transport.process(message, self)
     log_message(message)
   end
 

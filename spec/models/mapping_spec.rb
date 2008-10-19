@@ -65,8 +65,8 @@ describe Mapping do
     end
 
     %w(http://example.com https://example.com http://example.com/ http://example.com/foo http://example.com/foo/bar.html http://example.com/foo?blah[baz]=1).each do |valid|
-      it "allows #post_url == #{valid.inspect}" do
-        valid_mapping(:post_url => valid).should be_valid
+      it "allows #destination == #{valid.inspect}" do
+        valid_mapping(:destination => valid).should be_valid
       end
     end
 
@@ -84,7 +84,7 @@ describe Mapping do
 
   protected
     def valid_mapping(options = {})
-      Mapping.new({:user_id => 1, :post_url => 'http://foo.com', :email_user => 'sample'}.update(options))
+      Mapping.new({:user_id => 1, :destination => 'http://foo.com', :email_user => 'sample', :transport => 'http_post'}.update(options))
     end
   end
 end

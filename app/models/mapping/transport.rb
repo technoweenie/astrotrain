@@ -8,7 +8,10 @@ class Mapping
     attr_reader :message, :mapping
 
     def self.process(message, mapping)
-      new(message, mapping).process
+      case mapping.transport
+        when 'http_post' then HttpPost.process(message, mapping)
+        when 'jabber'    then Jabber.process(message, mapping)
+      end
     end
 
     def initialize(message, mapping)
@@ -17,6 +20,15 @@ class Mapping
     end
 
     def process
+    end
+
+    def self.inherited(child)
+      super
+      class << child
+        def process(message, mapping)
+          new(message, mapping).process
+        end
+      end
     end
   end
 end

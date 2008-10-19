@@ -6,7 +6,7 @@ class Mapping
 
     def process
       return unless Transport.processing
-      connection.deliver(@mapping.post_url, content)
+      connection.deliver(@mapping.destination, content)
     end
 
     def connection
