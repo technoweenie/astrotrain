@@ -26,3 +26,26 @@ describe Mapping::HttpPost do
     end
   end
 end
+
+describe Mapping::Jabber do
+  before :all do
+    @dest    = 'foo@bar.com'
+    @message = Message.parse(mail(:basic))
+    @trans   = Mapping::Jabber.new(@message, Mapping.new(:post_url => @dest))
+  end
+
+  it "sets #content" do
+    @trans.content.should == "From: %s\nTo: %s\nSubject: %s\n%s" % [@message.senders.join(", "), @message.recipient, @message.subject, @message.body]
+  end
+
+  it "delivers jabber message when processing" do
+    begin
+      @trans.stub!(:connection).and_return(mock("Jabber::Simple"))
+      Mapping::Transport.processing = true
+      @trans.connection.should_receive :deliver
+      @trans.process
+    ensure
+      Mapping::Transport.processing = false
+    end
+  end
+end

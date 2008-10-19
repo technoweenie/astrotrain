@@ -6,6 +6,7 @@ class Mapping
     self.processing = false
 
     attr_reader :message, :mapping
+
     def self.process(message, mapping)
       new(message, mapping).process
     end

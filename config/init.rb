@@ -19,6 +19,8 @@ Merb::BootLoader.before_app_loads do
 end
  
 Merb::BootLoader.after_app_loads do
+  require 'xmpp4r-simple'
   require 'mapping/transport'
   require 'mapping/http_post'
+  require 'mapping/jabber'
 end

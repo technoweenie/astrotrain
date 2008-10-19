@@ -16,3 +16,4 @@ dependency "dm-validations", "0.9.6"  # Validation framework
 
 dependency "tmail", "1.2.3.1"
 dependency "curb", "0.1.4"
+dependency "xmpp4r-simple", "0.8.7"
