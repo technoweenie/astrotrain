@@ -4,7 +4,8 @@ describe Mapping::HttpPost do
   before :all do
     @post    = 'http://example.com'
     @message = Message.parse(mail(:basic))
-    @trans   = Mapping::HttpPost.new(@message, Mapping.new(:destination => @post))
+    @mapping = Mapping.new(:destination => @post, :transport => 'http_post')
+    @trans   = Mapping::HttpPost.new(@message, @mapping)
   end
 
   it "sets #post_fields" do
@@ -16,12 +17,27 @@ describe Mapping::HttpPost do
     @trans.request.url.should == @post
   end
 
-  it "makes HTTP post request when processing" do
-    begin
-      Mapping::Transport.processing = true
+  describe "when processing" do
+    before do
+      @trans.request.stub!(:http_post)
+      Mapping::HttpPost.stub!(:new).and_return(@trans)
+    end
+
+    it "makes http post request" do
       @trans.request.should_receive :http_post
       @trans.process
-    ensure
+    end
+
+    it "makes http post request from Transport" do
+      @trans.request.should_receive :http_post
+      Mapping::Transport.process(@message, @mapping)
+    end
+
+    before :all do
+      Mapping::Transport.processing = true
+    end
+
+    after :all do
       Mapping::Transport.processing = false
     end
   end
@@ -31,20 +47,36 @@ describe Mapping::Jabber do
   before :all do
     @dest    = 'foo@bar.com'
     @message = Message.parse(mail(:basic))
-    @trans   = Mapping::Jabber.new(@message, Mapping.new(:destination => @dest))
+    @mapping = Mapping.new(:destination => @dest, :transport => 'jabber')
+    @trans   = Mapping::Jabber.new(@message, @mapping)
   end
 
   it "sets #content" do
     @trans.content.should == "From: %s\nTo: %s\nSubject: %s\n%s" % [@message.senders.join(", "), @message.recipient, @message.subject, @message.body]
   end
 
-  it "delivers jabber message when processing" do
-    begin
-      @trans.stub!(:connection).and_return(mock("Jabber::Simple"))
-      Mapping::Transport.processing = true
+  describe "when processing" do
+    before do
+      Jabber::Simple.stub!(:new).and_return(mock("Jabber::Simple"))
+      @trans.connection.stub!(:deliver)
+      Mapping::Jabber.stub!(:new).and_return(@trans)
+    end
+
+    it "makes jabber delivery" do
       @trans.connection.should_receive :deliver
       @trans.process
-    ensure
+    end
+
+    it "makes jabber delivery from Transport" do
+      @trans.connection.should_receive :deliver
+      Mapping::Transport.process(@message, @mapping)
+    end
+
+    before :all do
+      Mapping::Transport.processing = true
+    end
+
+    after :all do
       Mapping::Transport.processing = false
     end
   end
