@@ -5,6 +5,18 @@ describe Mapping do
     Mapping.new.email_domain.should == Mapping.default_domain
   end
 
+  it "defaults #transport to 'http_post" do
+    Mapping.new.transport.should == 'http_post'
+  end
+
+  it "knows http_post transport uses urls" do
+    Mapping.new(:transport => 'http_post').destination_uses_url?.should == true
+  end
+
+  it "knows jabber transport uses emails" do
+    Mapping.new(:transport => 'jabber').destination_uses_email?.should == true
+  end
+
   describe "matching" do
     before :all do
       User.transaction do
@@ -65,8 +77,14 @@ describe Mapping do
     end
 
     %w(http://example.com https://example.com http://example.com/ http://example.com/foo http://example.com/foo/bar.html http://example.com/foo?blah[baz]=1).each do |valid|
-      it "allows #destination == #{valid.inspect}" do
-        valid_mapping(:destination => valid).should be_valid
+      it "allows #destination == #{valid.inspect} for http_post transport" do
+        valid_mapping(:destination => valid, :transport => 'http_post').should be_valid
+      end
+    end
+
+    %w(foo@bar.com).each do |valid|
+      it "allows #destination == #{valid.inspect} for jabber transport" do
+        valid_mapping(:destination => valid, :transport => 'jabber').should be_valid
       end
     end
 

@@ -18,4 +18,6 @@ Merb::BootLoader.after_app_loads do
   require 'ruby-debug'
   Debugger.start
   Mapping::Transport.processing = true
+  deployment = Merb.root / 'config' / 'deployment.rb'
+  require deployment if File.exist?(deployment)
 end

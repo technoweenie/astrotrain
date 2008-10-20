@@ -11,4 +11,6 @@ Merb::Config.use { |c|
 
 Merb::BootLoader.after_app_loads do
   Mapping::Transport.processing = true
+  deployment = Merb.root / 'config' / 'deployment.rb'
+  require deployment if File.exist?(deployment)
 end

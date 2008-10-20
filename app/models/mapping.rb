@@ -10,10 +10,12 @@ class Mapping
   property :user_id,      Integer, :nullable => false, :index => true
   property :email_user,   String, :size => 255, :length => 1..255, :index => :email, :format => /^[\w\.\_\%\+\-]*\*?$/
   property :email_domain, String, :size => 255, :lenght => 1..255, :index => :email, :format => /^[\w\-\_\.]+$/, :default => lambda { default_domain }
-  property :destination,  String, :size => 255, :length => 1..255, :unique_index => true, :unique => true, :format => /^https?:\/\/([\w\-\_\.]+)+(\/[\w\-\ \.\/\?\%\&\=\[\]]*)?$/
+  property :destination,  String, :size => 255, :length => 1..255, :unique_index => true, :unique => true
   property :transport,    String, :size => 255, :set => %w(http_post jabber), :default => 'http_post'
 
   validates_is_unique :email_user, :scope => :email_domain
+  validates_format :destination, :as => :url, :if => :destination_uses_url?
+  validates_format :destination, :as => :email_address, :if => :destination_uses_email?
 
   belongs_to :user
   has n, :logged_mails
@@ -45,6 +47,14 @@ class Mapping
 
   def match?(name)
     name =~ email_user_regex
+  end
+
+  def destination_uses_url?
+    transport == 'http_post'
+  end
+
+  def destination_uses_email?
+    transport == 'jabber'
   end
 
 protected
