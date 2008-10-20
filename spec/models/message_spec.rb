@@ -121,4 +121,17 @@ describe Message do
       end
     end
   end
+
+  describe "queueing" do
+    it "writes contents queue path" do
+      filename = Message.queue("boo!")
+      IO.read(filename).should == 'boo!'
+    end
+
+    before :all do
+      Message.queue_path = Merb.root / 'spec' / 'fixtures' / 'queue'
+      FileUtils.rm_rf Message.queue_path
+      FileUtils.mkdir_p Message.queue_path
+    end
+  end
 end
