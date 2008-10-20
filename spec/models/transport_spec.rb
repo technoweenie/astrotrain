@@ -12,6 +12,13 @@ describe Mapping::HttpPost do
     @trans.post_fields.should == {:subject => @message.subject, :from => @message.senders, :to => @message.recipient, :body => @message.body}
   end
 
+  it "sets post_fields with mapping separator set" do
+    @message = Message.parse(mail(:reply))
+    @mapping.separator = "=" * 5
+    @trans   = Mapping::HttpPost.new(@message, @mapping)
+    @trans.post_fields[:body].should == "blah blah"
+  end
+
   it "creates request object" do
     @trans.request.should be_kind_of(Curl::Easy)
     @trans.request.url.should == @post
@@ -58,7 +65,6 @@ describe Mapping::Jabber do
   it "sets content with mapping separator set" do
     @message = Message.parse(mail(:reply))
     @mapping.separator = "=" * 5
-    @message.body = @mapping.find_reply_from @message.body
     @trans   = Mapping::Jabber.new(@message, @mapping)
     @trans.content.should == "From: %s\nTo: %s\nSubject: %s\n%s" % [@message.senders.join(", "), @message.recipient, @message.subject, "blah blah"]
   end

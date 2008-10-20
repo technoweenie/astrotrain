@@ -15,6 +15,7 @@ class Mapping
     end
 
     def initialize(message, mapping)
+      message.body = mapping.find_reply_from(message.body)
       @message = message
       @mapping = mapping
     end
