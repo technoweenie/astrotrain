@@ -12,6 +12,7 @@ class Mapping
   property :email_domain, String, :size => 255, :lenght => 1..255, :index => :email, :format => /^[\w\-\_\.]+$/, :default => lambda { default_domain }
   property :destination,  String, :size => 255, :length => 1..255, :unique_index => true, :unique => true
   property :transport,    String, :size => 255, :set => %w(http_post jabber), :default => 'http_post'
+  property :separator,    String, :size => 255
 
   validates_is_unique :email_user, :scope => :email_domain
   validates_format :destination, :as => :url, :if => :destination_uses_url?
@@ -55,6 +56,39 @@ class Mapping
 
   def destination_uses_email?
     transport == 'jabber'
+  end
+
+  def find_reply_from(body)
+    return if separator.blank?
+    lines = body.split("\n")
+    delim_line = last_line = found_empty = nil
+    
+    lines.each_with_index do |line, i|
+      next if delim_line
+      delim_line = i if line.include?(separator)
+    end
+
+    while !last_line && delim_line.to_i > 0
+      delim_line = delim_line - 1
+      if found_empty
+        last_line = delim_line if lines[delim_line].strip.size > 0
+      else
+        found_empty = true if lines[delim_line].strip.size.zero?
+      end
+    end
+
+    if last_line
+      body = lines[0..delim_line] * "\n"
+    elsif !delim_line.nil?
+      body = ''
+    end
+
+    if body.frozen?
+      body.strip
+    else
+      body.strip!
+      body
+    end
   end
 
 protected

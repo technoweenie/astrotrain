@@ -55,6 +55,14 @@ describe Mapping::Jabber do
     @trans.content.should == "From: %s\nTo: %s\nSubject: %s\n%s" % [@message.senders.join(", "), @message.recipient, @message.subject, @message.body]
   end
 
+  it "sets content with mapping separator set" do
+    @message = Message.parse(mail(:reply))
+    @mapping.separator = "=" * 5
+    @message.body = @mapping.find_reply_from @message.body
+    @trans   = Mapping::Jabber.new(@message, @mapping)
+    @trans.content.should == "From: %s\nTo: %s\nSubject: %s\n%s" % [@message.senders.join(", "), @message.recipient, @message.subject, "blah blah"]
+  end
+
   describe "when processing" do
     before do
       Jabber::Simple.stub!(:new).and_return(mock("Jabber::Simple"))

@@ -1,7 +1,9 @@
 require 'digest/sha1'
 require 'fileutils'
 class Message
+  attr_accessor :body
   attr_reader :mail
+
   class << self
     attr_reader :queue_path
   end
@@ -60,7 +62,7 @@ class Message
   end
 
   def body
-    @mail.body
+    @body ||= @mail.body
   end
 
   def raw

@@ -42,6 +42,26 @@ describe Mapping do
     end
   end
 
+  describe "finding reply text" do
+    delim = "xyz"
+
+    before :all do
+      @mapping = Mapping.new :separator => delim
+    end
+
+    {
+      "foo bar\n\n#{delim}\nfoo" => "foo bar", 
+      "foo\n  bar\nbaz\n\n\n> #{delim}" => "foo\n  bar\nbaz",
+      "foo\n\nbar\nbaz\n#{delim}" =>  "foo",
+      "foo\n  bar\nbaz2\n\n\n\n" => "foo\n  bar\nbaz2",
+      ">> #{delim}\n foo bar" => ""
+    }.each do |before, after|
+      it "parses #{after.inspect} from #{before.inspect}" do
+        @mapping.find_reply_from(before).should == after
+      end
+    end
+  end
+
   describe "validation" do
     before :all do
       User.transaction do
