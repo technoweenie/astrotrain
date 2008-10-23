@@ -9,7 +9,7 @@ describe Mapping::HttpPost do
   end
 
   it "sets #post_fields" do
-    @trans.post_fields.should == {:subject => @message.subject, :from => @message.senders, :to => @message.recipient, :body => @message.body}
+    @trans.post_fields.should == {:subject => @message.subject, :from => @message.sender, :to => @message.recipient, :body => @message.body}
   end
 
   it "sets post_fields with mapping separator set" do
@@ -59,14 +59,14 @@ describe Mapping::Jabber do
   end
 
   it "sets #content" do
-    @trans.content.should == "From: %s\nTo: %s\nSubject: %s\n%s" % [@message.senders.join(", "), @message.recipient, @message.subject, @message.body]
+    @trans.content.should == "From: %s\nTo: %s\nSubject: %s\n%s" % [@message.sender, @message.recipient, @message.subject, @message.body]
   end
 
   it "sets content with mapping separator set" do
     @message = Message.parse(mail(:reply))
     @mapping.separator = "=" * 5
     @trans   = Mapping::Jabber.new(@message, @mapping)
-    @trans.content.should == "From: %s\nTo: %s\nSubject: %s\n%s" % [@message.senders.join(", "), @message.recipient, @message.subject, "blah blah"]
+    @trans.content.should == "From: %s\nTo: %s\nSubject: %s\n%s" % [@message.sender, @message.recipient, @message.subject, "blah blah"]
   end
 
   describe "when processing" do

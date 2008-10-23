@@ -14,7 +14,7 @@ class Mapping
     end
 
     def content
-      @content ||= "From: %s\nTo: %s\nSubject: %s\n%s" % [@message.senders.join(", "), @message.recipient, @message.subject, @message.body]
+      @content ||= "From: %s\nTo: %s\nSubject: %s\n%s" % [@message.sender, @message.recipient, @message.subject, @message.body]
     end
   end
 end

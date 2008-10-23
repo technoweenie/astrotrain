@@ -16,7 +16,7 @@ class Mapping
     end
 
     def post_fields
-      @post_fields ||= {:subject => @message.subject, :to => @message.recipient, :from => @message.senders, :body => @message.body}
+      @post_fields ||= {:subject => @message.subject, :to => @message.recipient, :from => @message.sender, :body => @message.body}
     end
   end
 end

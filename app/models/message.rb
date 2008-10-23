@@ -48,13 +48,13 @@ class Message
       elsif value = @mail['Delivered-To']
         value.to_s
       else
-        @mail.to.first.to_s
+        @mail['to'].to_s
       end
     end
   end
 
-  def senders
-    @senders ||= @mail.from.map { |f| f.to_s }
+  def sender
+    @sender ||= @mail['from'].to_s
   end
 
   def subject

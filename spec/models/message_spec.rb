@@ -39,11 +39,12 @@ describe Message do
       end
 
       it "recognizes To: header as recipient" do
-        @message.recipient.should == 'processor@astrotrain.com'
+        @message.recipient.should == %("Processor" <processor@astrotrain.com>)
       end
 
-      it "recognizes From: header as senders" do
-        @message.senders.should == %w(user@example.com)
+      it "recognizes From: header as sender" do
+
+        @message.sender.should == %(Bob <user@example.com>)
       end
 
       it "recognizes Subject: header" do
@@ -59,7 +60,7 @@ describe Message do
       end
     end
 
-    describe "multiple senders/recipients" do
+    describe "multiple sender/recipients" do
       before :all do
         @raw     = mail(:multiple)
         @message = Message.parse(@raw)
@@ -73,8 +74,8 @@ describe Message do
         @message.recipient.should == 'processor@astrotrain.com'
       end
 
-      it "recognizes From: header as senders" do
-        @message.senders.should == %w(user@example.com boss@example.com)
+      it "recognizes From: header as sender" do
+        @message.sender.should == %(user@example.com, boss@example.com)
       end
 
       it "recognizes Subject: header" do
@@ -104,8 +105,8 @@ describe Message do
         @message.recipient.should == 'processor-reply-57@custom.com'
       end
 
-      it "recognizes From: header as senders" do
-        @message.senders.should == %w(user@example.com boss@example.com)
+      it "recognizes From: header as sender" do
+        @message.sender.should == %(user@example.com, boss@example.com)
       end
 
       it "recognizes Subject: header" do

@@ -1,8 +1,8 @@
-Delivered-To: processor@astrotrain.com
+Delivered-To: "Processor" <processor@astrotrain.com>
 Message-ID: <a16be7390810161014n52b603e9k1aa6bb803c6735aa@mail.gmail.com>
 Date: Thu, 16 Oct 2008 10:14:18 -0700
-From: user@example.com
-To: processor@astrotrain.com
+From: Bob <user@example.com>
+To: Processor <processor@astrotrain.com>
 Subject: Fwd: blah blah
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
