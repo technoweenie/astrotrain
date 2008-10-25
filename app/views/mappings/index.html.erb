@@ -19,9 +19,9 @@
 			<% @mappings.each do |mapping| -%>
 			  <tr class="<%= cycle 'odd', 'even' %>">
 			  	<td>
-				    <%=h mapping.email_user %>@astrotrain.com
+				    <%=h mapping.email_user %>@<%= mapping.email_domain %>
 				  </td>
-				  <td><%=h mapping.destination %></td>
+				  <td><%=h mapping.destination %> (<%=h mapping.transport %>)</td>
 				  <td class="actions">
 						<%#= link_to 'view', resource(mapping) %>
 						<%= link_to 'edit', resource(mapping, :edit) %>

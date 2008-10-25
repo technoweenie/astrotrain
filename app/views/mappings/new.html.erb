@@ -1,8 +1,6 @@
 <h1>Create a Mapping</h1>
 
 <%= form_for @mapping, :action => url(:mappings) do %>
-	<%= error_messages_for @mapping %>
-  <p><%= text_field :email_user, :label => "Email" %>@<%= text_field :email_domain %></p>
-  <p><%= text_field :destination, :label => "Destination" %></p>
+<%=	partial :mapping %>
   <p><%= submit "Create" %> or <%= link_to 'cancel', url(:mappings) %></p></p>
 <% end =%>

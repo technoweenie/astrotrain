@@ -22,7 +22,9 @@
   h1                                {font-size:24px; line-height:24px; text-transform:uppercase; margin:0 0 15px; color:#000;}
   label                             {margin:0 5px 0 0;}
   div.actions                       {float:right; margin:-34px 0 20px;}
-  
+
+  fieldset legend                   {font-weight:bold; }
+
   div.error                         {border:1px solid #911; margin:0 0 30px;}
   div.error h2                      {background:#911; color:#fff; margin:0 0 20px; padding:5px 10px; font-size:13px;}
   div.error ul                      {}
