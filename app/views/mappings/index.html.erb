@@ -1,22 +1,33 @@
-<h1>Mappings for <%=h session.user.login %></h1>
+<h1>Your Mappings</h1>
+
+<div class="actions">
+	<%= link_to 'Create new mapping', url(:new_mapping), :class => 'button' %>
+</div>
 
 <% if @mappings.empty? -%>
-<p>No mappings defined.</p>
+	<p>You haven't created any mappings yet.</p>
 <% else -%>
-<table>
-  <tr>
-    <th>Email</th>
-    <th>Destination</th>
-    <th>&nbsp;</th>
-  </tr>
-<% @mappings.each do |mapping| -%>
-  <td>
-    <%=h mapping.email_user %>@astrotrain.com
-  </td>
-  <td><%=h mapping.destination %></td>
-  <td>blah</td>
+	<table>
+		<thead>
+			<tr>
+		    <th>Email</th>
+		    <th>Destination</th>
+		    <th class="actions">Actions</th>
+		  </tr>
+		</thead>
+		<tbody>
+			<% @mappings.each do |mapping| -%>
+			  <tr class="<%= cycle 'odd', 'even' %>">
+			  	<td>
+				    <%=h mapping.email_user %>@astrotrain.com
+				  </td>
+				  <td><%=h mapping.destination %></td>
+				  <td class="actions">
+						<%#= link_to 'view', resource(mapping) %>
+						<%= link_to 'edit', resource(mapping, :edit) %>
+					</td>
+			  </tr>
+			<% end -%>
+		</tbody>
+	</table>
 <% end -%>
-</table>
-<% end -%>
-
-<p><%= link_to 'Create', url(:new_mapping) %> a new @astrotrain.com mapping.</p>

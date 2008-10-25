@@ -1,3 +1,5 @@
-<h1>Mappings controller, show action</h1>
+<h1><%=h @mapping.email_user %>@<%=h @mapping.email_domain %></h1>
 
-<p>Edit this file in <tt>app/views/mappings/show.html.erb</tt></p>
+<p>Email to this mapping is posted to: <%=h @mapping.post_url %></p>
+
+<p><%= link_to 'View All', url(:mappings) %></p>

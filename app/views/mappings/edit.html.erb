@@ -1,3 +1,8 @@
-<h1>Mappings controller, edit action</h1>
+<h1>Edit Mapping</h1>
 
-<p>Edit this file in <tt>app/views/mappings/edit.html.erb</tt></p>
+<%= form_for @mapping, :action => resource(@mapping) do %>
+	<%= error_messages_for @mapping %>
+  <p><%= text_field :email_user, :label => "Email" %>@<%= text_field :email_domain %></p>
+  <p><%= text_field :destination, :label => "Destination" %></p>
+  <p><%= submit "Update" %> or <%= link_to 'cancel', url(:mappings) %></p>
+<% end =%>
