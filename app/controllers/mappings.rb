@@ -17,12 +17,6 @@ class Mappings < Application
     render
   end
 
-  def edit(id)
-    @mapping = session.user.mappings.get(id)
-    raise NotFound unless @mapping
-    render
-  end
-
   def create(mapping)
     @mapping = session.user.mappings.build(mapping)
     if @mapping.save
@@ -36,9 +30,9 @@ class Mappings < Application
     @mapping = session.user.mappings.get(params[:id])
     raise NotFound unless @mapping
     if @mapping.update_attributes(mapping)
-       redirect url(:mappings), :message => {:notice => "Mapping was successfully updated"}
+      redirect url(:mappings), :message => {:notice => "Mapping was successfully updated"}
     else
-      render :edit
+      render :show
     end
   end
 

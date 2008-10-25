@@ -21,7 +21,7 @@ class Mapping
   validates_format :destination, :as => :email_address, :if => :destination_uses_email?
 
   belongs_to :user
-  has n, :logged_mails
+  has n, :logged_mails, :order => [:created_at.desc]
 
   def self.match(email_address)
     email_address.strip!

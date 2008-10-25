@@ -1,5 +1,6 @@
-<h1><%=h @mapping.email_user %>@<%=h @mapping.email_domain %></h1>
+<h1>Edit Mapping</h1>
 
-<p>Email to this mapping is posted to: <%=h @mapping.post_url %></p>
-
-<p><%= link_to 'View All', url(:mappings) %></p>
+<%= form_for @mapping, :action => resource(@mapping) do %>
+<%=	partial :mapping %>
+  <p><%= submit "Update" %> or <%= link_to 'cancel', url(:mappings) %></p>
+<% end =%>
