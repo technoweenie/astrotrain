@@ -2,5 +2,5 @@
 
 <%= form_for @mapping, :action => resource(@mapping) do %>
 <%=	partial :mapping %>
-  <p><%= submit "Update" %> or <%= link_to 'cancel', url(:mappings) %></p>
+  <p class="submit"><%= submit "Update" %> or <%= link_to 'cancel', url(:mappings) %></p>
 <% end =%>

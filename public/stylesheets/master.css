@@ -26,7 +26,11 @@
   form ul                           {margin:0; padding:0;}
   form ul li                        {margin:0 0 10px; list-style-type:none;}
   form ul li label                  {display:block;}
-  form ul li input                  {font-size:13px; padding:2px; }
+  form ul li input                  {font-size:13px; padding:2px;}
+  fieldset                          {border:1px solid #eee; padding:5px 20px;}
+  fieldset legend                   {font-weight:bold; margin:0 -10px; padding:10px;}
+  
+  form .submit                      {margin:20px 0;}
   
   #login_form                       {padding:10px 20px; background:#eee; border:1px solid #ccc;}
   #login_form ul                    {margin:0; padding:0;}
@@ -34,8 +38,6 @@
   #login_form ul li label           {display:inline;}
   #login_form ul li input           {margin-right:10px; font-weight:bold;}
   
-  fieldset legend                   {font-weight:bold; }
-
   div.error                         {border:1px solid #911; margin:0 0 30px; background:#FCF7F7;}
   div.error h2                      {background:#911; color:#fff; margin:0 0 10px; padding:5px 10px; font-size:13px;}
   div.error ul                      {margin:0 0 10px 30px; padding:0;}
