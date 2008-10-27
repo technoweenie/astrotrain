@@ -6,8 +6,11 @@
 
 <fieldset>
   <legend>Outgoing</legend>
-  <p><%= text_field :destination, :label => "Destination" %></p>
-  <p><%= select :transport, :collection => Mapping.transports.to_a.each { |a| a.reverse! } %></p>
+  <p>
+		<%= select :transport, :collection => Mapping.transports.to_a.each { |a| a.reverse! } %>
+		<strong>to</strong>
+		<%= text_field :destination %>
+	</p>
 </fieldset>
 
 <fieldset>
