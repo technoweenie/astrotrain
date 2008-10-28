@@ -1,0 +1,6 @@
+<h1>Edit User</h1>
+
+<%= form_for @user, :action => resource(@user) do %>
+	<%=	partial :form %>
+  <p class="submit"><%= submit "Update" %> or <%= link_to 'cancel', url(:users) %></p>
+<% end =%>

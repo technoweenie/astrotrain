@@ -16,5 +16,12 @@ class User
   property :admin, Boolean, :default => false
   
   has n, :mappings
-
+  
+  # is there not a way to define :dependent => :destroy type stuff?
+  before :destroy, :erase_existence
+  
+  private
+    def erase_existence
+      mappings.destroy!
+    end
 end

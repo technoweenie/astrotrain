@@ -13,8 +13,14 @@
 			<h3><a href="/">Astrotrain</a></h3>
 			<p>
 				An email web hook app.
+				
+				<%- if admin? -%>
+					<%= link_to 'Manage Users', url(:users) %>
+				<%- end -%>
+				
+				
 				<%- if session.authenticated? -%>
-					<%= link_to 'Logout', url(:logout) %>
+					&bull; <%= link_to 'Logout', url(:logout) %>
 				<%- end -%>
 			</p>
 		</div>

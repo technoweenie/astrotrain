@@ -1,0 +1,30 @@
+<h1>Users</h1>
+
+<div class="actions">
+	<%= link_to 'Create new user', url(:new_user), :class => 'button' %>
+</div>
+
+<table>
+	<thead>
+		<tr>
+			<th>Login</th>
+			<th>Mappings</th>
+			<th>Admin?</th>
+			<th class="actions">
+				Actions
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<%- for user in @users -%>
+			<tr>
+				<td><%= link_to user.login, resource(user) %></td>
+				<td><%= user.mappings.count %></td>
+				<td><%= user.admin? ? 'Yes' : 'No' %></td>
+				<td class="actions">
+					<%= link_to 'edit', resource(user, :edit) %>
+				</td>
+			</tr>
+		<%- end -%>
+	</tbody>
+</table>

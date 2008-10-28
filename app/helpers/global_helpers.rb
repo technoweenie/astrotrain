@@ -1,5 +1,11 @@
 module Merb
   module GlobalHelpers
-    # helpers defined here available to all views.  
+    def ensure_admin
+      throw :halt, '<h1>No Entrar</h1>' unless admin?
+    end
+    
+    def admin?
+      session.authenticated? && session.user.admin?
+    end
   end
 end

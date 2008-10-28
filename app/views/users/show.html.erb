@@ -1,0 +1,34 @@
+<h1><%= @user.login %>'s Mappings</h1>
+
+<%- if @mappings.size > 0 -%>
+	<table>
+		<thead>
+			<tr>
+		    <th>Email</th>
+		    <th>Destination</th>
+		  </tr>
+		</thead>
+		<tbody>
+			<% @mappings.each do |mapping| -%>
+			  <tr class="<%= cycle 'odd', 'even' %>">
+			  	<td>
+				    <%=h mapping.email_user %>@<%= mapping.email_domain %>
+				  </td>
+				  <td><%=h mapping.destination %> (<%=h mapping.transport %>)</td>
+			  </tr>
+			<% end -%>
+		</tbody>
+	</table>
+<%- else -%>
+	<p>User has not created any mappings yet.</p>
+<%- end -%>
+
+<%- if session.user != @user -%>
+	<div class="delete">
+		<h3 class="delete">Delete this user?</h3>
+		<p>Don't be too hasty as this is permanent and irreversible.</p>
+		<%= form_for @user, :action => resource(@user), :method => :delete do |f| -%>
+			<p><%= submit "Yes, please delete #{@user.login} and their mappings" %></p>
+		<%- end =%>
+	</div>
+<%- end -%>

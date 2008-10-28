@@ -20,17 +20,26 @@
   a.button:hover                    {background:#ccc;}
   ul li, ol li                      {margin:0 0 5px;}
   h1                                {font-size:24px; line-height:24px; text-transform:uppercase; margin:0 0 15px; color:#000;}
+  h2                                {font-size:18px; line-height:18px; margin:20px 0 10px;}
+  h3                                {font-size:14px; line-height:14px; color:#333; margin:20px 0 10px;}
   label                             {margin:0 5px 0 0;}
   div.actions                       {float:right; margin:-34px 0 20px;}
   
   form ul                           {margin:0; padding:0;}
   form ul li                        {margin:0 0 10px; list-style-type:none;}
-  form ul li label                  {display:block;}
+  form ul li label                  {display:block; margin:0 0 5px;}
+  form ul li.check_box label        {display:inline;}
+  form ul li.check_box input        {margin-right:5px;}
   form ul li input                  {font-size:13px; padding:2px;}
   fieldset                          {border:1px solid #eee; padding:5px 20px;}
   fieldset legend                   {font-weight:bold; margin:0 -10px; padding:10px;}
-  
   form .submit                      {margin:20px 0;}
+  
+  form#admin_form                   {margin:20px 0 0;}
+  
+  div.delete                        {margin:40px 0 0; padding:15px 20px 5px; background:#eee; border:1px solid #ddd;}
+  div.delete h3                     {margin:0 0 10px;}
+  div.delete p                      {margin:0 0 10px;}
   
   #login_form                       {padding:10px 20px; background:#eee; border:1px solid #ccc;}
   #login_form ul                    {margin:0; padding:0;}

@@ -1,6 +1,15 @@
 require File.join( File.dirname(__FILE__), '..', "spec_helper" )
 
+module UserSpecHelpers
+  protected
+    def valid_user(options = {})
+      User.new({:login => 'sample', :password => 'monkey', :password_confirmation => 'monkey'}.update(options))
+    end
+end
+
 describe User do
+  include UserSpecHelpers
+  
   describe "validation" do
     %w(abc abc_def abc-123).each do |valid|
       it "allows #login == #{valid.inspect}" do
@@ -23,11 +32,6 @@ describe User do
         @user.destroy
       end
     end
-
-  protected
-    def valid_user(options = {})
-      User.new({:login => 'sample', :password => 'monkey', :password_confirmation => 'monkey'}.update(options))
-    end
   end
   
   describe "#admin?" do
@@ -44,6 +48,5 @@ describe User do
       @user.admin = false
       @user.admin?.should be_false
     end
-  end
-  
+  end  
 end
