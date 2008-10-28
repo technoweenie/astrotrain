@@ -13,7 +13,8 @@ class User
   
   property :id,    Serial
   property :login, String, :nullable => false, :size => 255, :length => 1..255, :unique_index => true, :unique => true, :format => /^[\w\-\_]+$/i
-
+  property :admin, Boolean, :default => false
+  
   has n, :mappings
 
 end

@@ -29,4 +29,21 @@ describe User do
       User.new({:login => 'sample', :password => 'monkey', :password_confirmation => 'monkey'}.update(options))
     end
   end
+  
+  describe "#admin?" do
+    before do
+      @user = User.new
+    end
+    
+    it "should be true if admin is true" do
+      @user.admin = true
+      @user.admin?.should be_true
+    end
+    
+    it "should be false if admin is false" do
+      @user.admin = false
+      @user.admin?.should be_false
+    end
+  end
+  
 end
