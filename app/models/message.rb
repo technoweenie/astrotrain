@@ -44,7 +44,7 @@ class Message
   end
 
   def recipient(order = nil)
-    order ||= self.class.recipient_header_order
+    order = self.class.recipient_header_order if order.blank?
     order.each do |key|
       value = send("recipient_from_#{key}")
       return value unless value.blank?

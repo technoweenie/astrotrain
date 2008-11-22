@@ -17,6 +17,24 @@ describe Mapping do
     Mapping.new(:transport => 'jabber').destination_uses_email?.should == true
   end
 
+  it "gets comma separated recipient_header_order as array" do
+    m = Mapping.new
+    m.attribute_set(:recipient_header_order, "foo,bar")
+    m.recipient_header_order.should == %w(foo bar)
+  end
+
+  it "sets comma separated recipient_header_order from array" do
+    m = Mapping.new
+    m.recipient_header_order = %w(foo bar)
+    m.attribute_get(:recipient_header_order).should == "foo,bar"
+  end
+
+  it "sets comma separated recipient_header_order from string" do
+    m = Mapping.new
+    m.recipient_header_order = "foo,bar"
+    m.attribute_get(:recipient_header_order).should == "foo,bar"
+  end
+
   describe "matching" do
     before :all do
       User.transaction do
@@ -70,6 +88,18 @@ describe Mapping do
         @user    = User.create!(:login => 'user')
         @mapping = @user.mappings.create!(:email_user => 'xyz')
       end
+    end
+
+    it "requires comma separated list" do
+      valid_mapping(:recipient_header_order => 'a, b').should_not be_valid
+    end
+
+    it "requires valid choices" do
+      valid_mapping(:recipient_header_order => 'delivered_to,whatever').should_not be_valid
+    end
+
+    it "accepts valid header order" do
+      valid_mapping(:recipient_header_order => 'delivered_to,to,original_to').should be_valid
     end
 
     %w(abc abc_def abc-123 abc+def abc%def foo* *).each do |valid|

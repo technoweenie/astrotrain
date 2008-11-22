@@ -10,7 +10,9 @@ class LoggedMail
 
   belongs_to :mapping
 
-  def self.from(message)
-    new :recipient => message.recipient, :subject => message.subject, :raw => message.raw
+  def self.from(message, mapping)
+    logged = new :recipient => message.recipient(mapping.recipient_header_order), :subject => message.subject, :raw => message.raw, :mapping_id => mapping.id
+    logged.save
+    logged
   end
 end

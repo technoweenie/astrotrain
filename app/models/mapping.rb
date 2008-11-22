@@ -15,10 +15,22 @@ class Mapping
   property :destination,  String, :size => 255, :length => 1..255, :unique_index => true, :unique => true
   property :transport,    String, :size => 255, :set => transports.values, :default => 'http_post'
   property :separator,    String, :size => 255
+  property :recipient_header_order, String, :size => 255, :auto_validation => false
 
   validates_is_unique :email_user, :scope => :email_domain
   validates_format :destination, :as => :url, :if => :destination_uses_url?
   validates_format :destination, :as => :email_address, :if => :destination_uses_email?
+  validates_with_block :recipient_header_order do
+    if order = recipient_header_order
+      if !order.all? { |key| Message.recipient_header_order.include?(key) }
+        [false, "Field should be an array with these choices: delivered_to, original_to, and to"]
+      else
+        true
+      end
+    else
+      true
+    end
+  end
 
   belongs_to :user
   has n, :logged_mails, :order => [:created_at.desc]
@@ -41,11 +53,24 @@ class Mapping
     log_message(message)
   end
 
+  def recipient_header_order
+    if s = attribute_get(:recipient_header_order)
+      s.split(",")
+    end
+  end
+
+  def recipient_header_order=(value)
+    value = \
+      case value
+        when Array  then value * ','
+        when String then value
+        else nil
+      end
+    attribute_set(:recipient_header_order, value)
+  end
+
   def log_message(message)
-    logged = LoggedMail.from(message)
-    logged_mails << logged
-    logged.save
-    logged
+    LoggedMail.from(message, self)
   end
 
   def match?(name)
