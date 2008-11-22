@@ -70,8 +70,8 @@ describe Message do
         @message.mail.should be_kind_of(TMail::Mail)
       end
 
-      it "recognizes Delivered-to: header as recipient" do
-        @message.recipient.should == 'processor@astrotrain.com'
+      it "recognizes To: header as recipient with custom header order" do
+        @message.recipient(%w(to original_to delivered_to)).should == 'other@example.com, processor@astrotrain.com'
       end
 
       it "recognizes From: header as sender" do
@@ -99,6 +99,18 @@ describe Message do
 
       it "#parse parses TMail::Mail object from raw text" do
         @message.mail.should be_kind_of(TMail::Mail)
+      end
+
+      it "recognizes X-Original-to: header as recipient" do
+        @message.recipient.should == 'processor-reply-57@custom.com'
+      end
+
+      it "recognizes Delivered-To: header as recipient with custom header order" do
+        @message.recipient(%w(delivered_to original_to to)).should == 'processor-delivered@astrotrain.com'
+      end
+
+      it "recognizes To: header as recipient with custom header order" do
+        @message.recipient(%w(to original_to delivered_to)).should == 'processor@astrotrain.com'
       end
 
       it "recognizes Delivered-to: header as recipient" do
