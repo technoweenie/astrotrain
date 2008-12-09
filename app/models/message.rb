@@ -2,7 +2,7 @@ require 'digest/sha1'
 require 'fileutils'
 class Message
   attr_accessor :body
-  attr_reader :mail
+  attr_reader :mail, :attachments
 
   class << self
     attr_reader   :queue_path
@@ -39,8 +39,9 @@ class Message
   end
 
   def initialize(mail)
-    @mail    = mail
-    @mapping = nil
+    @mail        = mail
+    @mapping     = nil
+    @attachments = []
   end
 
   def recipient(order = nil)
@@ -86,6 +87,32 @@ class Message
     @mail.port.to_s
   end
 
+  class Attachment
+    def initialize(part)
+      @part = part
+    end
+
+    def content_type
+      @part.content_type
+    end
+
+    def filename
+      @filename ||= @part.type_param("name")
+    end
+
+    def data
+      @part.body
+    end
+
+    def attached?
+      !filename.nil?
+    end
+
+    def inspect
+      %(#<Message::Attachment filename=#{filename.inspect} content_type=#{content_type.inspect}>)
+    end
+  end
+
 protected
   def scan_parts(message)
     message.parts.each do |part|
@@ -94,6 +121,9 @@ protected
       else
         if part.content_type == "text/plain"
           @body = part.body
+        else
+          att = Attachment.new(part)
+          @attachments << att if att.attached?
         end
       end
     end

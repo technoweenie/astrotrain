@@ -77,6 +77,18 @@ describe Message do
       it "recognizes message body" do
         @message.body.should == "Testing out rich emails with attachments!\n[state:hold responsible:rick]\n\n"
       end
+
+      it "retrieves attachments" do
+        @message.should have(1).attachments
+      end
+
+      it "retrieves attachment filename" do
+        @message.attachments.first.filename.should == 'bandit.jpg'
+      end
+
+      it "retrieves attachment content_type" do
+        @message.attachments.first.content_type.should == 'image/jpeg'
+      end
     end
 
     describe "multiple sender/recipients" do
