@@ -60,6 +60,25 @@ describe Message do
       end
     end
 
+    describe "multipart message" do
+      before :all do
+        @raw     = mail(:multipart)
+        @message = Message.parse(@raw)
+      end
+
+      it "#parse parses TMail::Mail object from raw text" do
+        @message.mail.should be_kind_of(TMail::Mail)
+      end
+
+      it "recognizes To: header as recipient" do
+        @message.recipient.should == %(foo@example.com)
+      end
+
+      it "recognizes message body" do
+        @message.body.should == "Testing out rich emails with attachments!\n[state:hold responsible:rick]\n\n"
+      end
+    end
+
     describe "multiple sender/recipients" do
       before :all do
         @raw     = mail(:multiple)

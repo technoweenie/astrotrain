@@ -39,7 +39,7 @@ class Message
   end
 
   def initialize(mail)
-    @mail = mail
+    @mail    = mail
     @mapping = nil
   end
 
@@ -72,10 +72,30 @@ class Message
   end
 
   def body
-    @body ||= @mail.body
+    @body ||= begin
+      if @mail.multipart?
+        scan_parts(@mail)
+        @body ||= ""
+      else
+        @mail.body
+      end
+    end
   end
 
   def raw
     @mail.port.to_s
+  end
+
+protected
+  def scan_parts(message)
+    message.parts.each do |part|
+      if part.multipart?
+        scan_parts(part)
+      else
+        if part.content_type == "text/plain"
+          @body = part.body
+        end
+      end
+    end
   end
 end
