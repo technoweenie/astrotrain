@@ -21,6 +21,12 @@ describe Mapping::HttpPost do
     @trans.post_fields.should == {:subject => @message.subject, :from => @message.sender, :to => @message.recipient(%w(delivered_to)), :body => @message.body}
   end
 
+  it "adds attachments to #post_fields" do
+    @multipart = Message.parse(mail(:multipart))
+    @trans     = Mapping::HttpPost.new(@multipart, @mapping)
+    @trans.post_fields.should == {:subject => @multipart.subject, :from => @multipart.sender, :to => @multipart.recipient, :body => @multipart.body, :attachments_0 => @multipart.attachments.first}
+  end
+
   it "sets post_fields with mapping separator set" do
     @message = Message.parse(mail(:reply))
     @mapping.separator = "=" * 5
