@@ -19,5 +19,5 @@ dependency "dm-validations", dm_ver  # Validation framework
 dependency "tmail", "1.2.3.1"
 dependency "xmpp4r-simple", "0.8.8"
 
-$LOAD_PATH << File.join(File.dirname(__FILE__), 'vendor', 'rest-client', 'lib')
+$LOAD_PATH.unshift File.join(Merb.root, 'vendor', 'rest-client', 'lib')
 require 'rest_client'
