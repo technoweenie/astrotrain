@@ -75,6 +75,7 @@ class Message
   def body
     @body ||= begin
       if @mail.multipart?
+        @attachments.clear
         scan_parts(@mail)
         @body ||= ""
       else
