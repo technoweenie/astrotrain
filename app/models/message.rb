@@ -103,14 +103,17 @@ class Message
     end
 
     # For IO API compatibility when used with Rest-Client
+    def close
+    end
+
     alias path filename
 
     def read(value = nil)
       if read?
-        data
-        @is_read = true
-      else
         nil
+      else
+        @is_read = true
+        data
       end
     end
 
