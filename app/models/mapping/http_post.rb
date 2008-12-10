@@ -4,15 +4,7 @@ class Mapping
 
     def process
       return unless Transport.processing
-      curl_params = post_fields.inject([]) do |params, (key, value)|
-        value = value * "," if value.is_a?(Array)
-        params << Curl::PostField.content(key.to_s, value)
-      end
-      request.http_post *curl_params
-    end
-
-    def request
-      @request ||= Curl::Easy.new(@mapping.destination)
+      RestClient.post @mapping.destination, post_fields, @@headers
     end
 
     def post_fields

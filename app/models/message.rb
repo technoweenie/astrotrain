@@ -89,7 +89,8 @@ class Message
 
   class Attachment
     def initialize(part)
-      @part = part
+      @part    = part
+      @is_read = false
     end
 
     def content_type
@@ -98,6 +99,22 @@ class Message
 
     def filename
       @filename ||= @part.type_param("name")
+    end
+
+    # For IO API compatibility when used with Rest-Client
+    alias path filename
+
+    def read(value = nil)
+      if read?
+        data
+        @is_read = true
+      else
+        nil
+      end
+    end
+
+    def read?
+      @is_read == true
     end
 
     def data

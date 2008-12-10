@@ -28,24 +28,18 @@ describe Mapping::HttpPost do
     @trans.post_fields[:body].should == "blah blah"
   end
 
-  it "creates request object" do
-    @trans.request.should be_kind_of(Curl::Easy)
-    @trans.request.url.should == @post
-  end
-
   describe "when processing" do
     before do
-      @trans.request.stub!(:http_post)
       Mapping::HttpPost.stub!(:new).and_return(@trans)
     end
 
     it "makes http post request" do
-      @trans.request.should_receive :http_post
+      RestClient.should_receive(:post).with(@mapping.destination, @trans.post_fields, 'Content-Type' => 'application/json')
       @trans.process
     end
 
     it "makes http post request from Transport" do
-      @trans.request.should_receive :http_post
+      RestClient.should_receive(:post).with(@mapping.destination, @trans.post_fields, 'Content-Type' => 'application/json')
       Mapping::Transport.process(@message, @mapping)
     end
 
