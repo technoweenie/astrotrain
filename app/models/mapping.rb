@@ -5,6 +5,7 @@ class Mapping
     attr_accessor :default_domain
     attr_accessor :transports
   end
+
   self.transports     = {"HTTP Post" => 'http_post', "Jabber" => 'jabber'}
   self.default_domain = 'astrotrain.com'
 

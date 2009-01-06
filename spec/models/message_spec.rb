@@ -8,8 +8,8 @@ describe Message do
           User.all.destroy!
           Mapping.all.destroy!
           @user     = User.create!(:login => 'user')
-          @mapping  = @user.mappings.create!(:email_user => 'xyz')
-          @mapping2 = @user.mappings.create!(:email_user => 'xyz',  :email_domain => 'sample.com')
+          @mapping  = @user.mappings.create!(:user_id => @user.id, :email_user => 'xyz')
+          @mapping2 = @user.mappings.create!(:user_id => @user.id, :email_user => 'xyz',  :email_domain => 'sample.com')
         end
       end
 

@@ -23,6 +23,10 @@ Spec::Runner.configure do |config|
   end
 end
 
+LoggedMail.log_path = Merb.root / 'spec' / 'messages'
+FileUtils.rm_rf   LoggedMail.log_path
+FileUtils.mkdir_p LoggedMail.log_path
+
 begin
   require 'ruby-debug'
   Debugger.start

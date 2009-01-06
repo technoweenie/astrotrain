@@ -41,9 +41,9 @@ describe Mapping do
         User.all.destroy!
         Mapping.all.destroy!
         @user     = User.create!(:login => 'user')
-        @mapping1 = @user.mappings.create!(:email_user => '*')
-        @mapping2 = @user.mappings.create!(:email_user => 'abc*')
-        @mapping3 = @user.mappings.create!(:email_user => 'abc')
+        @mapping1 = @user.mappings.create!(:user_id => @user.id, :email_user => '*')
+        @mapping2 = @user.mappings.create!(:user_id => @user.id, :email_user => 'abc*')
+        @mapping3 = @user.mappings.create!(:user_id => @user.id, :email_user => 'abc')
       end
     end
 
@@ -86,7 +86,7 @@ describe Mapping do
         User.all.destroy!
         Mapping.all.destroy!
         @user    = User.create!(:login => 'user')
-        @mapping = @user.mappings.create!(:email_user => 'xyz')
+        @mapping = @user.mappings.create!(:user_id => @user.id, :email_user => 'xyz')
       end
     end
 

@@ -6,10 +6,14 @@ describe LoggedMail do
       User.all.destroy!
       Mapping.all.destroy!
       @user    = User.create!(:login => 'user')
-      @mapping = @user.mappings.create!(:email_user => '*', :recipient_header_order => 'delivered_to,original_to,to')
+      @mapping = @user.mappings.create!(:user_id => @user.id, :email_user => '*', :recipient_header_order => 'delivered_to,original_to,to')
       @raw     = mail(:custom)
       @message = Message.parse(@raw)
+      @message.filename = 'logged_mail_raw'
       @logged  = LoggedMail.from(@message, @mapping)
+      File.open @logged.raw_path, 'w' do |f|
+        f << @raw
+      end
     end
 
     it "sets recipient" do
@@ -33,12 +37,16 @@ describe LoggedMail do
     before :all do
       @raw     = mail(:basic)
       @message = Message.parse(@raw)
+      @message.filename = 'logged_mail_raw_2'
       User.transaction do
         User.all.destroy!
         Mapping.all.destroy!
         @user    = User.create!(:login => 'user')
-        @mapping = @user.mappings.create!(:email_user => 'xyz')
+        @mapping = @user.mappings.create!(:user_id => @user.id, :email_user => 'xyz')
         @logged  = @mapping.log_message @message
+      end
+      File.open @logged.raw_path, 'w' do |f|
+        f << @raw
       end
       @logged.reload
     end

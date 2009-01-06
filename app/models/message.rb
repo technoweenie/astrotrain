@@ -1,7 +1,10 @@
 require 'digest/sha1'
 require 'fileutils'
+require 'tempfile'
+
+# Wrapper around a TMail object
 class Message
-  attr_accessor :body
+  attr_accessor :body, :filename
   attr_reader :mail, :attachments
 
   class << self
@@ -30,7 +33,17 @@ class Message
   end
 
   def self.receive(raw)
+    file = Tempfile.new("astrotrain-#{raw.size}")
+    file << raw
+    receive_file file.path, raw
+  end
+
+  def self.receive_file(path, raw = nil)
+    FileUtils.mkdir_p(LoggedMail.log_path)
+    filename = File.basename(path)
+    FileUtils.mv path, LoggedMail.log_path / filename
     message = parse(raw)
+    message.filename = filename
     Mapping.process(message)
   end
 
