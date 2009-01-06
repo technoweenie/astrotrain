@@ -40,11 +40,13 @@ class Message
 
   def self.receive_file(path, raw = nil)
     FileUtils.mkdir_p(LoggedMail.log_path)
-    filename = File.basename(path)
-    FileUtils.mv path, LoggedMail.log_path / filename
-    message = parse(raw)
+    raw            ||= IO.read(path)
+    filename         = File.basename(path)
+    message          = parse(raw)
     message.filename = filename
+    FileUtils.mv path, LoggedMail.log_path / filename
     Mapping.process(message)
+    message
   end
 
   def self.parse(raw)

@@ -1,10 +1,8 @@
 class Mapping
   class HttpPost < Transport
-    @@headers = {'Content-Type' => 'application/json'}
-
     def process
       return unless Transport.processing
-      RestClient.post @mapping.destination, post_fields, @@headers
+      RestClient.post @mapping.destination, post_fields
     end
 
     def post_fields

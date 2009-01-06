@@ -40,12 +40,12 @@ describe Mapping::HttpPost do
     end
 
     it "makes http post request" do
-      RestClient.should_receive(:post).with(@mapping.destination, @trans.post_fields, 'Content-Type' => 'application/json')
+      RestClient.should_receive(:post).with(@mapping.destination, @trans.post_fields)
       @trans.process
     end
 
     it "makes http post request from Transport" do
-      RestClient.should_receive(:post).with(@mapping.destination, @trans.post_fields, 'Content-Type' => 'application/json')
+      RestClient.should_receive(:post).with(@mapping.destination, @trans.post_fields)
       Mapping::Transport.process(@message, @mapping)
     end
 
