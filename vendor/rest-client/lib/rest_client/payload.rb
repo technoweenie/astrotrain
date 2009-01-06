@@ -69,8 +69,9 @@ module RestClient
 				b = "--#{boundary}"
 
 				@stream = Tempfile.new("RESTClient.Stream.#{rand(1000)}")
-				@stream.write(b + EOL)
+				@stream.write(b)
 				params.each do |k,v|
+				  @stream.write(EOL)
 					if v.respond_to?(:read) && v.respond_to?(:path)
 						create_file_field(@stream, k,v)
 					else
