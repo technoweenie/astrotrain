@@ -22,7 +22,6 @@ describe Mapping::HttpPost do
   end
 
   it "adds attachments to #post_fields" do
-    pending "multipart issue not solved yet"
     @multipart = Message.parse(mail(:multipart))
     @trans     = Mapping::HttpPost.new(@multipart, @mapping)
     @trans.post_fields.should == {:subject => @multipart.subject, :from => @multipart.sender, :to => @multipart.recipient, :body => @multipart.body, :attachments_0 => @multipart.attachments.first}
