@@ -44,14 +44,23 @@ class Mapping
   end
 
   def self.process(message)
-    if mapping = match(message.recipient)
-      mapping.process(message)
+    LoggedMail.from(message) do |logged|
+      begin
+        if mapping = match(message.recipient)
+          logged.set_mapping(mapping)
+          mapping.process(message)
+          logged.delivered_at = Time.now.utc
+        else
+          false
+        end
+      rescue
+        logged.error_message = "#{$!.class}: #{$!}"
+      end
     end
   end
 
   def process(message)
     Transport.process(message, self)
-    log_message(message)
   end
 
   def recipient_header_order
@@ -68,10 +77,6 @@ class Mapping
         else nil
       end
     attribute_set(:recipient_header_order, value)
-  end
-
-  def log_message(message)
-    LoggedMail.from(message, self)
   end
 
   def match?(name)

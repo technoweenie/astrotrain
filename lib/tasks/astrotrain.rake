@@ -15,8 +15,7 @@ namespace :app do
         realtime = Benchmark.realtime do
           files = Dir[Merb.root / "queue" / "*"]
           files.each do |mail|
-            Message.receive(IO.read(mail))
-            File.unlink mail
+            Message.receive_file(mail)
           end
           count = files.size
         end

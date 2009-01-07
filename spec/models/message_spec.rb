@@ -5,6 +5,7 @@ describe Message do
     describe "against default domain" do
       before :all do
         User.transaction do
+          LoggedMail.all.destroy!
           User.all.destroy!
           Mapping.all.destroy!
           @user     = User.create!(:login => 'user')
@@ -13,12 +14,73 @@ describe Message do
         end
       end
 
-      it "doesn't log message without mapping" do
-        lambda { Message.receive(mail(:basic)) }.should_not change(LoggedMail, :count)
+      describe "without mapping" do
+        before :all do
+          @msg = Message.receive(mail(:basic))
+          @log = LoggedMail.first
+        end
+
+        it "doesn't log message" do
+          @log.should == nil
+        end
       end
 
-      it "logs message with mapping" do
-        lambda { Message.receive(mail(:mapped)) }.should change(LoggedMail, :count).by(1)
+      describe "erroring" do
+        before do
+          LoggedMail.all.destroy!
+        end
+
+        it "logs message without mappping" do
+          Mapping.stub!(:match).and_raise RuntimeError
+          @msg = Message.receive(mail(:basic))
+          @log = LoggedMail.first
+          @log.should_not           == nil
+          @log.delivered_at.should  == nil
+          @log.error_message.should =~ /RuntimeError/
+          @log.mapping.should       == nil
+        end
+
+        it "logs message without mappping" do
+          Mapping.stub!(:match).and_return @mapping
+          @mapping.stub!(:process).and_raise RuntimeError
+          @msg = Message.receive(mail(:basic))
+          @log = LoggedMail.first
+          @log.should_not           == nil
+          @log.delivered_at.should  == nil
+          @log.error_message.should =~ /RuntimeError/
+          @log.mapping.should       == @mapping
+        end
+      end
+
+      describe "with mapping" do
+        before :all do
+          @msg = Message.receive(mail(:mapped))
+          @log = LoggedMail.first
+        end
+
+        it "logs message" do
+          @log.should_not == nil
+        end
+
+        it "links mapping" do
+          @log.mapping.should == @mapping
+        end
+
+        it "sets filename" do
+          @log.filename.should_not == nil
+        end
+
+        it "sets subject" do
+          @log.subject.should == @msg.subject
+        end
+
+        it "sets recipient" do
+          @log.recipient.should == @msg.recipient(@mapping.recipient_header_order)
+        end
+
+        it "sets delivered_at" do
+          @log.delivered_at.should_not == nil
+        end
       end
     end
   end

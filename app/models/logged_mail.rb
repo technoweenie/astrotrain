@@ -7,19 +7,37 @@ class LoggedMail
 
   self.log_path       = Merb.root / 'messages'
 
-  property :id,         Serial
-  property :mapping_id, Integer, :nullable => false, :index => true
-  property :recipient,  String
-  property :subject,    String
-  property :filename,   String
-  property :created_at, DateTime
+  property :id,            Serial
+  property :mapping_id,    Integer, :index => true
+  property :recipient,     String
+  property :subject,       String
+  property :filename,      String
+  property :created_at,    DateTime
+  property :delivered_at,  DateTime
+  property :error_message, String
 
   belongs_to :mapping
 
-  def self.from(message, mapping)
-    logged = new :filename => message.filename, :recipient => message.recipient(mapping.recipient_header_order), :subject => message.subject, :mapping_id => mapping.id
-    logged.save
+  attr_accessor :message
+
+  def self.from(message)
+    logged = new
+    logged.set_message(message)
+    if !block_given? || yield(logged)
+      logged.save
+    end
     logged
+  end
+
+  def set_message(message)
+    self.filename = message.filename
+    self.subject  = message.subject
+    @message      = message
+  end
+
+  def set_mapping(mapping)
+    self.recipient = @message.recipient(mapping.recipient_header_order) if @message
+    self.mapping   = mapping
   end
 
   def raw
