@@ -137,9 +137,12 @@ protected
     wildcards.detect { |w| w.match?(name) }
   end
 
+  @@language_regexes = [/^on\b.*wrote\b?:$/i, /^am\b.*schrieb [\w\d\s]+:$/i, /^le\b.*a écrit\b?:$/i]
   def strip_date_reply_line_from(lines)
-    if lines.last =~ /^On (\d{1,2}-\w+-\d{2,4}|\w+ \d{1,2},? \d{2,4})(,? at [^,]+,).*wrote:$/
-      lines.pop
+    @@language_regexes.detect do |lang_re|
+      if lines.last =~ lang_re
+        lines.pop
+      end
     end
     lines
   end
