@@ -69,6 +69,8 @@ describe Mapping do
 
     {
       "foo bar\n\n#{delim}\nfoo" => "foo bar", 
+      "foo bar\n\nOn 13-Jan-09, at 9:17 AM, ENTP Support wrote:\n\n\n#{delim}\nfoo" => "foo bar", 
+      "foo bar\n\nOn Jan 13, 2009 at 2:20 PM, ENTP Support wrote:\n\n\n#{delim}\nfoo" => "foo bar", 
       "foo\n  bar\nbaz\n\n\n> #{delim}" => "foo\n  bar\nbaz",
       "foo\n\nbar\nbaz\n#{delim}" =>  "foo",
       "foo\n  bar\nbaz2\n\n\n\n" => "foo\n  bar\nbaz2",

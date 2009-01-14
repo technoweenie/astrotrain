@@ -105,7 +105,6 @@ describe Message do
       end
 
       it "recognizes From: header as sender" do
-
         @message.sender.should == %(Bob <user@example.com>)
       end
 

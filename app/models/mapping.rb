@@ -111,7 +111,9 @@ class Mapping
     end
 
     if last_line
-      body = lines[0..delim_line] * "\n"
+      lines = lines[0..delim_line]
+      strip_date_reply_line_from lines
+      body = lines * "\n"
     elsif !delim_line.nil?
       body = ''
     end
@@ -133,6 +135,13 @@ protected
     wildcards = all(:email_domain => domain, :email_user.like => "%*")
     wildcards.sort! { |x, y| y.email_user.size <=> x.email_user.size }
     wildcards.detect { |w| w.match?(name) }
+  end
+
+  def strip_date_reply_line_from(lines)
+    if lines.last =~ /^On (\d{1,2}-\w+-\d{2,4}|\w+ \d{1,2},? \d{2,4})(,? at [^,]+,).*wrote:$/
+      lines.pop
+    end
+    lines
   end
 
   def email_user_regex
