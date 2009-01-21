@@ -120,6 +120,28 @@ describe Message do
         @message.raw.should == @raw
       end
     end
+    
+    describe "iso-8859-1 encoded headers" do
+      before :all do
+        @raw     = mail("iso-8859-1")
+        @message = Message.parse(@raw)
+      end
+      
+      it "recognizes From: header with strange encoding" do
+        @message.sender.should == %(Matthéw <user@example.com>)
+      end
+    end
+    
+    describe "utf-8 encoded headers" do
+      before :all do
+        @raw     = mail("utf-8")
+        @message = Message.parse(@raw)
+      end
+      
+      it "recognizes From: header with strange encoding" do
+        @message.sender.should == %(isnard naiké <user@example.com>)
+      end
+    end
 
     describe "multipart message" do
       before :all do

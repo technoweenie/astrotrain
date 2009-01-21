@@ -21,3 +21,5 @@ dependency "xmpp4r-simple", "0.8.8"
 
 $LOAD_PATH.unshift File.join(Merb.root, 'vendor', 'rest-client', 'lib')
 require 'rest_client'
+$LOAD_PATH.unshift File.join(Merb.root, 'lib')
+require 'rfc2047'

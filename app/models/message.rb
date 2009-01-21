@@ -80,7 +80,7 @@ class Message
   end
 
   def sender
-    @sender ||= @mail['from'].to_s
+    @sender ||= Rfc2047.decode_to("utf-8", @mail['from'].to_s)
   end
 
   def subject

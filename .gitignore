@@ -21,3 +21,5 @@ doc
 config/database.yml
 merb/custom.rb
 spec/fixtures/queue
+messages
+spec/messages
