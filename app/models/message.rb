@@ -80,7 +80,7 @@ class Message
   end
 
   def sender
-    @sender ||= Rfc2047.decode_to("utf-8", @mail['from'].to_s)
+    @sender ||= TMail::Unquoter.unquote_and_convert_to(@mail['from'].to_s, "utf-8")
   end
 
   def subject

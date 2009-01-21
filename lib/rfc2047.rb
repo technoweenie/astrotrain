@@ -1,7 +1,6 @@
 #this was pulled from (RFC 2047 decoding library (MIME format for non-ascii in mail headers)) at http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/69323 
 require 'iconv'
 module Rfc2047
-
   WORD = %r{=\?([!#\$%&'*+-/0-9A-Z\\^\`a-z{|}~]+)\?([BbQq])\?([!->@-~]+)\?=} # :nodoc:
 
   # Decodes a string, +from+, containing RFC 2047 encoded words into a target
