@@ -130,7 +130,7 @@ describe Mapping do
       end
     end
 
-    %w(http://example.com https://example.com http://example.com/ http://example.com/foo http://example.com/foo/bar.html http://example.com/foo?blah[baz]=1).each do |valid|
+    %w(http://example.com https://example.com http://example.com/ http://example.com/foo http://rick:monkey@example.com http://example.com:4567/foo http://localhost:3000/foo http://localhost/foo http://example.com/foo/bar.html http://example.com/foo?blah[baz]=1).each do |valid|
       it "allows #destination == #{valid.inspect} for http_post transport" do
         valid_mapping(:destination => valid, :transport => 'http_post').should be_valid
       end

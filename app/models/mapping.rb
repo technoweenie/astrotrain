@@ -19,7 +19,7 @@ class Mapping
   property :recipient_header_order, String, :size => 255, :auto_validation => false
 
   validates_is_unique :email_user, :scope => :email_domain
-  validates_format :destination, :as => :url, :if => :destination_uses_url?
+  validates_format :destination, :as => /^(https?:)\/\/[^\/]+\/?/i, :if => :destination_uses_url?
   validates_format :destination, :as => :email_address, :if => :destination_uses_email?
   validates_with_block :recipient_header_order do
     if order = recipient_header_order
