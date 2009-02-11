@@ -141,6 +141,14 @@ describe Message do
       it "recognizes From: header with strange encoding" do
         @message.sender.should == %(isnard naiké <user@example.com>)
       end
+
+      it "recognizes Subject: header with strange encoding" do
+        @message.subject.should == "isnard naiké"
+      end
+
+      it "recognizes Body with strange encoding" do
+        @message.body.should == "---------- Forwarded message ----------\nisnard naiké \nWhooboy."
+      end
     end
 
     describe "multipart message" do

@@ -84,7 +84,7 @@ class Message
   end
 
   def subject
-    @mail.subject
+    @subject ||= @mail.subject
   end
 
   def body
