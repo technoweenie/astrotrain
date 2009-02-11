@@ -1,0 +1,100 @@
+Message-Id: <4520EF24-6DA2-4011-8DF7-E7ACB4115848@entp.com>
+From: bar@example.com
+To: foo@example.com
+In-Reply-To: <49920fc1c2ba0_91815ba96b4a6fc12194d@xc88-s00059.tmail>
+Content-Type: multipart/mixed;
+	boundary=Apple-Mail-7-451386929
+X-Smtp-Server: smtp.att.yahoo.com:foo@bar.net
+Mime-Version: 1.0 (Apple Message framework v930.3)
+Subject: Re: Email attachments and file upload [Suggestions]
+Date: Tue, 10 Feb 2009 15:39:00 -0800
+References: <49920fc1c2ba0_91815ba96b4a6fc12194d@xc88-s00059.tmail>
+
+
+--Apple-Mail-7-451386929
+Content-Type: text/plain;
+	charset=US-ASCII;
+	format=flowed
+Content-Transfer-Encoding: 7bit
+
+Let's have a test here:
+
+
+--Apple-Mail-7-451386929
+Content-Disposition: inline;
+	filename=logo.gif
+Content-Type: image/gif;
+	x-mac-creator=3842494D;
+	x-unix-mode=0644;
+	x-mac-type=47494666;
+	name="logo.gif"
+Content-Transfer-Encoding: base64
+
+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
+QwgCADs=
+
+--Apple-Mail-7-451386929
+Content-Type: text/plain;
+	charset=US-ASCII;
+	format=flowed;
+	delsp=yes
+Content-Transfer-Encoding: 7bit
+
+Yum
+
+
+On Feb 10, 2009, at 3:37 PM, Tender Support wrote:
+
+> // Add your reply above here
+> ==================================================
+> From: Tyler Durden
+> Subject: Email attachments and file upload
+>
+> not at the moment ... let me test
+>
+> View this Discussion online: http://foobar.com
+> .
+
+
+
+
+--Apple-Mail-7-451386929--

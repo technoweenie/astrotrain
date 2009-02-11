@@ -174,6 +174,37 @@ describe Message do
       end
     end
 
+    describe "apple multipart message" do
+      before :all do
+        @raw     = mail(:apple_multipart)
+        @message = Message.parse(@raw)
+      end
+
+      it "#parse parses TMail::Mail object from raw text" do
+        @message.mail.should be_kind_of(TMail::Mail)
+      end
+
+      it "recognizes To: header as recipient" do
+        @message.recipient.should == %(foo@example.com)
+      end
+
+      it "recognizes message body" do
+        @message.body.should == "Let's have a test here:\r\n\r\n\r\n\nYum\r\n\r\n\r\nOn Feb 10, 2009, at 3:37 PM, Tender Support wrote:\r\n\r\n> // Add your reply above here\r\n> ==================================================\r\n> From: Tyler Durden\r\n> Subject: Email attachments and file upload\r\n>\r\n> not at the moment ... let me test\r\n>\r\n> View this Discussion online: http://foobar.com\r\n> .\r\n\r\n\r\n\r\n\r\n--Apple-Mail-7-451386929--"
+      end
+
+      it "retrieves attachments" do
+        @message.should have(1).attachments
+      end
+
+      it "retrieves attachment filename" do
+        @message.attachments.first.filename.should == 'logo.gif'
+      end
+
+      it "retrieves attachment content_type" do
+        @message.attachments.first.content_type.should == 'image/gif'
+      end
+    end
+
     describe "multiple sender/recipients" do
       before :all do
         @raw     = mail(:multiple)

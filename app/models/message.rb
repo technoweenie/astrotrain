@@ -91,8 +91,9 @@ class Message
     @body ||= begin
       if @mail.multipart?
         @attachments.clear
+        @body = []
         scan_parts(@mail)
-        @body ||= ""
+        @body = @body.join("\n")
       else
         @mail.body
       end
@@ -156,7 +157,7 @@ protected
         scan_parts(part)
       else
         if part.content_type == "text/plain"
-          @body = part.body
+          @body << part.body
         else
           att = Attachment.new(part)
           @attachments << att if att.attached?
