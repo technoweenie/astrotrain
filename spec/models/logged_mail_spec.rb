@@ -33,5 +33,16 @@ describe LoggedMail do
     it "sets raw headers" do
       @logged.raw.should == @raw
     end
+
+    it "keeps raw file" do
+      File.exist?(@logged.raw_path).should == true
+    end
+
+    it "deletes raw file if delivered" do
+      @logged.delivered_at = Time.now.utc
+      @logged.save
+      @logged.filename.should == nil
+      File.exist?(@logged.raw_path).should == false
+    end
   end
 end

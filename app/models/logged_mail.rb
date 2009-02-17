@@ -17,6 +17,12 @@ class LoggedMail
   property :error_message, String
 
   belongs_to :mapping
+  before :save do
+    if delivered_at && filename
+      FileUtils.rm_rf raw_path if File.exist?(raw_path)
+      self.filename = nil
+    end
+  end
 
   attr_accessor :message
 
@@ -41,7 +47,7 @@ class LoggedMail
   end
 
   def raw
-    @raw ||= filename.blank? ? nil : IO.read(raw_path)
+    @raw ||= (!filename.blank? && File.exist?(raw_path)) ? IO.read(raw_path) : nil
   end
 
   def raw_path
