@@ -13,7 +13,7 @@ class Mapping
   property :user_id,      Integer, :nullable => false, :index => true
   property :email_user,   String, :size => 255, :length => 1..255, :index => :email, :format => /^[\w\.\_\%\+\-]*\*?$/
   property :email_domain, String, :size => 255, :lenght => 1..255, :index => :email, :format => /^[\w\-\_\.]+$/, :default => lambda { default_domain }
-  property :destination,  String, :size => 255, :length => 1..255, :unique_index => true, :unique => true
+  property :destination,  String, :size => 255, :length => 1..255
   property :transport,    String, :size => 255, :set => transports.values, :default => 'http_post'
   property :separator,    String, :size => 255
   property :recipient_header_order, String, :size => 255, :auto_validation => false
