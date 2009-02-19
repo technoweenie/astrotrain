@@ -67,7 +67,7 @@ describe Message do
         end
 
         it "sets filename" do
-          @log.filename.should_not == nil
+          @log.filename.should == nil
         end
 
         it "sets subject" do

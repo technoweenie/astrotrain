@@ -13,9 +13,17 @@ describe LoggedMail do
       @logged  = LoggedMail.from(@message) do |l|
         l.set_mapping(@mapping)
       end
+    end
+
+    before do
       File.open @logged.raw_path, 'w' do |f|
         f << @raw
       end
+    end
+
+    it "clears message file if no mapping was set" do
+      Mapping.process(@message)
+      File.exist?(@logged.raw_path).should == false
     end
 
     it "sets recipient" do

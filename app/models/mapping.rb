@@ -51,6 +51,7 @@ class Mapping
           mapping.process(message)
           logged.delivered_at = Time.now.utc
         else
+          FileUtils.rm_rf logged.raw_path
           false
         end
       rescue
