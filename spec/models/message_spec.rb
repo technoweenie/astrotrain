@@ -278,6 +278,17 @@ describe Message do
         @message.raw.should == @raw
       end
     end
+
+    describe "with multiple delivered-to headers" do
+      before :all do
+        @raw     = mail(:multiple_delivered_to)
+        @message = Message.parse(@raw)
+      end
+
+      it "recognizes Delivered-to: header as recipient" do
+        @message.recipient.should == 'processor-reply-57@custom.com'
+      end
+    end
   end
 
   describe "queueing" do

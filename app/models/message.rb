@@ -72,7 +72,14 @@ class Message
   end
 
   def recipient_from_delivered_to
-    @recipient_from_delivered_to ||= @mail['Delivered-To'].to_s
+    @recipient_from_delivered_to ||= begin
+      delivered = @mail['Delivered-To']
+      if delivered.respond_to?(:first)
+        delivered.first.to_s
+      else
+        delivered.to_s
+      end
+    end
   end
 
   def recipient_from_original_to
