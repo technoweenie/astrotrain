@@ -26,7 +26,8 @@ class Mapping
 
     def fields
       @fields ||= begin
-        {:subject => @message.subject, :to => @recipient, :from => @message.sender, :body => @message.body}
+        all_emails = @message.recipients - [@recipient]
+        {:subject => @message.subject, :to => @recipient, :from => @message.sender, :body => @message.body, :emails => all_emails}
       end
     end
 

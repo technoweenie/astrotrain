@@ -57,6 +57,7 @@ class Message
     @mail        = mail
     @mapping     = nil
     @attachments = []
+    @recipients  = {}
   end
 
   def recipient(order = nil)
@@ -64,6 +65,22 @@ class Message
     order.each do |key|
       value = send("recipient_from_#{key}")
       return value unless value.blank?
+    end
+  end
+
+  def recipients(order = nil)
+    if !@recipients.key?(order)
+      order = self.class.recipient_header_order if order.blank?
+      recipients = []
+      order.each do |key|
+        value = send("recipient_from_#{key}")
+        recipients << value unless value.blank?
+      end
+      recipients.flatten!
+      recipients.uniq!
+      @recipients[order] = recipients
+    else
+      @recipients[order]
     end
   end
 

@@ -14,7 +14,7 @@ class Mapping
     end
 
     def content
-      @content ||= "From: %s\nTo: %s\nSubject: %s\n%s" % [fields[:from], fields[:to], fields[:subject], fields[:body]]
+      @content ||= "From: %s\nTo: %s\nSubject: %s\nEmails: %s\n%s" % [fields[:from], fields[:to], fields[:subject], fields[:emails] * ", ", fields[:body]]
     end
   end
 end

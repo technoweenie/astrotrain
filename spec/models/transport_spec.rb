@@ -12,13 +12,13 @@ describe Mapping::HttpPost do
   end
 
   it "sets #fields" do
-    @trans.fields.should == {:subject => @message.subject, :from => @message.sender, :to => @message.recipient(%w(delivered_to)), :body => @message.body}
+    @trans.fields.should == {:subject => @message.subject, :from => @message.sender, :to => @message.recipient(%w(delivered_to)), :body => @message.body, :emails => @message.recipients(%w(original_to to))}
   end
 
   it "adds attachments to #fields" do
     @multipart = Message.parse(mail(:multipart))
     @trans     = Mapping::HttpPost.new(@multipart, @mapping, @multipart.recipient)
-    @trans.fields.should == {:subject => @multipart.subject, :from => @multipart.sender, :to => @multipart.recipient, :body => @multipart.body, :attachments_0 => @multipart.attachments.first}
+    @trans.fields.should == {:subject => @multipart.subject, :from => @multipart.sender, :to => @multipart.recipient, :body => @multipart.body, :attachments_0 => @multipart.attachments.first, :emails => []}
   end
 
   it "sets fields with mapping separator set" do
@@ -65,14 +65,14 @@ describe Mapping::Jabber do
   end
 
   it "sets #content" do
-    @trans.content.should == "From: %s\nTo: %s\nSubject: %s\n%s" % [@message.sender, @message.recipient(%w(delivered_to)), @message.subject, @message.body]
+    @trans.content.should == "From: %s\nTo: %s\nSubject: %s\nEmails: %s\n%s" % [@message.sender, @message.recipient(%w(delivered_to)), @message.subject, @message.recipients(%w(original_to to)) * ", ", @message.body]
   end
 
   it "sets content with mapping separator set" do
     @message = Message.parse(mail(:reply))
     @mapping.separator = "=" * 5
     @trans   = Mapping::Jabber.new(@message, @mapping, @message.recipient(%w(delivered_to)))
-    @trans.content.should == "From: %s\nTo: %s\nSubject: %s\n%s" % [@message.sender, @message.recipient(%w(delivered_to)), @message.subject, "blah blah"]
+    @trans.content.should == "From: %s\nTo: %s\nSubject: %s\nEmails: %s\n%s" % [@message.sender, @message.recipient(%w(delivered_to)), @message.subject, '', "blah blah"]
   end
 
   describe "when processing" do
