@@ -8,13 +8,7 @@ describe Mapping::HttpPost do
   end
 
   before do
-    @mapping.recipient_header_order = 'delivered_to,original_to,to'
-    @trans   = Mapping::HttpPost.new(@message, @mapping)
-  end
-
-  it "sets #post_fields with default recipient_header_order" do
-    @mapping.recipient_header_order = ''
-    @trans.post_fields.should == {:subject => @message.subject, :from => @message.sender, :to => @message.recipient(%w(original_to)), :body => @message.body}
+    @trans   = Mapping::HttpPost.new(@message, @mapping, @message.recipient(%w(delivered_to)))
   end
 
   it "sets #post_fields" do
@@ -23,14 +17,14 @@ describe Mapping::HttpPost do
 
   it "adds attachments to #post_fields" do
     @multipart = Message.parse(mail(:multipart))
-    @trans     = Mapping::HttpPost.new(@multipart, @mapping)
+    @trans     = Mapping::HttpPost.new(@multipart, @mapping, @multipart.recipient)
     @trans.post_fields.should == {:subject => @multipart.subject, :from => @multipart.sender, :to => @multipart.recipient, :body => @multipart.body, :attachments_0 => @multipart.attachments.first}
   end
 
   it "sets post_fields with mapping separator set" do
     @message = Message.parse(mail(:reply))
     @mapping.separator = "=" * 5
-    @trans   = Mapping::HttpPost.new(@message, @mapping)
+    @trans   = Mapping::HttpPost.new(@message, @mapping, @message.recipient)
     @trans.post_fields[:body].should == "blah blah"
   end
 
@@ -46,7 +40,7 @@ describe Mapping::HttpPost do
 
     it "makes http post request from Transport" do
       RestClient.should_receive(:post).with(@mapping.destination, @trans.post_fields)
-      Mapping::Transport.process(@message, @mapping)
+      Mapping::Transport.process(@message, @mapping, @message.recipient)
     end
 
     before :all do
@@ -67,13 +61,7 @@ describe Mapping::Jabber do
   end
 
   before do
-    @mapping.recipient_header_order = 'delivered_to,original_to,to'
-    @trans   = Mapping::Jabber.new(@message, @mapping)
-  end
-
-  it "sets #content with default recipient_header_order" do
-    @mapping.recipient_header_order = ''
-    @trans.content.should == "From: %s\nTo: %s\nSubject: %s\n%s" % [@message.sender, @message.recipient(%w(original_to)), @message.subject, @message.body]
+    @trans   = Mapping::Jabber.new(@message, @mapping, @message.recipient(%w(delivered_to)))
   end
 
   it "sets #content" do
@@ -83,7 +71,7 @@ describe Mapping::Jabber do
   it "sets content with mapping separator set" do
     @message = Message.parse(mail(:reply))
     @mapping.separator = "=" * 5
-    @trans   = Mapping::Jabber.new(@message, @mapping)
+    @trans   = Mapping::Jabber.new(@message, @mapping, @message.recipient(%w(delivered_to)))
     @trans.content.should == "From: %s\nTo: %s\nSubject: %s\n%s" % [@message.sender, @message.recipient(%w(delivered_to)), @message.subject, "blah blah"]
   end
 
@@ -101,7 +89,7 @@ describe Mapping::Jabber do
 
     it "makes jabber delivery from Transport" do
       @trans.connection.should_receive :deliver
-      Mapping::Transport.process(@message, @mapping)
+      Mapping::Transport.process(@message, @mapping, @message.recipient(%w(delivered_to)))
     end
 
     before :all do

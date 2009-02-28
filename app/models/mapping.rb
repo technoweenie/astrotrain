@@ -55,7 +55,7 @@ class Mapping
         if mapping
           logged.recipient = recipient
           logged.mapping   = mapping
-          mapping.process(message)
+          mapping.process(message, recipient)
           logged.delivered_at = Time.now.utc
         else
           FileUtils.rm_rf logged.raw_path
@@ -67,8 +67,8 @@ class Mapping
     end
   end
 
-  def process(message)
-    Transport.process(message, self)
+  def process(message, recipient)
+    Transport.process(message, self, recipient)
   end
 
   def recipient_header_order
