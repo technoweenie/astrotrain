@@ -100,8 +100,8 @@ describe Message do
         @message.mail.should be_kind_of(TMail::Mail)
       end
 
-      it "recognizes To: header as recipient" do
-        @message.recipient.should == %("Processor" <processor@astrotrain.com>)
+      it "recognizes Delivered-To and To: headers as recipients" do
+        @message.recipients.should == %w(processor@astrotrain.com)
       end
 
       it "recognizes From: header as sender" do
@@ -153,8 +153,8 @@ describe Message do
         @message.mail.should be_kind_of(TMail::Mail)
       end
 
-      it "recognizes To: header as recipient" do
-        @message.recipient.should == %(foo@example.com)
+      it "recognizes Delivered-To/To: headers as recipient" do
+        @message.recipients.should == %w(foo@example.com)
       end
 
       it "recognizes message body" do
@@ -185,7 +185,7 @@ describe Message do
       end
 
       it "recognizes To: header as recipient" do
-        @message.recipient.should == %(foo@example.com)
+        @message.recipients.should == %w(foo@example.com)
       end
 
       it "recognizes message body" do
@@ -215,8 +215,12 @@ describe Message do
         @message.mail.should be_kind_of(TMail::Mail)
       end
 
-      it "recognizes To: header as recipient with custom header order" do
-        @message.recipient(%w(to original_to delivered_to)).should == 'other@example.com, processor@astrotrain.com'
+      it "recognizes To: headers as recipients" do
+        @message.recipients.should == %w(processor@astrotrain.com other@example.com)
+      end
+
+      it "recognizes To: headers as recipients with custom header order" do
+        @message.recipients(%w(to original_to delivered_to)).should == %w(other@example.com processor@astrotrain.com)
       end
 
       it "recognizes From: header as sender" do
@@ -247,19 +251,15 @@ describe Message do
       end
 
       it "recognizes X-Original-to: header as recipient" do
-        @message.recipient.should == 'processor-reply-57@custom.com'
+        @message.recipients.should == %w(processor-reply-57@custom.com processor-delivered@astrotrain.com processor@astrotrain.com)
       end
 
       it "recognizes Delivered-To: header as recipient with custom header order" do
-        @message.recipient(%w(delivered_to original_to to)).should == 'processor-delivered@astrotrain.com'
+        @message.recipients(%w(delivered_to original_to to)).should == %w(processor-delivered@astrotrain.com processor-reply-57@custom.com processor@astrotrain.com)
       end
 
       it "recognizes To: header as recipient with custom header order" do
-        @message.recipient(%w(to original_to delivered_to)).should == 'processor@astrotrain.com'
-      end
-
-      it "recognizes Delivered-to: header as recipient" do
-        @message.recipient.should == 'processor-reply-57@custom.com'
+        @message.recipients(%w(to original_to delivered_to)).should == %w(processor@astrotrain.com processor-reply-57@custom.com processor-delivered@astrotrain.com)
       end
 
       it "recognizes From: header as sender" do
@@ -286,7 +286,7 @@ describe Message do
       end
 
       it "recognizes Delivered-to: header as recipient" do
-        @message.recipient.should == 'processor-reply-57@custom.com'
+        @message.recipients.should == %w(processor-reply-57@custom.com processor-delivered@astrotrain.com processor@astrotrain.com)
       end
     end
   end

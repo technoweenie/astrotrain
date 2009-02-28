@@ -61,11 +61,7 @@ class Message
   end
 
   def recipient(order = nil)
-    order = self.class.recipient_header_order if order.blank?
-    order.each do |key|
-      value = send("recipient_from_#{key}")
-      return value unless value.blank?
-    end
+    recipients(order).first
   end
 
   def recipients(order = nil)
@@ -73,8 +69,16 @@ class Message
       order = self.class.recipient_header_order if order.blank?
       recipients = []
       order.each do |key|
-        value = send("recipient_from_#{key}")
-        recipients << value unless value.blank?
+        values = send("recipients_from_#{key}")
+        values.each do |value|
+          if !value.blank?
+            emails = TMail::AddressHeader.new('to', value)
+            emails.addrs.each do |addr|
+              email = TMail::Address.parse(addr.to_s)
+              recipients << email.address
+            end
+          end
+        end
       end
       recipients.flatten!
       recipients.uniq!
@@ -84,23 +88,23 @@ class Message
     end
   end
 
-  def recipient_from_to
-    @recipient_from_to ||= @mail['to'].to_s
+  def recipients_from_to
+    @recipient_from_to ||= [@mail['to'].to_s]
   end
 
-  def recipient_from_delivered_to
+  def recipients_from_delivered_to
     @recipient_from_delivered_to ||= begin
       delivered = @mail['Delivered-To']
       if delivered.respond_to?(:first)
-        delivered.first.to_s
+        delivered.map! { |a| a.to_s }
       else
-        delivered.to_s
+        [delivered.to_s]
       end
     end
   end
 
-  def recipient_from_original_to
-    @recipient_from_original_to ||= @mail['X-Original-To'].to_s
+  def recipients_from_original_to
+    @recipient_from_original_to ||= [@mail['X-Original-To'].to_s]
   end
 
   def sender
