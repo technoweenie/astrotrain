@@ -64,18 +64,12 @@ class Message
     if !@recipients.key?(order)
       order = self.class.recipient_header_order if order.blank?
       recipients = []
+
+      parse_email_headers recipients_from_body, recipients
       order.each do |key|
-        values = send("recipients_from_#{key}")
-        values.each do |value|
-          if !value.blank?
-            emails = TMail::AddressHeader.new('to', value)
-            emails.addrs.each do |addr|
-              email = TMail::Address.parse(addr.to_s)
-              recipients << email.address
-            end
-          end
-        end
+        parse_email_headers send("recipients_from_#{key}"), recipients
       end
+
       recipients.flatten!
       recipients.uniq!
       @recipients[order] = recipients
@@ -101,6 +95,10 @@ class Message
 
   def recipients_from_original_to
     @recipient_from_original_to ||= [@mail['X-Original-To'].to_s]
+  end
+
+  def recipients_from_body
+    @recipients_from_body ||= body.scan(/<[\w\.\_\%\+\-]+@[\w\-\_\.]+>/)
   end
 
   def sender
@@ -185,6 +183,18 @@ protected
         else
           att = Attachment.new(part)
           @attachments << att if att.attached?
+        end
+      end
+    end
+  end
+
+  def parse_email_headers(values, collection)
+    values.each do |value|
+      if !value.blank?
+        emails = TMail::AddressHeader.new('to', value)
+        emails.addrs.each do |addr|
+          email = TMail::Address.parse(addr.to_s)
+          collection << email.address
         end
       end
     end

@@ -240,6 +240,17 @@ describe Message do
       end
     end
 
+    describe "recipients in the body" do
+      before :all do
+        @raw     = mail(:multiple_with_body_recipients)
+        @message = Message.parse(@raw)
+      end
+
+      it "recognizes in-body emails and To: headers as recipients" do
+        @message.recipients.should == %w(processor+foobar@astrotrain.com processor+blah@astrotrain.com processor@astrotrain.com other@example.com)
+      end
+    end
+
     describe "with x-original-to header" do
       before :all do
         @raw     = mail(:custom)
