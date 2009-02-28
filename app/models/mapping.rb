@@ -36,17 +36,22 @@ class Mapping
   belongs_to :user
   has n, :logged_mails, :order => [:created_at.desc]
 
-  def self.match(email_address)
-    email_address.strip!
-    email_address.downcase!
-    name, domain = email_address.split("@")
-    match_by_address(name, domain) || match_by_wildcard(name, domain)
+  def self.match(email_addresses)
+    email_addresses.each do |email_address|
+      email_address.strip!
+      email_address.downcase!
+      name, domain = email_address.split("@")
+      if mapping = match_by_address(name, domain) || match_by_wildcard(name, domain)
+        return mapping
+      end
+    end
+    nil
   end
 
   def self.process(message)
     LoggedMail.from(message) do |logged|
       begin
-        if mapping = match(message.recipient)
+        if mapping = match([message.recipient])
           logged.set_mapping(mapping)
           mapping.process(message)
           logged.delivered_at = Time.now.utc

@@ -48,15 +48,15 @@ describe Mapping do
     end
 
     it "matches email user" do
-      Mapping.match("abc@#{Mapping.default_domain}").should == @mapping3
+      Mapping.match(["abc@#{Mapping.default_domain}"]).should == @mapping3
     end
 
     it "matches email partial wildcard" do
-      Mapping.match("abc1@#{Mapping.default_domain}").should == @mapping2
+      Mapping.match(["abc1@#{Mapping.default_domain}"]).should == @mapping2
     end
 
     it "matches email partial wildcard" do
-      Mapping.match("def@#{Mapping.default_domain}").should == @mapping1
+      Mapping.match(["def@#{Mapping.default_domain}"]).should == @mapping1
     end
   end
 
