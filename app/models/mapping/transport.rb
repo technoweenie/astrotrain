@@ -24,6 +24,12 @@ class Mapping
     def process
     end
 
+    def fields
+      @fields ||= begin
+        {:subject => @message.subject, :to => @recipient, :from => @message.sender, :body => @message.body}
+      end
+    end
+
     def self.inherited(child)
       super
       class << child

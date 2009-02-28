@@ -11,21 +11,21 @@ describe Mapping::HttpPost do
     @trans   = Mapping::HttpPost.new(@message, @mapping, @message.recipient(%w(delivered_to)))
   end
 
-  it "sets #post_fields" do
-    @trans.post_fields.should == {:subject => @message.subject, :from => @message.sender, :to => @message.recipient(%w(delivered_to)), :body => @message.body}
+  it "sets #fields" do
+    @trans.fields.should == {:subject => @message.subject, :from => @message.sender, :to => @message.recipient(%w(delivered_to)), :body => @message.body}
   end
 
-  it "adds attachments to #post_fields" do
+  it "adds attachments to #fields" do
     @multipart = Message.parse(mail(:multipart))
     @trans     = Mapping::HttpPost.new(@multipart, @mapping, @multipart.recipient)
-    @trans.post_fields.should == {:subject => @multipart.subject, :from => @multipart.sender, :to => @multipart.recipient, :body => @multipart.body, :attachments_0 => @multipart.attachments.first}
+    @trans.fields.should == {:subject => @multipart.subject, :from => @multipart.sender, :to => @multipart.recipient, :body => @multipart.body, :attachments_0 => @multipart.attachments.first}
   end
 
-  it "sets post_fields with mapping separator set" do
+  it "sets fields with mapping separator set" do
     @message = Message.parse(mail(:reply))
     @mapping.separator = "=" * 5
     @trans   = Mapping::HttpPost.new(@message, @mapping, @message.recipient)
-    @trans.post_fields[:body].should == "blah blah"
+    @trans.fields[:body].should == "blah blah"
   end
 
   describe "when processing" do
@@ -34,12 +34,12 @@ describe Mapping::HttpPost do
     end
 
     it "makes http post request" do
-      RestClient.should_receive(:post).with(@mapping.destination, @trans.post_fields)
+      RestClient.should_receive(:post).with(@mapping.destination, @trans.fields)
       @trans.process
     end
 
     it "makes http post request from Transport" do
-      RestClient.should_receive(:post).with(@mapping.destination, @trans.post_fields)
+      RestClient.should_receive(:post).with(@mapping.destination, @trans.fields)
       Mapping::Transport.process(@message, @mapping, @message.recipient)
     end
 
