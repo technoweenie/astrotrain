@@ -60,10 +60,6 @@ class Message
     @recipients  = {}
   end
 
-  def recipient(order = nil)
-    recipients(order).first
-  end
-
   def recipients(order = nil)
     if !@recipients.key?(order)
       order = self.class.recipient_header_order if order.blank?

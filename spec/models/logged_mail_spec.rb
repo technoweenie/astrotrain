@@ -11,7 +11,7 @@ describe LoggedMail do
       @message = Message.parse(@raw)
       @message.filename = 'logged_mail_raw'
       @logged  = LoggedMail.from(@message) do |l|
-        l.recipient = @message.recipient(%w(delivered_to))
+        l.recipient = @message.recipients(%w(delivered_to)).first
         l.mapping   = @mapping
       end
     end
@@ -28,7 +28,7 @@ describe LoggedMail do
     end
 
     it "sets recipient" do
-      @logged.recipient.should == @message.recipient(%w(delivered_to))
+      @logged.recipient.should == @message.recipients(%w(delivered_to)).first
     end
 
     it "sets subject" do

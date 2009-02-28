@@ -75,7 +75,7 @@ describe Message do
         end
 
         it "sets recipient" do
-          @log.recipient.should == @msg.recipient(@mapping.recipient_header_order)
+          @log.recipient.should == @msg.recipients(@mapping.recipient_header_order).first
         end
 
         it "sets delivered_at" do

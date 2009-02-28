@@ -51,7 +51,7 @@ class Mapping
   def self.process(message)
     LoggedMail.from(message) do |logged|
       begin
-        mapping, recipient = match([message.recipient])
+        mapping, recipient = match(message.recipients)
         if mapping
           logged.recipient = recipient
           logged.mapping   = mapping
