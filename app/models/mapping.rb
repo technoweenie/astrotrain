@@ -80,8 +80,8 @@ class Mapping
     attribute_set(:recipient_header_order, value)
   end
 
-  def match?(name)
-    name =~ email_user_regex
+  def match?(name, domain)
+    email_domain == domain && name =~ email_user_regex
   end
 
   def destination_uses_url?
@@ -135,7 +135,7 @@ protected
   def self.match_by_wildcard(name, domain)
     wildcards = all(:email_domain => domain, :email_user.like => "%*")
     wildcards.sort! { |x, y| y.email_user.size <=> x.email_user.size }
-    wildcards.detect { |w| w.match?(name) }
+    wildcards.detect { |w| w.match?(name, domain) }
   end
 
   @@language_regexes = [/^on\b.*wrote\b?:$/i, /^am\b.*schrieb [\w\d\s]+:$/i, /^le\b.*a écrit\b?:$/i]
