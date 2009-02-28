@@ -42,7 +42,7 @@ class Mapping
       email_address.downcase!
       name, domain = email_address.split("@")
       if mapping = match_by_address(name, domain) || match_by_wildcard(name, domain)
-        return mapping
+        return [mapping, email_address]
       end
     end
     nil
@@ -51,8 +51,10 @@ class Mapping
   def self.process(message)
     LoggedMail.from(message) do |logged|
       begin
-        if mapping = match([message.recipient])
-          logged.set_mapping(mapping)
+        mapping, recipient = match([message.recipient])
+        if mapping
+          logged.recipient = recipient
+          logged.mapping   = mapping
           mapping.process(message)
           logged.delivered_at = Time.now.utc
         else

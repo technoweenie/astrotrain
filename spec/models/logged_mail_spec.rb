@@ -11,7 +11,8 @@ describe LoggedMail do
       @message = Message.parse(@raw)
       @message.filename = 'logged_mail_raw'
       @logged  = LoggedMail.from(@message) do |l|
-        l.set_mapping(@mapping)
+        l.recipient = @message.recipient(%w(delivered_to))
+        l.mapping   = @mapping
       end
     end
 

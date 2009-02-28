@@ -24,26 +24,12 @@ class LoggedMail
     end
   end
 
-  attr_accessor :message
-
   def self.from(message)
-    logged = new
-    logged.set_message(message)
+    logged = new(:filename => message.filename, :subject => message.subject)
     if !block_given? || yield(logged)
       logged.save
     end
     logged
-  end
-
-  def set_message(message)
-    self.filename = message.filename
-    self.subject  = message.subject
-    @message      = message
-  end
-
-  def set_mapping(mapping)
-    self.recipient = @message.recipient(mapping.recipient_header_order) if @message
-    self.mapping   = mapping
   end
 
   def raw
