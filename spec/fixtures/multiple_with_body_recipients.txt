@@ -11,5 +11,5 @@ Content-Disposition: inline
 
 blah blah
 
-ISSUE #: <processor+foobar@astrotrain.com>
+ISSUE #: <processor%2Bfoobar@astrotrain.com>
 ISSUE #: <processor+blah@astrotrain.com>

@@ -194,9 +194,17 @@ protected
         emails = TMail::AddressHeader.new('to', value)
         emails.addrs.each do |addr|
           email = TMail::Address.parse(addr.to_s)
-          collection << email.address
+          collection << unescape(email.address)
         end
       end
     end
+  end
+
+  # Stolen from Rack/Camping, remove the "+" => " " translation
+  def unescape(s)
+    s.gsub!(/((?:%[0-9a-fA-F]{2})+)/n){
+      [$1.delete('%')].pack('H*')
+    }
+    s
   end
 end
