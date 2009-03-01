@@ -8,7 +8,8 @@ describe Mapping::HttpPost do
   end
 
   before do
-    @trans   = Mapping::HttpPost.new(@message, @mapping, @message.recipients(%w(delivered_to)).first)
+    @trans           = Mapping::HttpPost.new(@message, @mapping, @message.recipients(%w(delivered_to)).first)
+    @expected_fields = @trans.fields.merge(:emails => @message.recipients(%w(original_to to)) * ",")
   end
 
   it "sets #fields" do
@@ -34,12 +35,12 @@ describe Mapping::HttpPost do
     end
 
     it "makes http post request" do
-      RestClient.should_receive(:post).with(@mapping.destination, @trans.fields)
+      RestClient.should_receive(:post).with(@mapping.destination, @expected_fields)
       @trans.process
     end
 
     it "makes http post request from Transport" do
-      RestClient.should_receive(:post).with(@mapping.destination, @trans.fields)
+      RestClient.should_receive(:post).with(@mapping.destination, @expected_fields)
       Mapping::Transport.process(@message, @mapping, @message.recipients.first)
     end
 

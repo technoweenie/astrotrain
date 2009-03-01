@@ -2,7 +2,7 @@ class Mapping
   class HttpPost < Transport
     def process
       return unless Transport.processing
-      RestClient.post @mapping.destination, fields
+      RestClient.post @mapping.destination, fields.merge(:emails => fields[:emails].join(","))
     end
 
     def fields
