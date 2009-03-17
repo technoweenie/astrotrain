@@ -8,13 +8,18 @@ class Message
   attr_reader :mail, :attachments
 
   class << self
-    attr_reader   :queue_path
+    attr_reader   :queue_path, :archive_path
     attr_accessor :recipient_header_order
   end
 
   def self.queue_path=(path)
     FileUtils.mkdir_p path
     @queue_path = File.expand_path(path)
+  end
+
+  def self.archive_path=(path)
+    FileUtils.mkdir_p path
+    @archive_path = File.expand_path(path)
   end
 
   self.recipient_header_order = %w(original_to delivered_to to)
@@ -40,7 +45,11 @@ class Message
 
   def self.receive_file(path, raw = nil)
     message = receive IO.read(path)
-    FileUtils.rm_rf path
+    if archive_path
+      FileUtils.mv path, archive_path / Time.now.year.to_s / Time.now.month.to_s / Time.now.day.to_s / File.basename(path)
+    else
+      FileUtils.rm_rf path
+    end
     message
   end
 
