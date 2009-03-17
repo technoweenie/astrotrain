@@ -66,10 +66,6 @@ describe Message do
           @log.mapping.should == @mapping
         end
 
-        it "sets filename" do
-          @log.filename.should == nil
-        end
-
         it "sets subject" do
           @log.subject.should == @msg.subject
         end

@@ -8,7 +8,7 @@ dependency "merb-slices", ver        # Provides a mechanism for letting plugins 
 dependency "merb-auth", ver          # An authentication slice (Merb's equivalent to Rails' restful authentication)
 dependency "merb-param-protection", ver
  
-dm_ver = "0.9.9"
+dm_ver = "0.9.10"
 dependency "dm-core", dm_ver         # The datamapper ORM
 dependency "dm-aggregates", dm_ver   # Provides your DM models with count, sum, avg, min, max, etc.
 dependency "dm-migrations", dm_ver   # Make incremental changes to your database.

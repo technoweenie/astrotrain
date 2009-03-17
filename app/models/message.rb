@@ -4,7 +4,7 @@ require 'tempfile'
 
 # Wrapper around a TMail object
 class Message
-  attr_accessor :body, :filename
+  attr_accessor :body
   attr_reader :mail, :attachments
 
   class << self
@@ -33,19 +33,14 @@ class Message
   end
 
   def self.receive(raw)
-    file = Tempfile.new("astrotrain-#{raw.size}")
-    file << raw
-    receive_file file.path, raw
+    message = parse(raw)
+    Mapping.process(message)
+    message
   end
 
   def self.receive_file(path, raw = nil)
-    FileUtils.mkdir_p(LoggedMail.log_path)
-    raw            ||= IO.read(path)
-    filename         = File.basename(path)
-    message          = parse(raw)
-    message.filename = filename
-    FileUtils.mv path, LoggedMail.log_path / filename
-    Mapping.process(message)
+    message = receive IO.read(path)
+    FileUtils.rm_rf path
     message
   end
 
