@@ -1,4 +1,4 @@
-ver = '1.0.7.1'
+ver = '1.0.11'
 dependency "merb-action-args", ver   # Provides support for querystring arguments to be passed in to controller actions
 dependency "merb-assets", ver        # Provides link_to, asset_path, auto_link, image_tag methods (and lots more)
 dependency "merb-cache", ver         # Provides your application with caching functions 
@@ -8,7 +8,7 @@ dependency "merb-slices", ver        # Provides a mechanism for letting plugins 
 dependency "merb-auth", ver          # An authentication slice (Merb's equivalent to Rails' restful authentication)
 dependency "merb-param-protection", ver
  
-dm_ver = "0.9.10"
+dm_ver = "0.9.11"
 dependency "dm-core", dm_ver         # The datamapper ORM
 dependency "dm-aggregates", dm_ver   # Provides your DM models with count, sum, avg, min, max, etc.
 dependency "dm-migrations", dm_ver   # Make incremental changes to your database.
