@@ -92,6 +92,11 @@ describe Message do
         @message = Message.parse(@raw)
       end
 
+      it "parses TMail::Mail headers" do
+        @message.headers.should == {'mime-version' => '1.0', 'content-type' => 'text/plain; charset=ISO-8859-1', 
+          'x-custom' => 'reply', 'content-transfer-encoding' => '7bit', 'content-disposition' => 'inline'}
+      end
+
       it "#parse parses TMail::Mail object from raw text" do
         @message.mail.should be_kind_of(TMail::Mail)
       end

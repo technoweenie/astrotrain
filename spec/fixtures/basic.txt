@@ -5,6 +5,7 @@ From: Bob <user@example.com>
 To: Processor <processor@astrotrain.com>
 Subject: Fwd: blah blah
 MIME-Version: 1.0
+X-Custom: reply
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline

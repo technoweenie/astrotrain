@@ -1,6 +1,7 @@
 require 'digest/sha1'
 require 'fileutils'
 require 'tempfile'
+require 'set'
 
 # Wrapper around a TMail object
 class Message
@@ -9,7 +10,7 @@ class Message
 
   class << self
     attr_reader   :queue_path, :archive_path
-    attr_accessor :recipient_header_order
+    attr_accessor :recipient_header_order, :skipped_headers
   end
 
   def self.queue_path=(path)
@@ -22,6 +23,7 @@ class Message
     @archive_path = File.expand_path(path)
   end
 
+  self.skipped_headers = Set.new %w(message-id from date subject to delivered-to original-to)
   self.recipient_header_order = %w(original_to delivered_to to)
   self.queue_path = File.join(File.dirname(__FILE__), '..', '..', 'queue')
 
@@ -128,6 +130,17 @@ class Message
 
   def raw
     @mail.port.to_s
+  end
+
+  def headers
+    @headers ||= begin
+      h = {}
+      @mail.header.each do |key, value|
+        next if self.class.skipped_headers.include?(key)
+        h[key] = value.to_s
+      end
+      h
+    end
   end
 
   class Attachment
