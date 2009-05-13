@@ -27,7 +27,11 @@ class Mapping
     def fields
       @fields ||= begin
         all_emails = @message.recipients - [@recipient]
-        {:subject => @message.subject, :to => @recipient, :from => @message.sender, :body => @message.body, :emails => all_emails}
+        f = {:subject => @message.subject, :to => @recipient, :from => @message.sender, :body => @message.body, :emails => all_emails}
+        @message.headers.each do |key, value|
+          f["headers[#{key}]"] = value
+        end
+        f
       end
     end
 
