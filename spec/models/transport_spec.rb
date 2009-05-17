@@ -14,6 +14,7 @@ describe Mapping::HttpPost do
 
   it "sets #fields" do
     @trans.fields.should == {:subject => @message.subject, :from => @message.sender, :to => @message.recipients(%w(delivered_to)).first, :body => @message.body, :emails => @message.recipients(%w(original_to to)),
+      "headers[reply-to]" => "reply-to-me@example.com",
       "headers[mime-version]"=>"1.0", "headers[content-type]"=>"text/plain; charset=ISO-8859-1", "headers[content-disposition]"=>"inline", "headers[content-transfer-encoding]"=>"7bit"}
   end
 
