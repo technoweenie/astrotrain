@@ -18,7 +18,12 @@ class LoggedMail
   belongs_to :mapping
 
   def self.from(message)
-    logged = new(:subject => message.subject)
+    logged = new
+    begin
+      logged.subject = message.subject
+    rescue Iconv::InvalidCharacter
+      logged.subject = message.mail.quoted_subject
+    end
     if !block_given? || yield(logged)
       logged.save
     end
