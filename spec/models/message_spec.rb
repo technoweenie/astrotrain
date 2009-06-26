@@ -40,7 +40,7 @@ describe Message do
           @log.mapping.should       == nil
         end
 
-        it "logs message without mappping" do
+        it "logs message with mappping" do
           Mapping.stub!(:match).and_return @mapping
           @mapping.stub!(:process).and_raise RuntimeError
           @msg = Message.receive(mail(:basic))
@@ -58,24 +58,8 @@ describe Message do
           @log = LoggedMail.first
         end
 
-        it "logs message" do
-          @log.should_not == nil
-        end
-
-        it "links mapping" do
-          @log.mapping.should == @mapping
-        end
-
-        it "sets subject" do
-          @log.subject.should == @msg.subject
-        end
-
-        it "sets recipient" do
-          @log.recipient.should == @msg.recipients(@mapping.recipient_header_order).first
-        end
-
-        it "sets delivered_at" do
-          @log.delivered_at.should_not == nil
+        it "does not log message" do
+          @log.should == nil
         end
       end
     end
