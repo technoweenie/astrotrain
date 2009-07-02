@@ -14,7 +14,7 @@ describe Mapping::HttpPost do
 
   it "sets #fields" do
     @trans.fields.should == {:subject => @message.subject, :from => @message.sender, :to => @message.recipients(%w(delivered_to)).first, :body => @message.body, :emails => @message.recipients(%w(original_to to)),
-      "headers[reply-to]" => "reply-to-me@example.com",
+      "headers[reply-to]" => "reply-to-me@example.com", 'headers[message-id]' => '<a16be7390810161014n52b603e9k1aa6bb803c6735aa@mail.gmail.com>',
       "headers[mime-version]"=>"1.0", "headers[content-type]"=>"text/plain; charset=ISO-8859-1", "headers[content-disposition]"=>"inline", "headers[content-transfer-encoding]"=>"7bit"}
   end
 
@@ -22,7 +22,7 @@ describe Mapping::HttpPost do
     @multipart = Message.parse(mail(:multipart))
     @trans     = Mapping::HttpPost.new(@multipart, @mapping, @multipart.recipients.first)
     @trans.fields.should == {:subject => @multipart.subject, :from => @multipart.sender, :to => @multipart.recipients.first, :body => @multipart.body, :attachments_0 => @multipart.attachments.first, :emails => [],
-      "headers[mime-version]"=>"1.0", "headers[content-type]"=>@multipart.headers['content-type']}
+      "headers[message-id]"=>"<ddf0a08f0812091503x4696425eid0fa5910ad39bce1@mail.examle.com>", "headers[mime-version]"=>"1.0", "headers[content-type]"=>@multipart.headers['content-type']}
   end
 
   it "sets fields with mapping separator set" do
