@@ -111,9 +111,31 @@ describe Message do
         @raw     = mail("iso-8859-1")
         @message = Message.parse(@raw)
       end
-      
+
       it "recognizes From: header with strange encoding" do
         @message.sender.should == %(Matthéw <user@example.com>)
+      end
+    end
+
+    describe "gb2312 encoded body" do
+      before :all do
+        @raw     = mail("gb2312_encoding")
+        @message = Message.parse(@raw)
+      end
+
+      it "converts to UTF-8" do
+        @message.body.should == "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd： blah China"
+      end
+    end
+
+    describe "gb2312 encoded body with invalid charset in mime-version header" do
+      before :all do
+        @raw     = mail("gb2312_encoding_invalid")
+        @message = Message.parse(@raw)
+      end
+
+      it "converts to UTF-8" do
+        @message.body.should == "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd： blah China"
       end
     end
     

@@ -56,7 +56,7 @@ class Message
   end
 
   def self.parse(raw)
-    new TMail::Mail.parse(raw)
+    new Astrotrain::Mail.parse(raw)
   end
 
   def initialize(mail)
