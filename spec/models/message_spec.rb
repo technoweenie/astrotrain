@@ -138,7 +138,7 @@ describe Message do
         @message.body.should == "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd： blah China"
       end
     end
-    
+
     describe "utf-8 encoded headers" do
       before :all do
         @raw     = mail("utf-8")

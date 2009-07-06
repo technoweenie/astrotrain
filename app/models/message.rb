@@ -115,6 +115,7 @@ class Message
     @mail.subject
   end
 
+
   def body
     @body ||= begin
       if @mail.multipart?
@@ -123,8 +124,9 @@ class Message
         scan_parts(@mail)
         @body = @body.join("\n")
       else
-        @mail.body
+        @body = @mail.body
       end
+      @mail.charset ? @body : convert_to_utf8(@body)
     end
   end
 
@@ -223,5 +225,20 @@ protected
       [$1.delete('%')].pack('H*')
     }
     s
+  end
+
+  # Attempts to run iconv conversions in common charsets to UTF-8.  Needed for 
+  # those crappy emails that don't properly specify a charset in the headers. 
+  ICONV_CONVERSIONS = %w(utf-8 ISO-8859-1 ISO-8859-2 ISO-8859-3 ISO-8859-4 ISO-8859-5 ISO-8859-6 ISO-8859-7 ISO-8859-8 ISO-8859-9
+    ISO-8859-15 GB2312)
+  def convert_to_utf8(s)
+    ICONV_CONVERSIONS.each do |from|
+      begin
+        return Iconv.iconv(ICONV_CONVERSIONS[0], from, s).to_s
+      rescue Iconv::IllegalSequence
+      ensure
+        s
+      end
+    end
   end
 end
