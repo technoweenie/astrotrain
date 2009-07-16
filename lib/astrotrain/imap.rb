@@ -113,7 +113,7 @@ module Astrotrain
         attr_accessor :raw_field
         def fetch(connection, ids, fields)
           fields = process_fields(fields)
-          connection.fetch(ids, fields).map! { |m| Message.new(m.seqno, m.attr[fields.first]) }
+          connection.fetch(ids, fields).map! { |m| Message.new(m, fields) }
         end
 
         def process_fields(fields)
@@ -127,12 +127,19 @@ module Astrotrain
 
       self.raw_field = 'RFC822'
 
-      attr_reader :number
-      attr_reader :raw
+      attr_reader :data, :fields, :number, :raw
 
-      def initialize(number, raw)
-        @number = number
-        @raw    = raw
+      def initialize(data, fields = nil)
+        @data   = data
+        @fields = fields || []
+        @number = data.seqno
+        if @fields.include?(self.class.raw_field)
+          @raw = self[self.class.raw_field]
+        end
+      end
+
+      def [](key)
+        @data.attr[key]
       end
 
       def ==(other)

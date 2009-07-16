@@ -40,7 +40,7 @@ describe "Astrotrain" do
     it "searches mailbox" do
       @conn.mock(:search, ["foo", "bar"])    { [2, 1] }
       @conn.mock(:fetch, [2, 1], %w(RFC822)) { [OpenStruct.new(:seqno => 2, :attr => {}), OpenStruct.new(:seqno => 1, :attr => {})] }
-      @mbox.search("foo bar").should == [Astrotrain::Imap::Message.new(2, nil), Astrotrain::Imap::Message.new(1, nil)]
+      @mbox.search("foo bar").should == [Astrotrain::Imap::Message.new(OpenStruct.new(:seqno => 2, :attr => {})), Astrotrain::Imap::Message.new(OpenStruct.new(:seqno => 1, :attr => {}))]
     end
 
     it "destroys mailbox" do
