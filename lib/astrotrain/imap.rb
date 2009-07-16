@@ -66,10 +66,10 @@ module Astrotrain
       end
 
       def search(q = 'ALL', options = {})
-        options[:limit] ||= 15
+        options[:limit]  ||= 15
         search_for_ids(q.to_s.split(" ")) do |ids|
           ids = ids[0..options[:limit]-1] if ids.size > options[:limit]
-          @connection.fetch(ids, 'RFC822').map! { |m| Message.new(m.seqno, m.attr['RFC822']) }
+          Message.fetch(@connection, ids, options[:fields])
         end
       end
 
@@ -109,6 +109,24 @@ module Astrotrain
     end
 
     class Message
+      class << self
+        attr_accessor :raw_field
+        def fetch(connection, ids, fields)
+          fields = process_fields(fields)
+          connection.fetch(ids, fields).map! { |m| Message.new(m.seqno, m.attr[fields.first]) }
+        end
+
+        def process_fields(fields)
+          fields = [fields]
+          fields.uniq!
+          fields.compact!
+          fields << raw_field if fields.empty?
+          fields
+        end
+      end
+
+      self.raw_field = 'RFC822'
+
       attr_reader :number
       attr_reader :raw
 
