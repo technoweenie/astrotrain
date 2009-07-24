@@ -77,7 +77,7 @@ describe Message do
       end
 
       it "parses TMail::Mail headers" do
-        @message.headers.should == {'mime-version' => '1.0', 'content-type' => 'text/plain; charset=ISO-8859-1', 
+        @message.headers.should == {'mime-version' => '1.0', 'content-type' => 'text/plain; charset=ISO-8859-1', 'to' => 'Processor <processor@astrotrain.com>',
           'x-custom' => 'reply', 'content-transfer-encoding' => '7bit', 'content-disposition' => 'inline', 'message-id' => '<a16be7390810161014n52b603e9k1aa6bb803c6735aa@mail.gmail.com>'}
       end
 

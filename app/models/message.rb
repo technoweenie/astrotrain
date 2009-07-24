@@ -23,7 +23,7 @@ class Message
     @archive_path = File.expand_path(path)
   end
 
-  self.skipped_headers = Set.new %w(from date subject to delivered-to x-original-to received)
+  self.skipped_headers = Set.new %w(date from subject delivered-to x-original-to received)
   self.recipient_header_order = %w(original_to delivered_to to)
   self.queue_path = File.join(File.dirname(__FILE__), '..', '..', 'queue')
 

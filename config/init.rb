@@ -1,5 +1,6 @@
 # Go to http://wiki.merbivore.com/pages/init-rb
- 
+
+gem 'addressable', '2.0.2'
 require 'config/dependencies.rb'
  
 use_orm :datamapper
