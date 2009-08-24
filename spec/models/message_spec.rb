@@ -150,7 +150,7 @@ describe Message do
       end
     end
 
-    describe "multipart message" do
+    describe "multipart message with name property on Content-Type" do
       before :all do
         @raw     = mail(:multipart)
         @message = Message.parse(@raw)
@@ -165,7 +165,38 @@ describe Message do
       end
 
       it "recognizes message body" do
-        @message.body.should == "Testing out rich emails with attachments!\n[state:hold responsible:rick]\n\n"
+        @message.body.should == "Testing out rich emails with attachments!\nThis one has a name property on Content-Type.\n[state:hold responsible:rick]\n\n"
+      end
+
+      it "retrieves attachments" do
+        @message.should have(1).attachments
+      end
+
+      it "retrieves attachment filename" do
+        @message.attachments.first.filename.should == 'bandit.jpg'
+      end
+
+      it "retrieves attachment content_type" do
+        @message.attachments.first.content_type.should == 'image/jpeg'
+      end
+    end
+
+    describe "multipart message with filename property on Content-Disposition" do
+      before :all do
+        @raw     = mail(:multipart2)
+        @message = Message.parse(@raw)
+      end
+
+      it "#parse parses TMail::Mail object from raw text" do
+        @message.mail.should be_kind_of(TMail::Mail)
+      end
+
+      it "recognizes Delivered-To/To: headers as recipient" do
+        @message.recipients.should == %w(foo@example.com)
+      end
+
+      it "recognizes message body" do
+        @message.body.should == "Testing out rich emails with attachments!\nThis one has NO name property on Content-Type.\n[state:hold responsible:rick]\n\n"
       end
 
       it "retrieves attachments" do

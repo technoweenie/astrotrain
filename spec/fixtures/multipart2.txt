@@ -20,7 +20,7 @@ Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 Testing out rich emails with attachments!
-This one has a name property on Content-Type.
+This one has NO name property on Content-Type.
 [state:hold responsible:rick]
 
 ------=_Part_98511_30821043.1228863798546
@@ -33,7 +33,7 @@ Testing out <span class="Apple-style-span" style="font-weight: bold;">rich</span
 ------=_Part_98511_30821043.1228863798546--
 
 ------=_Part_98510_7267541.1228863798546
-Content-Type: image/jpeg; name=bandit.jpg
+Content-Type: image/jpeg
 Content-Transfer-Encoding: base64
 X-Attachment-Id: f_foj5r58f0
 Content-Disposition: attachment; filename=bandit.jpg

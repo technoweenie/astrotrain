@@ -156,7 +156,7 @@ class Message
     end
 
     def filename
-      @filename ||= @part.type_param("name")
+      @filename ||= @part.type_param("name") || @part.disposition_param('filename')
     end
 
     # For IO API compatibility when used with Rest-Client
