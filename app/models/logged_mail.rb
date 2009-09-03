@@ -21,7 +21,7 @@ class LoggedMail
   def self.from(message)
     logged = new
     begin
-      logged.sender  = message.sender
+      logged.sender  = Message.parse_email_addresses(:from, message.sender).first
       logged.subject = message.subject
     end
     if !block_given? || yield(logged)

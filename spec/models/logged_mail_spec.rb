@@ -20,7 +20,7 @@ describe LoggedMail do
     end
 
     it "sets sender" do
-      @logged.sender.should == @message.sender
+      @logged.sender.should == 'user@example.com'
     end
 
     it "sets subject" do
@@ -57,7 +57,7 @@ describe LoggedMail do
     end
 
     it "sets sender" do
-      @logged.sender.should == @message.sender
+      @logged.sender.should == 'user@example.com'
     end
 
     it "sets mapping" do

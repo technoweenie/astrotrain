@@ -67,6 +67,40 @@ class Message
     new Astrotrain::Mail.parse(raw)
   end
 
+  def self.parse_email_addresses(header_name, value)
+    emails     = TMail::AddressHeader.new(header_name.to_s, value)
+    collection = []
+    emails.addrs.each do |addr|
+      header = parse_email_address(addr.to_s)
+      collection << unescape(header[:email]) if !header[:email].blank?
+    end
+    collection
+  end
+
+  def self.parse_email_address(email)
+    return {} if email.blank?
+    begin
+      header = TMail::Address.parse(email)
+      {:name => header.name, :email => header.address}
+    rescue SyntaxError, TMail::SyntaxError
+      email = email.scan(/\<([^\>]+)\>/)[0]
+      if email.blank?
+        return {:name => nil, :email => nil}
+      else
+        email = email[0]
+        retry
+      end
+    end
+  end
+
+  # Stolen from Rack/Camping, remove the "+" => " " translation
+  def self.unescape(s)
+    s.gsub!(/((?:%[0-9a-fA-F]{2})+)/n){
+      [$1.delete('%')].pack('H*')
+    }
+    s
+  end
+
   def initialize(mail)
     @mail        = mail
     @mapping     = nil
@@ -219,21 +253,9 @@ protected
   def parse_email_headers(values, collection)
     values.each do |value|
       if !value.blank?
-        emails = TMail::AddressHeader.new('to', value)
-        emails.addrs.each do |addr|
-          email = TMail::Address.parse(addr.to_s)
-          collection << unescape(email.address)
-        end
+        collection.push *self.class.parse_email_addresses(:to, value)
       end
     end
-  end
-
-  # Stolen from Rack/Camping, remove the "+" => " " translation
-  def unescape(s)
-    s.gsub!(/((?:%[0-9a-fA-F]{2})+)/n){
-      [$1.delete('%')].pack('H*')
-    }
-    s
   end
 
   # Attempts to run iconv conversions in common charsets to UTF-8.  Needed for 
