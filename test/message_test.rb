@@ -359,11 +359,5 @@ class Astrotrain::MessageTest < Astrotrain::TestCase
       filename = Astrotrain::Message.queue("boo!")
       assert_equal 'boo!', IO.read(filename)
     end
-
-    before :all do
-      Astrotrain::Message.queue_path = Astrotrain.root / 'fixtures' / 'queue'
-      FileUtils.rm_rf Astrotrain::Message.queue_path
-      FileUtils.mkdir_p Astrotrain::Message.queue_path
-    end
   end
 end

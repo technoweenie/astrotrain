@@ -9,11 +9,8 @@ task :default => 'test'
 
 namespace :at do
   task :init do
-    ENV['LIB'] ||= 'lib'
-    $LOAD_PATH.unshift File.expand_path(ENV['LIB'])
-    if ENV['CONFIG']
-      require ENV['CONFIG']
-    end
+    $LOAD_PATH.unshift File.expand_path(ENV['LIB']) if ENV['LIB']
+    require ENV['CONFIG'] if ENV['CONFIG']
 
     if !Object.const_defined?(:Astrotrain)
       require 'astrotrain'
@@ -63,8 +60,6 @@ namespace :at do
 
   desc "Start astrotrain DRb server."
   task :process => :init do
-
-
     pid_filename = File.join(Astrotrain.root, 'log', 'astrotrain_job.pid')
 
     FileUtils.mkdir_p File.dirname(pid_filename)
