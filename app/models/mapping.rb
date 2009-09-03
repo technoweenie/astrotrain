@@ -58,8 +58,7 @@ class Mapping
           mapping.process(message, recipient)
           logged.delivered_at = Time.now.utc
         end
-        FileUtils.rm_rf logged.raw_path
-        false # don't save successfully processed messages
+        Message.log_processed_messages # save successfully processed messages?
       rescue
         logged.error_message = "#{$!.class}: #{$!}"
       end

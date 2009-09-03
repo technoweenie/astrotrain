@@ -15,13 +15,22 @@ describe Message do
       end
 
       describe "without mapping" do
-        before :all do
+        it "doesn't log message" do
           @msg = Message.receive(mail(:basic))
           @log = LoggedMail.first
+          @log.should == nil
         end
 
-        it "doesn't log message" do
-          @log.should == nil
+        it "logs message if Message.log_processed_messages" do
+          begin
+            Message.log_processed_messages = true
+            @msg = Message.receive(mail(:basic))
+            @log = LoggedMail.first
+            @log.should_not == nil
+            @log.error_message.should be_blank
+          ensure
+            Message.log_processed_messages = false
+          end
         end
       end
 

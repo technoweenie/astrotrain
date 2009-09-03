@@ -9,6 +9,7 @@ class LoggedMail
 
   property :id,            Serial
   property :mapping_id,    Integer, :index => true
+  property :sender,        String
   property :recipient,     String
   property :subject,       String
   property :created_at,    DateTime
@@ -20,9 +21,8 @@ class LoggedMail
   def self.from(message)
     logged = new
     begin
+      logged.sender  = message.sender
       logged.subject = message.subject
-    rescue Iconv::InvalidCharacter
-      logged.subject = message.mail.quoted_subject
     end
     if !block_given? || yield(logged)
       logged.save

@@ -10,17 +10,25 @@ class Message
 
   class << self
     attr_reader   :queue_path, :archive_path
-    attr_accessor :recipient_header_order, :skipped_headers
+    attr_accessor :recipient_header_order, :skipped_headers, :log_processed_messages
   end
 
+  self.log_processed_messages = false
+
   def self.queue_path=(path)
-    FileUtils.mkdir_p path
-    @queue_path = File.expand_path(path)
+    if path
+      path = File.expand_path(path)
+      FileUtils.mkdir_p path
+    end
+    @queue_path = path
   end
 
   def self.archive_path=(path)
-    FileUtils.mkdir_p path
-    @archive_path = File.expand_path(path)
+    if path
+      path = File.expand_path(path)
+      FileUtils.mkdir_p path
+    end
+    @archive_path = path
   end
 
   self.skipped_headers = Set.new %w(date from subject delivered-to x-original-to received)
@@ -113,8 +121,9 @@ class Message
 
   def subject
     @mail.subject
+  rescue Iconv::InvalidCharacter
+    @mail.quoted_subject
   end
-
 
   def body
     @body ||= begin

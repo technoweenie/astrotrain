@@ -19,6 +19,10 @@ describe LoggedMail do
       @logged.recipient.should == @message.recipients(%w(delivered_to)).first
     end
 
+    it "sets sender" do
+      @logged.sender.should == @message.sender
+    end
+
     it "sets subject" do
       @logged.subject.should == @message.subject
     end
@@ -50,6 +54,10 @@ describe LoggedMail do
 
     it "sets subject" do
       @logged.subject.should == @subject
+    end
+
+    it "sets sender" do
+      @logged.sender.should == @message.sender
     end
 
     it "sets mapping" do
