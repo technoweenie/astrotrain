@@ -22,12 +22,12 @@ namespace :at do
       Astrotrain.load
     end
 
-    ENV['QUEUE'] ||= File.join(Astrotrain.root, 'queue')
+    Astrotrain::Message.queue_path = ENV['QUEUE'] if ENV['QUEUE']
 
     pid_filename = File.join(Astrotrain.root, 'log', 'astrotrain_job.pid')
 
-    if !File.exist?(ENV['QUEUE'])
-      puts "No Queue: #{ENV['QUEUE'].inspect}"
+    if !File.exist?(Astrotrain::Message.queue_path)
+      puts "No Queue: #{Astrotrain.queue_path.inspect}"
       exit
     end
 
@@ -45,7 +45,7 @@ namespace :at do
         count = nil
 
         realtime = Benchmark.realtime do
-          files = Dir["#{ENV['QUEUE']}/*"]
+          files = Dir["#{Astrotrain::Message.queue_path}/*"]
           files.each do |mail|
             Astrotrain::Message.receive_file(mail)
           end

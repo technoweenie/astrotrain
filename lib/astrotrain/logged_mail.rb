@@ -6,7 +6,7 @@ module Astrotrain
       attr_accessor :log_path
     end
 
-    self.log_path       = Astrotrain.root / 'messages'
+    self.log_path       = File.join(Astrotrain.root, 'messages')
 
     property :id,            Serial
     property :mapping_id,    Integer, :index => true

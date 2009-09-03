@@ -34,7 +34,7 @@ module Astrotrain
 
     self.skipped_headers = Set.new %w(date from subject delivered-to x-original-to received)
     self.recipient_header_order = %w(original_to delivered_to to)
-    self.queue_path = File.join(File.dirname(__FILE__), '..', '..', 'queue')
+    self.queue_path = File.join(Astrotrain.root, 'queue')
 
     def self.queue(raw)
       filename = nil
