@@ -96,6 +96,10 @@ module Astrotrain
       transport == 'jabber'
     end
 
+    def full_email
+      "#{email_user}@#{email_domain}"
+    end
+
     def find_reply_from(body)
       return if separator.blank?
       lines = body.split("\n")
