@@ -20,6 +20,6 @@ src/*
 doc
 config/database.yml
 merb/custom.rb
-spec/fixtures/queue
+test/fixtures/queue
 messages
-spec/messages
+test/messages
