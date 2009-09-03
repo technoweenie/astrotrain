@@ -29,7 +29,6 @@ namespace :at do
     Astrotrain::Mapping.all.each do |map|
       puts "##{map.id}: #{map.full_email} => #{map.destination}"
       puts "Separated by: #{map.separator.inspect}" if !map.separator.blank?
-      puts "Custom Recipient Header Order: #{map.recipient_header_order.inspect}" if !map.recipient_header_order.blank?
       puts
     end
   end
@@ -41,7 +40,6 @@ namespace :at do
     map.destination = ENV['DEST']
     map.transport   = ENV['TRANS'] if ENV['TRANS']
     map.separator   = ENV['SEP']   if ENV['SEP']
-    map.recipient_header_order = ENV['HEADERS'] if ENV['HEADERS']
     if map.save
       puts "Mapping created for #{map.full_email} => #{map.destination}"
       Rake::Task['at:mappings'].invoke

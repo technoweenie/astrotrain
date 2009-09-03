@@ -4,7 +4,7 @@ class Astrotrain::LoggedMailTest < Astrotrain::TestCase
   describe "being created from Message" do
     before :all do
       Astrotrain::Mapping.all.destroy!
-      @mapping = Astrotrain::Mapping.create!(:email_user => '*', :recipient_header_order => 'delivered_to,original_to,to')
+      @mapping = Astrotrain::Mapping.create!(:email_user => '*')
       @raw     = mail(:custom)
       @message = Astrotrain::Message.parse(@raw)
       @logged  = Astrotrain::LoggedMail.from(@message) do |l|
@@ -33,7 +33,7 @@ class Astrotrain::LoggedMailTest < Astrotrain::TestCase
   describe "attempted creation with badly encoded message" do
     before :all do
       Astrotrain::Mapping.all.destroy!
-      @mapping = Astrotrain::Mapping.create!(:email_user => '*', :recipient_header_order => 'delivered_to,original_to,to')
+      @mapping = Astrotrain::Mapping.create!(:email_user => '*')
       @raw     = mail(:custom)
       @subject = "=?gb2312?B?usO80rXnubrO78341b68urjEsOajrLfJwPvG1tfu0MKxqLzbo6jUsbmkvNuj?= =?gb2312?B?qQ==?="
       @raw.sub! /Subject\: Fwd\: blah blah/, "Subject: #{@subject}"

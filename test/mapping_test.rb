@@ -17,24 +17,6 @@ class Astrotrain::MappingTest < Astrotrain::TestCase
     assert Astrotrain::Mapping.new(:transport => 'jabber').destination_uses_email?
   end
 
-  it "gets comma separated recipient_header_order as array" do
-    m = Astrotrain::Mapping.new
-    m.attribute_set(:recipient_header_order, "foo,bar")
-    assert_equal %w(foo bar), m.recipient_header_order
-  end
-
-  it "sets comma separated recipient_header_order from array" do
-    m = Astrotrain::Mapping.new
-    m.recipient_header_order = %w(foo bar)
-    assert_equal "foo,bar", m.attribute_get(:recipient_header_order)
-  end
-
-  it "sets comma separated recipient_header_order from string" do
-    m = Astrotrain::Mapping.new
-    m.recipient_header_order = "foo,bar"
-    assert_equal "foo,bar", m.attribute_get(:recipient_header_order)
-  end
-
   describe "matching" do
     before :all do
       Astrotrain::Mapping.transaction do
@@ -89,18 +71,6 @@ class Astrotrain::MappingTest < Astrotrain::TestCase
     before :all do
       Astrotrain::Mapping.all.destroy!
       @mapping = Astrotrain::Mapping.create!(:email_user => 'xyz')
-    end
-
-    it "requires comma separated list" do
-      assert !valid_mapping(:recipient_header_order => 'a, b').valid?
-    end
-
-    it "requires valid choices" do
-      assert !valid_mapping(:recipient_header_order => 'delivered_to,whatever').valid?
-    end
-
-    it "accepts valid header order" do
-      assert valid_mapping(:recipient_header_order => 'delivered_to,to,original_to').valid?
     end
 
     %w(abc abc_def abc-123 abc+def abc%def foo* *).each do |valid|
