@@ -3,17 +3,12 @@ astrotrain
 
 Scans incoming emails for mapped recipients and sends an HTTP POST somewhere.
 
-  @user = User.new :login => 'bob'
-  @user.password = @user.password_confirmation = 'monkey'
-  @user.save
-
   # set a mapping to accept email for support@example.com
-  @mapping = @user.mappings.build(:email_user => 'support', :email_domain => 'example.com', :destination => '...')
-  @mapping.save
+  @mapping = Mapping.create(:email_user => 'support', :email_domain => 'example.com', :destination => '...')
   
   # you can also create wildcards for users:
-  @user.mappings.build(:email_user => 'reply-*', :email_domain => 'example.com', ...)
-  @user.mappings.build(:email_user => '*', :email_domain => 'example.com', ...)
+  Mapping.create(:email_user => 'reply-*', :email_domain => 'example.com', ...)
+  Mapping.create(:email_user => '*', :email_domain => 'example.com', ...)
 
   # need a script to read from STDIN to process emails.
   /usr/bin/merb -m /var/www/astrotrain -r 'Message.receive(STDIN.read)' -e production
@@ -28,7 +23,5 @@ there's no protection against anyone signing up and creating mappings on your se
 TODO
 ====
 
-Real web UI
 Jabber support
-DRb daemon
 bounced emails

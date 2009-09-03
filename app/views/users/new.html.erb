@@ -1,6 +1,0 @@
-<h1>Create new user</h1>
-
-<%= form_for @user, :action => url(:users) do %>
-	<%=	partial :form %>
-  <p class="submit"><%= submit "Create" %> or <%= link_to 'cancel', url(:users) %></p>
-<% end =%>
