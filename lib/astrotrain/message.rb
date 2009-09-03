@@ -32,8 +32,10 @@ module Astrotrain
 
     self.skipped_headers = Set.new %w(date from subject delivered-to x-original-to received)
     self.recipient_header_order = %w(original_to delivered_to to)
-    self.queue_path = File.join(Astrotrain.root, 'queue')
+    self.queue_path             = File.join(Astrotrain.root, 'queue')
 
+    # Dumps the raw text into the queue_path.  Not really recommended, since you should
+    # set the queue_path to the directory your incoming emails are dumped into.
     def self.queue(raw)
       filename = nil
       digest   = Digest::SHA1.hexdigest(raw)
