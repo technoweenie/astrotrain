@@ -1,4 +1,5 @@
 module Astrotrain
+  # Logs details of each incoming message.  
   class LoggedMail
     include DataMapper::Resource
 
@@ -6,6 +7,7 @@ module Astrotrain
       attr_accessor :log_path, :log_processed
     end
 
+    # Enabling this will save records for every processed email, not just the errored emails.
     self.log_processed = false
     self.log_path      = File.join(Astrotrain.root, 'messages')
 

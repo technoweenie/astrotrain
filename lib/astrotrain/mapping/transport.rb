@@ -4,10 +4,14 @@ module Astrotrain
       class << self
         attr_accessor :processing
       end
+
+      # Enable this turn on processing.
       self.processing = false
 
       attr_reader :message, :mapping
 
+      # process a given message against the mapping.  The mapping transport is checked,
+      # and the appropirate transport class handles the request.
       def self.process(message, mapping, recipient)
         case mapping.transport
           when 'http_post' then HttpPost.process(message, mapping, recipient)
@@ -23,6 +27,7 @@ module Astrotrain
       end
 
       def process
+        raise UnimplementedError
       end
 
       def fields
@@ -36,6 +41,7 @@ module Astrotrain
         end
       end
 
+      # defines custom #process class methods that instantiate the class and calls a #process instance method
       def self.inherited(child)
         super
         class << child

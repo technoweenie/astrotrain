@@ -35,6 +35,7 @@ module Astrotrain
 
     has n, :logged_mails, :order => [:created_at.desc]
 
+    # returns a mapping for the given array of email addresses
     def self.match(email_addresses)
       email_addresses.each do |email_address|
         email_address.strip!
@@ -47,6 +48,8 @@ module Astrotrain
       nil
     end
 
+    # Processes a given message.  It finds a mapping, creates a LoggedMail record,
+    # and attempts to process the message.
     def self.process(message)
       LoggedMail.from(message) do |logged|
         begin
@@ -64,6 +67,7 @@ module Astrotrain
       end
     end
 
+    # Processes a given message and recipient against the mapping's transport.
     def process(message, recipient)
       Transport.process(message, self, recipient)
     end
@@ -84,6 +88,8 @@ module Astrotrain
       attribute_set(:recipient_header_order, value)
     end
 
+    # returns true if the email matches this mapping.  Wildcards in the name are allowed.
+    # A mapping with foo*@bar.com will match foo@bar.com and food@bar.com, but not foo@baz.com.
     def match?(name, domain)
       email_domain == domain && name =~ email_user_regex
     end
@@ -100,6 +106,16 @@ module Astrotrain
       "#{email_user}@#{email_domain}"
     end
 
+    # Looks for the mapping's separator in the message body and pulls only the content
+    # above it.  Assuming a separator of '===='...
+    #
+    #   This will be kept
+    #   
+    #   On Thu, Sep 3, 2009 at 12:34 AM... (this will be removed)
+    #   ====
+    #
+    #   > Everything here will be removed.
+    #
     def find_reply_from(body)
       return if separator.blank?
       lines = body.split("\n")

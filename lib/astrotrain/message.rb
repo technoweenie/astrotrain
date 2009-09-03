@@ -46,12 +46,15 @@ module Astrotrain
       filename
     end
 
+    # Parses the given raw email text and processes it with a matching Mapping.
     def self.receive(raw)
       message = parse(raw)
       Mapping.process(message)
       message
     end
 
+    # Processes the given file.  It parses it by reading the contents, and optionally
+    # archives or removes the original file.
     def self.receive_file(path, raw = nil)
       message = receive IO.read(path)
       if archive_path
@@ -62,6 +65,7 @@ module Astrotrain
       message
     end
 
+    # Parses the raw email headers into a Astrotrain::Message instance.
     def self.parse(raw)
       new Mail.parse(raw)
     end
@@ -107,6 +111,9 @@ module Astrotrain
       @recipients  = {}
     end
 
+    # Gets the recipients of an email using the To/Delivered-To/X-Original-To headers.
+    # It's not always straightforward which email we want when dealing with filters
+    # and forward rules.
     def recipients(order = nil)
       if !@recipients.key?(order)
         order = self.class.recipient_header_order if order.blank?
@@ -114,7 +121,7 @@ module Astrotrain
 
         parse_email_headers recipients_from_body, recipients
         order.each do |key|
-          parse_email_headers send("recipients_from_#{key}"), recipients
+          parse_email_headers(send("recipients_from_#{key}"), recipients)
         end
 
         recipients.flatten!

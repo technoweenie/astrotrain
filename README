@@ -3,25 +3,41 @@ astrotrain
 
 Scans incoming emails for mapped recipients and sends an HTTP POST somewhere.
 
-  # set a mapping to accept email for support@example.com
-  @mapping = Mapping.create(:email_user => 'support', :email_domain => 'example.com', :destination => '...')
-  
-  # you can also create wildcards for users:
-  Mapping.create(:email_user => 'reply-*', :email_domain => 'example.com', ...)
-  Mapping.create(:email_user => '*', :email_domain => 'example.com', ...)
+  # setup a config file.
+  # Point the queue_path at a directory that your mail server dumps each raw incoming mail.
+  require 'astrotrain'
 
-  # need a script to read from STDIN to process emails.
-  /usr/bin/merb -m /var/www/astrotrain -r 'Message.receive(STDIN.read)' -e production
+  Astrotrain.load path do
+    DataMapper.setup(:default, {
+      :adapter  => "mysql",
+      :database => "astrotrain",
+      :username => "root",
+      :host     => "localhost"
+    })
+  end
+  Astrotrain::Message.queue_path = "/path/to/maildir"
+  Astrotrain::Mapping::Transport.processing = true
 
-  # set it up in postfix (master.cf, ymmv)
-  astrotrain unix  -       n       n       -       -       pipe
-  flags=O user=www-data argv=/var/www/astrotrain/merb.sh
+  # start up IRB
+  irb -I /var/astrotrain/lib -r config.rb
 
-This is still highly experimental.  Don't even bother with the web UI yet,
-there's no protection against anyone signing up and creating mappings on your server.
+  # manage mappings
+  LIB=/var/astrotrain/lib CONFIG=config.rb rake at:mappings
+  LIB=/var/astrotrain/lib CONFIG=config.rb rake at:map EMAIL=support@foo.com DEST=http://foo.com/email
+  LIB=/var/astrotrain/lib CONFIG=config.rb rake at:unmap MAP=123
+
+  # start the server that runs over the queue directory
+  LIB=/var/astrotrain/lib CONFIG=config.rb rake at:process
+
+  # start the sinatra API
+  ruby -I /var/astrotrain/lib /var/astrotrain/lib/astrotrain/api.rb config.rb
+
+A single Astrotrain process currently handles email for two production applications, processing thousands daily.
+It's far from perfect, but definitely usable.
 
 TODO
 ====
 
-Jabber support
+Gem package - I realize the load paths could be simplified a bunch, so a gem package will come soon.
+Docs
 bounced emails

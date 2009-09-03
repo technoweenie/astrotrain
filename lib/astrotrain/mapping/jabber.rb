@@ -1,5 +1,6 @@
 module Astrotrain
   class Mapping
+    # This is experimental.  No attachments are supported.
     class Jabber < Transport
       class << self
         attr_accessor :login, :password

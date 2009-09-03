@@ -2,6 +2,7 @@ require 'net/imap'
 require 'stringio'
 require 'ostruct'
 
+# some toy class for accessing Imap hosts.  Not used anywhere in Astrotrain, currently
 module Astrotrain
   class Imap
     class << self
