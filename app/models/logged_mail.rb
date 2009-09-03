@@ -9,9 +9,9 @@ class LoggedMail
 
   property :id,            Serial
   property :mapping_id,    Integer, :index => true
-  property :sender,        String
-  property :recipient,     String
-  property :subject,       String
+  property :sender,        String, :index => true
+  property :recipient,     String, :index => true
+  property :subject,       String, :index => true
   property :created_at,    DateTime
   property :delivered_at,  DateTime
   property :error_message, String
