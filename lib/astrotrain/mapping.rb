@@ -57,7 +57,7 @@ module Astrotrain
             mapping.process(message, recipient)
             logged.delivered_at = Time.now.utc
           end
-          Message.log_processed_messages # save successfully processed messages?
+          LoggedMail.log_processed # save successfully processed messages?
         rescue
           logged.error_message = "#{$!.class}: #{$!}"
         end

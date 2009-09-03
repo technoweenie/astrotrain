@@ -3,10 +3,11 @@ module Astrotrain
     include DataMapper::Resource
 
     class << self
-      attr_accessor :log_path
+      attr_accessor :log_path, :log_processed
     end
 
-    self.log_path       = File.join(Astrotrain.root, 'messages')
+    self.log_processed = false
+    self.log_path      = File.join(Astrotrain.root, 'messages')
 
     property :id,            Serial
     property :mapping_id,    Integer, :index => true

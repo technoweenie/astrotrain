@@ -11,10 +11,8 @@ module Astrotrain
 
     class << self
       attr_reader   :queue_path, :archive_path
-      attr_accessor :recipient_header_order, :skipped_headers, :log_processed_messages
+      attr_accessor :recipient_header_order, :skipped_headers
     end
-
-    self.log_processed_messages = false
 
     def self.queue_path=(path)
       if path

@@ -19,15 +19,15 @@ class Astrotrain::MessageTest < Astrotrain::TestCase
           assert_nil @log
         end
 
-        it "logs message if Astrotrain::Message.log_processed_messages" do
+        it "logs message if Astrotrain::LoggedMail.log_processed" do
           begin
-            Astrotrain::Message.log_processed_messages = true
+            Astrotrain::LoggedMail.log_processed = true
             @msg = Astrotrain::Message.receive(mail(:basic))
             @log = Astrotrain::LoggedMail.first
             assert @log
             assert @log.error_message.blank?
           ensure
-            Astrotrain::Message.log_processed_messages = false
+            Astrotrain::LoggedMail.log_processed = false
           end
         end
       end
