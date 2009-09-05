@@ -89,38 +89,40 @@ module Astrotrain
     #   > Everything here will be removed.
     #
     def find_reply_from(body)
-      return if separator.blank?
+      return    if separator.blank?
+      return '' if body.blank?
       lines = body.split("\n")
-      delim_line = last_line = found_empty = nil
-    
-      lines.each_with_index do |line, i|
-        next if delim_line
-        delim_line = i if line.include?(separator)
-      end
+      delim_line = found_empty = nil
 
-      while !last_line && delim_line.to_i > 0
-        delim_line = delim_line - 1
-        if found_empty
-          last_line = delim_line if lines[delim_line].strip.size > 0
-        else
-          found_empty = true if lines[delim_line].strip.size.zero?
+      (lines.size - 1).downto(0) do |i|
+        line = lines[i]
+        if !delim_line && line.include?(separator)
+          delim_line = i
+        elsif delim_line && !found_empty
+          delim_line = i
+          found_empty = line.strip.blank?
+        elsif delim_line && found_empty
+          if date_reply_line?(line) || line.strip.blank?
+            delim_line = i
+          else
+            break
+          end
         end
       end
 
-      if last_line
-        lines = lines[0..delim_line]
-        strip_date_reply_line_from lines
-        body = lines * "\n"
-      elsif !delim_line.nil?
-        body = ''
+      if delim_line
+        body = if delim_line.zero?
+          []
+        elsif lines.size >= delim_line
+          lines[0..delim_line-1]
+        else
+          lines
+        end.join("\n")
+      elsif body.frozen?
+        body = body.dup
       end
-
-      if body.frozen?
-        body.strip
-      else
-        body.strip!
-        body
-      end
+      body.strip!
+      body
     end
 
   protected
@@ -134,14 +136,9 @@ module Astrotrain
       wildcards.detect { |w| w.match?(name, domain) }
     end
 
-    @@language_regexes = [/^on\b.*wrote\b?:$/i, /^am\b.*schrieb [\w\d\s]+:$/i, /^le\b.*a écrit\b?:$/i]
-    def strip_date_reply_line_from(lines)
-      @@language_regexes.detect do |lang_re|
-        if lines.last =~ lang_re
-          lines.pop
-        end
-      end
-      lines
+    DATE_LANGUATE_REGEXES = [/^on\b.*wrote\b?:$/i, /^am\b.*schrieb [\w\d\s]+:$/i, /^le\b.*a écrit\b?:$/i]
+    def date_reply_line?(line)
+      DATE_LANGUATE_REGEXES.any? { |re| line =~ re }
     end
 
     def email_user_regex
