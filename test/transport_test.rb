@@ -14,7 +14,7 @@ class Astrotrain::TransportTest < Astrotrain::TestCase
     end
 
     it "sets #fields" do
-      expected = {:subject => @message.subject, :from => @message.sender, :to => @message.recipients(%w(delivered_to)).first, :body => @message.body, :emails => @message.recipients(%w(original_to to)),
+      expected = {:subject => @message.subject, :from => @message.sender, :to => @message.recipients(%w(delivered_to)).first, :body => @message.body, :html => @message.html, :emails => @message.recipients(%w(original_to to)),
         "headers[reply-to]" => "reply-to-me@example.com", 'headers[message-id]' => '<a16be7390810161014n52b603e9k1aa6bb803c6735aa@mail.gmail.com>', 'headers[to]' => "processor@astrotrain.com",
         "headers[mime-version]"=>"1.0", "headers[content-type]"=>"text/plain; charset=ISO-8859-1", "headers[content-disposition]"=>"inline", "headers[content-transfer-encoding]"=>"7bit"}
       assert_equal expected, @trans.fields

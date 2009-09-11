@@ -33,7 +33,7 @@ module Astrotrain
       def fields
         @fields ||= begin
           all_emails = @message.recipients - [@recipient]
-          f = {:subject => @message.subject, :to => @recipient, :from => @message.sender, :body => @message.body, :emails => all_emails}
+          f = {:subject => @message.subject, :to => @recipient, :from => @message.sender, :body => @message.body, :emails => all_emails, :html => @message.html}
           @message.headers.each do |key, value|
             f["headers[#{key}]"] = value
           end

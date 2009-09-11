@@ -29,7 +29,11 @@ module Astrotrain
         logged.subject = message.subject
       end
       if !block_given? || yield(logged)
-        logged.save
+        begin
+          logged.save
+        rescue
+          puts $!.inspect
+        end
       end
       logged
     end

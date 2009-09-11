@@ -169,15 +169,15 @@ module Astrotrain
 
     def body
       @body ||= begin
-        if @mail.multipart?
-          @attachments.clear
-          @body = []
-          scan_parts(@mail)
-          @body = @body.join("\n")
-        else
-          @body = @mail.body
-        end
-        @mail.charset ? @body : convert_to_utf8(@body)
+        process_message_body
+        @body
+      end
+    end
+
+    def html
+      @html ||= begin
+        process_message_body
+        @html
       end
     end
 
@@ -247,16 +247,36 @@ module Astrotrain
     end
 
   protected
+    def process_message_body
+      if @mail.multipart?
+        @attachments.clear
+        @body, @html = [], []
+        scan_parts(@mail)
+        @body = @body.join("\n")
+        @html = @html.join("\n")
+      else
+        @body = @mail.body
+        @html = ''
+      end
+      if !@mail.charset
+        @body = convert_to_utf8(@body)
+        @html = convert_to_utf8(@html)
+      end
+    end
+
     def scan_parts(message)
       message.parts.each do |part|
         if part.multipart?
           scan_parts(part)
         else
-          if part.content_type == "text/plain"
-            @body << part.body
-          else
-            att = Attachment.new(part)
-            @attachments << att if att.attached?
+          case part.content_type
+            when 'text/plain'
+              @body << part.body
+            when 'text/html'
+              @html << part.body
+            else
+              att = Attachment.new(part)
+              @attachments << att if att.attached?
           end
         end
       end
