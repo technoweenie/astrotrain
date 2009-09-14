@@ -72,10 +72,12 @@ module Astrotrain
       new Mail.parse(raw)
     end
 
-    def self.parse_email_addresses(header_name, value)
-      emails     = TMail::AddressHeader.new(header_name.to_s, value)
+    def self.parse_email_addresses(value)
+      emails     = value.split(",")
       collection = []
-      emails.addrs.each do |addr|
+      emails.each do |addr|
+        addr.strip!
+        next if addr.blank?
         header = parse_email_address(addr.to_s)
         collection << unescape(header[:email]) if !header[:email].blank?
       end
@@ -285,7 +287,7 @@ module Astrotrain
     def parse_email_headers(values, collection)
       values.each do |value|
         if !value.blank?
-          collection.push *self.class.parse_email_addresses(:to, value)
+          collection.push *self.class.parse_email_addresses(value)
         end
       end
     end

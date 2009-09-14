@@ -25,7 +25,7 @@ module Astrotrain
     def self.from(message)
       logged = new
       begin
-        logged.sender  = Message.parse_email_addresses(:from, message.sender).first
+        logged.sender  = Message.parse_email_addresses(message.sender).first
         logged.subject = message.subject
       end
       if !block_given? || yield(logged)
