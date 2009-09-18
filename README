@@ -1,6 +1,10 @@
 astrotrain
 ==========
 
+NOTE: Astrotrain is a full gem now.  If you're looking for the old Astrotrain on merb:
+http://github.com/entp/astrotrain/tree/merb
+git://github.com/entp/astrotrain.git (merb branch)
+
 Scans incoming emails for mapped recipients and sends an HTTP POST somewhere.
 
   # setup a config file.
