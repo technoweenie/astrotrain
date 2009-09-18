@@ -60,7 +60,9 @@ module Astrotrain
     def self.receive_file(path, raw = nil)
       message = receive IO.read(path)
       if archive_path
-        FileUtils.mv path, archive_path / Time.now.year.to_s / Time.now.month.to_s / Time.now.day.to_s / File.basename(path)
+        daily_archive_path = archive_path / Time.now.year.to_s / Time.now.month.to_s / Time.now.day.to_s
+        FileUtils.mkdir_p(daily_archive_path)
+        FileUtils.mv path, daily_archive_path / File.basename(path)
       else
         FileUtils.rm_rf path
       end
