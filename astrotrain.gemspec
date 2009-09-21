@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{astrotrain}
-  s.version = "0.1.0"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["technoweenie"]
-  s.date = %q{2009-09-17}
+  s.date = %q{2009-09-21}
   s.email = %q{technoweenie@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -18,10 +18,10 @@ Gem::Specification.new do |s|
      "README",
      "Rakefile",
      "VERSION",
+     "astrotrain.gemspec",
      "config/sample.rb",
      "lib/astrotrain.rb",
      "lib/astrotrain/api.rb",
-     "lib/astrotrain/imap.rb",
      "lib/astrotrain/logged_mail.rb",
      "lib/astrotrain/mapping.rb",
      "lib/astrotrain/mapping/http_post.rb",
@@ -64,7 +64,6 @@ Gem::Specification.new do |s|
      "test/fixtures/multiple_with_body_recipients.txt",
      "test/fixtures/reply.txt",
      "test/fixtures/utf-8.txt",
-     "test/imap_test.rb",
      "test/logged_mail_test.rb",
      "test/mapping_test.rb",
      "test/message_test.rb",
@@ -78,7 +77,6 @@ Gem::Specification.new do |s|
   s.summary = %q{email => http post}
   s.test_files = [
     "test/api_test.rb",
-     "test/imap_test.rb",
      "test/logged_mail_test.rb",
      "test/mapping_test.rb",
      "test/message_test.rb",
