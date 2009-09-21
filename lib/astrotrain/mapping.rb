@@ -40,7 +40,7 @@ module Astrotrain
     # and attempts to process the message.
     def self.process(message)
       LoggedMail.from(message) do |logged|
-        begin
+        save_logged = begin
           mapping, recipient = match(message.recipients)
           if mapping
             logged.recipient = recipient
@@ -52,11 +52,14 @@ module Astrotrain
         rescue
           logged.error_message = "#{$!.class}: #{$!}"
         end
+        Astrotrain.callback(:post_processing, message, mapping, logged)
+        save_logged
       end
     end
 
     # Processes a given message and recipient against the mapping's transport.
     def process(message, recipient)
+      Astrotrain.callback(:pre_processing, message, self)
       Transport.process(message, self, recipient)
     end
 

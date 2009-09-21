@@ -51,6 +51,7 @@ module Astrotrain
     # Parses the given raw email text and processes it with a matching Mapping.
     def self.receive(raw)
       message = parse(raw)
+      Astrotrain.callback(:pre_mapping, message)
       Mapping.process(message)
       message
     end

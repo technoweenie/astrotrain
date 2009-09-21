@@ -1,6 +1,7 @@
 module Astrotrain
+  CALLBACK_TYPES = [:pre_mapping, :pre_processing, :post_processing]
   class << self
-    attr_accessor :root, :lib_root
+    attr_accessor :root, :lib_root, :callbacks
   end
 
   def self.load(root = Dir.pwd)
@@ -14,7 +15,24 @@ module Astrotrain
     Astrotrain::Mail::ALLOW_MULTIPLE['delivered-to'] = true
   end
 
+  def self.callback(name, *args, &block)
+    found = callbacks[name]
+    if block
+      found << block
+    else
+      found.each { |cback| cback.call(*args) }
+    end
+    found
+  end
+
+  def self.clear_callbacks
+    self.callbacks = CALLBACK_TYPES.inject({}) { |memo, ctype| memo.update(ctype => []) }
+  end
+
+  clear_callbacks
+
 private
+  # help me ryan tomayko, you're my only help
   def self.load_dependencies
     require 'rubygems'
     gem 'addressable',   '2.0.2'

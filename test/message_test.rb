@@ -13,6 +13,10 @@ class Astrotrain::MessageTest < Astrotrain::TestCase
       end
 
       describe "without mapping" do
+        before do
+          Astrotrain::LoggedMail.all.destroy!
+        end
+
         it "doesn't log message" do
           @msg = Astrotrain::Message.receive(mail(:basic))
           @log = Astrotrain::LoggedMail.first
@@ -20,15 +24,57 @@ class Astrotrain::MessageTest < Astrotrain::TestCase
         end
 
         it "logs message if Astrotrain::LoggedMail.log_processed" do
-          begin
-            Astrotrain::LoggedMail.log_processed = true
-            @msg = Astrotrain::Message.receive(mail(:basic))
-            @log = Astrotrain::LoggedMail.first
-            assert @log
-            assert @log.error_message.blank?
-          ensure
-            Astrotrain::LoggedMail.log_processed = false
+          Astrotrain::LoggedMail.log_processed = true
+          @msg = Astrotrain::Message.receive(mail(:basic))
+          @log = Astrotrain::LoggedMail.first
+          assert @log
+          assert @log.error_message.blank?
+        end
+
+        it "calls pre_mapping callback" do
+          Astrotrain::LoggedMail.log_processed = true
+          callback_msg = nil
+          Astrotrain.callback(:pre_mapping) do |message|
+            callback_msg = message
           end
+
+          @msg = Astrotrain::Message.receive(mail(:mapped))
+          assert_equal callback_msg, @msg
+        end
+
+        it "calls pre_processing callback" do
+          Astrotrain::LoggedMail.log_processed = true
+          callback_msg, callback_map = nil
+          Astrotrain.callback(:pre_processing) do |message, mapping|
+            callback_msg = message
+            callback_map = mapping
+          end
+
+          @msg = Astrotrain::Message.receive(mail(:mapped))
+          @log = Astrotrain::LoggedMail.first
+          assert_equal callback_msg, @msg
+          assert_equal callback_map, @log.mapping
+        end
+
+        it "calls post_processing callback" do
+          Astrotrain::LoggedMail.log_processed = true
+          callback_msg, callback_map, callback_log = nil
+          Astrotrain.callback(:post_processing) do |message, mapping, log|
+            callback_msg = message
+            callback_map = mapping
+            callback_log = log
+          end
+
+          @msg = Astrotrain::Message.receive(mail(:mapped))
+          @log = Astrotrain::LoggedMail.first
+          assert_equal callback_msg, @msg
+          assert_equal callback_map, @log.mapping
+          assert_equal callback_log, @log
+        end
+
+        after do
+          Astrotrain::LoggedMail.log_processed = false
+          Astrotrain.clear_callbacks
         end
       end
 
