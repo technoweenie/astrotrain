@@ -59,15 +59,15 @@ module Astrotrain
     # Processes the given file.  It parses it by reading the contents, and optionally
     # archives or removes the original file.
     def self.receive_file(path)
-      raw = IO.read(path)
+      raw         = IO.read(path)
+      logged_path = path
       if archive_path
         daily_archive_path = archive_path / Time.now.year.to_s / Time.now.month.to_s / Time.now.day.to_s
         FileUtils.mkdir_p(daily_archive_path)
-        FileUtils.mv path, daily_archive_path / File.basename(path)
+        logged_path = daily_archive_path / File.basename(path)
+        FileUtils.mv path, logged_path
       end
-      message = receive(raw, path)
-      FileUtils.rm_rf path if !archive_path
-      message
+      receive(raw, logged_path)
     end
 
     # Parses the raw email headers into a Astrotrain::Message instance.
