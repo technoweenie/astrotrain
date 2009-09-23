@@ -12,11 +12,11 @@ module Astrotrain
     self.log_path      = File.join(Astrotrain.root, 'messages')
 
     property :id,            Serial
-    property :mail_file,     String
     property :mapping_id,    Integer, :index => true
     property :sender,        String,  :index => true, :size => 255, :length => 1..255
     property :recipient,     String,  :index => true, :size => 255, :length => 1..255
     property :subject,       String,  :index => true, :size => 255, :length => 1..255
+    property :mail_file,     String,  :size => 255, :length => 1..255
     property :created_at,    DateTime
     property :delivered_at,  DateTime
     property :error_message, String, :size => 255, :length => 1..255
