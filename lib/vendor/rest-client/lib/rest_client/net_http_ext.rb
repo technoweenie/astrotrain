@@ -5,6 +5,8 @@
 # Taken from:	
 # http://www.missiondata.com/blog/ruby/29/streaming-data-to-s3-with-ruby/
 
+Net::HTTP.ssl_context_accessor(:tmp_dh_callback)
+
 module Net
 	class HTTP
 		alias __request__ request
