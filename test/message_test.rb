@@ -123,6 +123,22 @@ class Astrotrain::MessageTest < Astrotrain::TestCase
       @body = "---------- Forwarded message ----------\nblah blah"
     end
 
+    describe "basic, with bad content type header" do
+      before :all do
+        @raw = mail(:bad_content_type)
+        @message = Astrotrain::Message.parse(@raw)
+      end
+
+      it "parses body" do
+        expected = "--====boundary====\nContent-Type: text/plain; charset=\"us-ascii\"\n\nThis message is being generated automatically to notify you\nthat PowerMTA has crashed on mtasv.net.\n\nAs the information below is likely to be essential for debugging\nthe problem, please forward this message to <support@port25.com>.\nThank you.\n\n--====boundary====\nContent-Type: text/plain; charset=\"us-ascii\"\n\nYo\n--====boundary====--"
+        assert_equal expected, @message.body
+      end
+
+      it "attempts parsing bad header" do
+        assert_equal "multipart/mixed; boundary=\"====boundary=\"===\"\"", @message.header('content-type')
+      end
+    end
+
     describe "basic, single sender/recipient" do
       before :all do
         @raw     = mail(:basic)

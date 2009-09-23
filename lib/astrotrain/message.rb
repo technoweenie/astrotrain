@@ -190,12 +190,29 @@ module Astrotrain
       @mail.port.to_s
     end
 
+    def header(key)
+      @headers ||= {}
+      if !@headers.key?(key)
+        @headers[key] = if self.class.skipped_headers.include?(key)
+          nil
+        else
+          header = @mail.header[key]
+          begin
+            header.to_s
+          rescue
+            header.raw_body
+          end
+        end
+      end
+      @headers[key]
+    end
+
     def headers
       @headers ||= begin
         h = {}
         @mail.header.each do |key, value|
-          next if self.class.skipped_headers.include?(key)
-          h[key] = value.to_s
+          header_value = header(key)
+          h[key] = header_value if header_value
         end
         h
       end
