@@ -137,6 +137,7 @@ module RestClient
 
 			net = Net::HTTP.new(uri.host, uri.port)
 			net.use_ssl = uri.is_a?(URI::HTTPS)
+			net.tmp_dh_callback = proc { }
 
 			net.start do |http|
 				## Ok. I know this is weird but it's a hack for now
