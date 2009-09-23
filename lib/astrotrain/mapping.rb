@@ -38,8 +38,8 @@ module Astrotrain
 
     # Processes a given message.  It finds a mapping, creates a LoggedMail record,
     # and attempts to process the message.
-    def self.process(message)
-      LoggedMail.from(message) do |logged|
+    def self.process(message, file = nil)
+      LoggedMail.from(message, file) do |logged|
         save_logged = begin
           mapping, recipient = match(message.recipients)
           if mapping

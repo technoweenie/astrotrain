@@ -49,24 +49,24 @@ module Astrotrain
     end
 
     # Parses the given raw email text and processes it with a matching Mapping.
-    def self.receive(raw)
+    def self.receive(raw, file = nil)
       message = parse(raw)
       Astrotrain.callback(:pre_mapping, message)
-      Mapping.process(message)
+      Mapping.process(message, file)
       message
     end
 
     # Processes the given file.  It parses it by reading the contents, and optionally
     # archives or removes the original file.
-    def self.receive_file(path, raw = nil)
-      message = receive IO.read(path)
+    def self.receive_file(path)
+      raw = IO.read(path)
       if archive_path
         daily_archive_path = archive_path / Time.now.year.to_s / Time.now.month.to_s / Time.now.day.to_s
         FileUtils.mkdir_p(daily_archive_path)
         FileUtils.mv path, daily_archive_path / File.basename(path)
-      else
-        FileUtils.rm_rf path
       end
+      message = receive(raw, path)
+      FileUtils.rm_rf path if !archive_path
       message
     end
 

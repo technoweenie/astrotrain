@@ -7,7 +7,7 @@ class Astrotrain::LoggedMailTest < Astrotrain::TestCase
       @mapping = Astrotrain::Mapping.create!(:email_user => '*')
       @raw     = mail(:custom)
       @message = Astrotrain::Message.parse(@raw)
-      @logged  = Astrotrain::LoggedMail.from(@message) do |l|
+      @logged  = Astrotrain::LoggedMail.from(@message, 'foo/bar') do |l|
         l.recipient = @message.recipients(%w(delivered_to)).first
         l.mapping   = @mapping
       end
@@ -15,6 +15,10 @@ class Astrotrain::LoggedMailTest < Astrotrain::TestCase
 
     it "sets recipient" do
       assert_equal @message.recipients(%w(delivered_to)).first, @logged.recipient
+    end
+
+    it "sets mail_file" do
+      assert_equal 'foo/bar', @logged.mail_file
     end
 
     it "sets sender" do

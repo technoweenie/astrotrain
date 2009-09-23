@@ -12,6 +12,7 @@ module Astrotrain
     self.log_path      = File.join(Astrotrain.root, 'messages')
 
     property :id,            Serial
+    property :mail_file,     String
     property :mapping_id,    Integer, :index => true
     property :sender,        String,  :index => true, :size => 255, :length => 1..255
     property :recipient,     String,  :index => true, :size => 255, :length => 1..255
@@ -22,15 +23,19 @@ module Astrotrain
 
     belongs_to :mapping
 
-    def self.from(message)
+    def self.from(message, file = nil)
       logged = new
       begin
-        logged.sender  = Message.parse_email_addresses(message.sender).first
-        logged.subject = message.subject
+        logged.sender    = Message.parse_email_addresses(message.sender).first
+        logged.subject   = message.subject
+        logged.mail_file = file if file
       end
       if !block_given? || yield(logged)
         begin
           logged.save
+          if logged.delivered_at && File.exist?(logged.mail_file.to_s)
+            FileUtils.rm_rf logged.mail_file
+          end
         rescue
           puts $!.inspect
         end
