@@ -65,7 +65,7 @@ module Astrotrain
         daily_archive_path = archive_path / Time.now.year.to_s / Time.now.month.to_s / Time.now.day.to_s
         FileUtils.mkdir_p(daily_archive_path)
         logged_path = daily_archive_path / File.basename(path)
-        FileUtils.mv path, logged_path
+        FileUtils.mv path, logged_path if path != logged_path
       end
       receive(raw, logged_path)
     end
