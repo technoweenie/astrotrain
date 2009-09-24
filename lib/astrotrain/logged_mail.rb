@@ -19,7 +19,7 @@ module Astrotrain
     property :mail_file,     String,  :size => 255, :length => 1..255
     property :created_at,    DateTime
     property :delivered_at,  DateTime
-    property :error_message, String, :size => 255, :length => 1..255
+    property :error_message, Text
 
     belongs_to :mapping
 

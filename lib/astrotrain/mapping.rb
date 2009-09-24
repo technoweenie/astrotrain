@@ -50,7 +50,7 @@ module Astrotrain
           end
           LoggedMail.log_processed # save successfully processed messages?
         rescue
-          logged.error_message = "#{$!.class}: #{$!}"
+          logged.error_message = "#{$!.message}\n#{$!.backtrace.join("\n")}"
         end
         Astrotrain.callback(:post_processing, message, mapping, logged)
         save_logged
