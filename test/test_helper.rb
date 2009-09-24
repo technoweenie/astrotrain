@@ -18,6 +18,9 @@ module Astrotrain
     })
   end
 
+  LoggedMail.auto_migrate!
+  Mapping.auto_migrate!
+
   LoggedMail.log_path = Astrotrain.root / 'messages'
   FileUtils.rm_rf   LoggedMail.log_path
   FileUtils.mkdir_p LoggedMail.log_path
