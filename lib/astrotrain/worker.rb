@@ -3,8 +3,8 @@ module Astrotrain
   class Worker
     attr_accessor :logger, :sleep_duration, :name
 
-    def self.start(options = {})
-      new(options).run
+    def self.start(options = {}, &block)
+      new(options).run(&block)
     end
 
     def initialize(options = {})
@@ -14,17 +14,21 @@ module Astrotrain
       @logger          = options.key?(:logger) ? options[:logger] : STDOUT
     end
 
-    def run
-      setup do
-        files = 0
-        Dir.foreach(Message.queue_path) do |f|
-          next if f =~ /^\.{1,2}$/
-          files += 1
-          file = File.join(Message.queue_path, f)
-          Message.receive_file(file)
-        end
-        files
+    # override this to perform other tasks in the astrotrain job loop
+    def run(&block)
+      block ||= lambda { |w| w.process_emails }
+      setup(&block)
+    end
+
+    def process_emails
+      files = 0
+      Dir.foreach(Message.queue_path) do |f|
+        next if f =~ /^\.{1,2}$/
+        files += 1
+        file = File.join(Message.queue_path, f)
+        Message.receive_file(file)
       end
+      files
     end
 
     def say(s)
@@ -42,7 +46,7 @@ module Astrotrain
 
       loop do
         count    = nil
-        realtime = Benchmark.realtime { count = yield }
+        realtime = Benchmark.realtime { count = yield(self) }
 
         break if $exit
 
