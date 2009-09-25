@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["technoweenie"]
-  s.date = %q{2009-09-23}
+  s.date = %q{2009-09-25}
   s.email = %q{technoweenie@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -45,10 +45,9 @@ Gem::Specification.new do |s|
      "lib/vendor/rest-client/spec/request_errors_spec.rb",
      "lib/vendor/rest-client/spec/resource_spec.rb",
      "lib/vendor/rest-client/spec/rest_client_spec.rb",
-     "tasks/doc.thor",
-     "tasks/merb.thor",
      "test/api_test.rb",
      "test/fixtures/apple_multipart.txt",
+     "test/fixtures/bad_content_type.txt",
      "test/fixtures/basic.txt",
      "test/fixtures/custom.txt",
      "test/fixtures/fwd.txt",
@@ -83,6 +82,20 @@ Gem::Specification.new do |s|
      "test/test_helper.rb",
      "test/transport_test.rb"
   ]
+
+  s.requirements << "For Jabber Support: xmpp4r-simple gem"
+  s.requirements << "For the web API: Sinatra"
+  s.requirements << "For testing: Context and RR"
+
+  s.add_dependency 'addressable',   '2.0.2'
+  s.add_dependency "tmail",         "1.2.3.1"
+
+  dm_ver = "0.9.11"
+  s.add_dependency "dm-core",        dm_ver # The datamapper ORM
+  s.add_dependency "dm-aggregates",  dm_ver # Provides your DM models with count, sum, avg, min, max, etc.
+  s.add_dependency "dm-timestamps",  dm_ver # Automatically populate created_at, created_on, etc. when those properties are present.
+  s.add_dependency "dm-types",       dm_ver # Provides additional types, including csv, json, yaml.
+  s.add_dependency "dm-validations", dm_ver # Validation framework
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
