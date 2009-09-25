@@ -8,7 +8,19 @@ begin
     gem.email = "technoweenie@gmail.com"
     gem.homepage = "http://github.com/entp/astrotrain"
     gem.authors = ["technoweenie"]
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+
+    dm_ver = "0.9.11"
+    gem.add_runtime_dependency 'addressable',   '2.0.2'
+    gem.add_runtime_dependency "tmail",         "1.2.3.1"
+    gem.add_runtime_dependency "dm-core",        dm_ver # The datamapper ORM
+    gem.add_runtime_dependency "dm-aggregates",  dm_ver # Provides your DM models with count, sum, avg, min, max, etc.
+    gem.add_runtime_dependency "dm-timestamps",  dm_ver # Automatically populate created_at, created_on, etc. when those properties are present.
+    gem.add_runtime_dependency "dm-types",       dm_ver # Provides additional types, including csv, json, yaml.
+    gem.add_runtime_dependency "dm-validations", dm_ver # Validation framework
+    gem.add_development_dependency "context"
+    gem.add_development_dependency "rr"
+    gem.add_development_dependency "sinatra"
+    gem.add_development_dependency "xmppr4-simple"
   end
 
 rescue LoadError

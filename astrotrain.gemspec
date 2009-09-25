@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{astrotrain}
-  s.version = "0.2.1"
+  s.version = "0.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["technoweenie"]
@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
      "lib/astrotrain/mapping/transport.rb",
      "lib/astrotrain/message.rb",
      "lib/astrotrain/tmail.rb",
+     "lib/astrotrain/worker.rb",
      "lib/vendor/rest-client/README.rdoc",
      "lib/vendor/rest-client/Rakefile",
      "lib/vendor/rest-client/bin/restclient",
@@ -83,27 +84,46 @@ Gem::Specification.new do |s|
      "test/transport_test.rb"
   ]
 
-  s.requirements << "For Jabber Support: xmpp4r-simple gem"
-  s.requirements << "For the web API: Sinatra"
-  s.requirements << "For testing: Context and RR"
-
-  s.add_dependency 'addressable',   '2.0.2'
-  s.add_dependency "tmail",         "1.2.3.1"
-
-  dm_ver = "0.9.11"
-  s.add_dependency "dm-core",        dm_ver # The datamapper ORM
-  s.add_dependency "dm-aggregates",  dm_ver # Provides your DM models with count, sum, avg, min, max, etc.
-  s.add_dependency "dm-timestamps",  dm_ver # Automatically populate created_at, created_on, etc. when those properties are present.
-  s.add_dependency "dm-types",       dm_ver # Provides additional types, including csv, json, yaml.
-  s.add_dependency "dm-validations", dm_ver # Validation framework
-
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<addressable>, ["= 2.0.2"])
+      s.add_runtime_dependency(%q<tmail>, ["= 1.2.3.1"])
+      s.add_runtime_dependency(%q<dm-core>, ["= 0.9.11"])
+      s.add_runtime_dependency(%q<dm-aggregates>, ["= 0.9.11"])
+      s.add_runtime_dependency(%q<dm-timestamps>, ["= 0.9.11"])
+      s.add_runtime_dependency(%q<dm-types>, ["= 0.9.11"])
+      s.add_runtime_dependency(%q<dm-validations>, ["= 0.9.11"])
+      s.add_development_dependency(%q<context>, [">= 0"])
+      s.add_development_dependency(%q<rr>, [">= 0"])
+      s.add_development_dependency(%q<sinatra>, [">= 0"])
+      s.add_development_dependency(%q<xmppr4-simple>, [">= 0"])
     else
+      s.add_dependency(%q<addressable>, ["= 2.0.2"])
+      s.add_dependency(%q<tmail>, ["= 1.2.3.1"])
+      s.add_dependency(%q<dm-core>, ["= 0.9.11"])
+      s.add_dependency(%q<dm-aggregates>, ["= 0.9.11"])
+      s.add_dependency(%q<dm-timestamps>, ["= 0.9.11"])
+      s.add_dependency(%q<dm-types>, ["= 0.9.11"])
+      s.add_dependency(%q<dm-validations>, ["= 0.9.11"])
+      s.add_dependency(%q<context>, [">= 0"])
+      s.add_dependency(%q<rr>, [">= 0"])
+      s.add_dependency(%q<sinatra>, [">= 0"])
+      s.add_dependency(%q<xmppr4-simple>, [">= 0"])
     end
   else
+    s.add_dependency(%q<addressable>, ["= 2.0.2"])
+    s.add_dependency(%q<tmail>, ["= 1.2.3.1"])
+    s.add_dependency(%q<dm-core>, ["= 0.9.11"])
+    s.add_dependency(%q<dm-aggregates>, ["= 0.9.11"])
+    s.add_dependency(%q<dm-timestamps>, ["= 0.9.11"])
+    s.add_dependency(%q<dm-types>, ["= 0.9.11"])
+    s.add_dependency(%q<dm-validations>, ["= 0.9.11"])
+    s.add_dependency(%q<context>, [">= 0"])
+    s.add_dependency(%q<rr>, [">= 0"])
+    s.add_dependency(%q<sinatra>, [">= 0"])
+    s.add_dependency(%q<xmppr4-simple>, [">= 0"])
   end
 end
