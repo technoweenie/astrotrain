@@ -1,4 +1,3 @@
-require 'rubygems'
 require 'rake'
 
 begin
@@ -67,42 +66,8 @@ namespace :at do
 
   desc "Start astrotrain DRb server."
   task :process => :init do
-    pid_filename = File.join(Astrotrain.root, 'log', 'astrotrain_job.pid')
-
-    FileUtils.mkdir_p File.dirname(pid_filename)
-    require 'benchmark'
-
-    begin
-      File.open(pid_filename, 'w') { |f| f << Process.pid.to_s }
-      SLEEP = 5
-       
-      trap('TERM') { puts 'Exiting...'; $exit = true }
-      trap('INT')  { puts 'Exiting...'; $exit = true }
-
-      loop do
-        count = nil
-
-        realtime = Benchmark.realtime do
-          files = Dir["#{Astrotrain::Message.queue_path}/*"]
-          files.each do |mail|
-            Astrotrain::Message.receive_file(mail)
-          end
-          count = files.size
-        end
-
-        break if $exit
-
-        if count.zero?
-          sleep(SLEEP)
-        else
-          puts "#{count} mails processed at %.4f m/s ..." % [count / realtime]
-        end
-      
-        break if $exit
-      end
-    ensure
-      FileUtils.rm(pid_filename) rescue nil
-    end
+    require 'astrotrain/worker'
+    Astrotrain::Worker.start
   end
 end
 
