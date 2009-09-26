@@ -58,7 +58,7 @@ class Astrotrain::TransportTest < Astrotrain::TestCase
     end
   end
 
-  if Astrotrain::Mapping.defined?(:Jabber)
+  if Astrotrain::Mapping.const_defined?(:Jabber)
     describe "jabber" do
       before :all do
         @dest    = 'foo@bar.com'
