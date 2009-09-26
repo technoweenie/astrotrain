@@ -58,53 +58,55 @@ class Astrotrain::TransportTest < Astrotrain::TestCase
     end
   end
 
-  describe "jabber" do
-    before :all do
-      @dest    = 'foo@bar.com'
-      @message = Astrotrain::Message.parse(mail(:custom))
-      @mapping = Astrotrain::Mapping.new(:destination => @dest, :transport => 'jabber')
-    end
-
-    before do
-      @trans   = Astrotrain::Mapping::Jabber.new(@message, @mapping, @message.recipients(%w(delivered_to)).first)
-    end
-
-    it "sets #content" do
-      expected = "From: %s\nTo: %s\nSubject: %s\nEmails: %s\n%s" % [@message.sender, @message.recipients(%w(delivered_to)).first, @message.subject, @message.recipients(%w(original_to to)) * ", ", @message.body]
-      assert_equal expected, @trans.content
-    end
-
-    it "sets content with mapping separator set" do
-      @message = Astrotrain::Message.parse(mail(:reply))
-      @mapping.separator = "=" * 5
-      @trans   = Astrotrain::Mapping::Jabber.new(@message, @mapping, @message.recipients(%w(delivered_to)).first)
-      expected = "From: %s\nTo: %s\nSubject: %s\nEmails: %s\n%s" % [@message.sender, @message.recipients(%w(delivered_to)).first, @message.subject, '', "blah blah"]
-      assert_equal expected, @trans.content
-    end
-
-    describe "when processing" do
-      before do
-        @conn = Object.new
-        stub(@trans).connection { @conn }
-        stub(Astrotrain::Mapping::Jabber).new { @trans }
-      end
-
-      it "makes jabber delivery" do
-        mock(@conn).deliver(@mapping.destination, @trans.content)
-        @trans.process
-      end
-
-      it "makes jabber delivery from Transport" do
-        mock(@conn).deliver(@mapping.destination, @trans.content)
-        Astrotrain::Mapping::Transport.process(@message, @mapping, @message.recipients(%w(delivered_to)).first)
-      end
-
+  if Astrotrain::Mapping.defined?(:Jabber)
+    describe "jabber" do
       before :all do
-        Astrotrain::Mapping::Transport.processing = true
+        @dest    = 'foo@bar.com'
+        @message = Astrotrain::Message.parse(mail(:custom))
+        @mapping = Astrotrain::Mapping.new(:destination => @dest, :transport => 'jabber')
       end
 
-      after :all do
-        Astrotrain::Mapping::Transport.processing = false
+      before do
+        @trans   = Astrotrain::Mapping::Jabber.new(@message, @mapping, @message.recipients(%w(delivered_to)).first)
+      end
+
+      it "sets #content" do
+        expected = "From: %s\nTo: %s\nSubject: %s\nEmails: %s\n%s" % [@message.sender, @message.recipients(%w(delivered_to)).first, @message.subject, @message.recipients(%w(original_to to)) * ", ", @message.body]
+        assert_equal expected, @trans.content
+      end
+
+      it "sets content with mapping separator set" do
+        @message = Astrotrain::Message.parse(mail(:reply))
+        @mapping.separator = "=" * 5
+        @trans   = Astrotrain::Mapping::Jabber.new(@message, @mapping, @message.recipients(%w(delivered_to)).first)
+        expected = "From: %s\nTo: %s\nSubject: %s\nEmails: %s\n%s" % [@message.sender, @message.recipients(%w(delivered_to)).first, @message.subject, '', "blah blah"]
+        assert_equal expected, @trans.content
+      end
+
+      describe "when processing" do
+        before do
+          @conn = Object.new
+          stub(@trans).connection { @conn }
+          stub(Astrotrain::Mapping::Jabber).new { @trans }
+        end
+
+        it "makes jabber delivery" do
+          mock(@conn).deliver(@mapping.destination, @trans.content)
+          @trans.process
+        end
+
+        it "makes jabber delivery from Transport" do
+          mock(@conn).deliver(@mapping.destination, @trans.content)
+          Astrotrain::Mapping::Transport.process(@message, @mapping, @message.recipients(%w(delivered_to)).first)
+        end
+
+        before :all do
+          Astrotrain::Mapping::Transport.processing = true
+        end
+
+        after :all do
+          Astrotrain::Mapping::Transport.processing = false
+        end
       end
     end
   end
