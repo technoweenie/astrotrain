@@ -13,6 +13,7 @@ module Astrotrain
 
     property :id,            Serial
     property :mapping_id,    Integer, :index => true
+    property :message_id,    String,  :index => true, :size => 255, :length => 1..255
     property :sender,        String,  :index => true, :size => 255, :length => 1..255
     property :recipient,     String,  :index => true, :size => 255, :length => 1..255
     property :subject,       String,  :index => true, :size => 255, :length => 1..255
@@ -26,9 +27,10 @@ module Astrotrain
     def self.from(message, file = nil)
       logged = new
       begin
-        logged.sender    = Message.parse_email_addresses(message.sender).first
-        logged.subject   = message.subject
-        logged.mail_file = file if file
+        logged.message_id = message.message_id
+        logged.sender     = Message.parse_email_addresses(message.sender).first
+        logged.subject    = message.subject
+        logged.mail_file  = file if file
       end
       if !block_given? || yield(logged)
         begin

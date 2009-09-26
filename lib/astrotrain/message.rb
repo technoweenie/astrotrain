@@ -172,6 +172,10 @@ module Astrotrain
       @mail.quoted_subject
     end
 
+    def message_id
+      @message_id ||= mail.header('message-id').to_s.gsub(/^<|>$/, '')
+    end
+
     def body
       @body ||= begin
         process_message_body
