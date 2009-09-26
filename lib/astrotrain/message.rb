@@ -173,7 +173,7 @@ module Astrotrain
     end
 
     def message_id
-      @message_id ||= mail.header('message-id').to_s.gsub(/^<|>$/, '')
+      @message_id ||= header('message-id').to_s.gsub(/^<|>$/, '')
     end
 
     def body
