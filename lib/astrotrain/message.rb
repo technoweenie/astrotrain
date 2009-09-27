@@ -91,7 +91,13 @@ module Astrotrain
       return {} if email.blank?
       begin
         header = TMail::Address.parse(email)
-        {:name => header.name, :email => header.address}
+        parsed = {:name => header.name}
+        if header.is_a?(TMail::AddressGroup)
+          parsed[:email] = header[0].address
+        else
+          parsed[:email] = header.address
+        end
+        parsed
       rescue SyntaxError, TMail::SyntaxError
         email = email.scan(/\<([^\>]+)\>/)[0]
         if email.blank?

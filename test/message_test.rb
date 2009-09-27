@@ -433,6 +433,14 @@ class Astrotrain::MessageTest < Astrotrain::TestCase
         assert_equal %w(processor-reply-57@custom.com processor-delivered@astrotrain.com processor@astrotrain.com), @message.recipients
       end
     end
+
+    it "parses invalid email collection" do
+      assert_equal %w(ricky@foo.com bobby@foo.com), Astrotrain::Message.parse_email_addresses("Ricky <ricky@foo.com>, Bobby:bobby@foo.com")
+    end
+
+    it "parses invalid email" do
+      assert_equal({:name => "Name", :email => "email@server.com"}, Astrotrain::Message.parse_email_address("Name:email@server.com"))
+    end
   end
 
   describe "queueing" do
