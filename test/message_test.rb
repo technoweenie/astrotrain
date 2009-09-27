@@ -441,6 +441,13 @@ class Astrotrain::MessageTest < Astrotrain::TestCase
     it "parses invalid email" do
       assert_equal({:name => "Name", :email => "email@server.com"}, Astrotrain::Message.parse_email_address("Name:email@server.com"))
     end
+
+    it "parses undisclosed recipients" do
+      raw = mail(:undisclosed)
+      m   = Astrotrain::Message.parse(raw)
+      assert_equal(["undisclosed-recipients: ;"], m.recipients_from_to)
+      assert_equal({:name => "undisclosed-recipients"}, Astrotrain::Message.parse_email_address(m.recipients_from_to.first))
+    end
   end
 
   describe "queueing" do

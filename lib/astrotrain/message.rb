@@ -93,8 +93,9 @@ module Astrotrain
         header = TMail::Address.parse(email)
         parsed = {:name => header.name}
         if header.is_a?(TMail::AddressGroup)
-          parsed[:email] = header[0].address
-        else
+          header = header[0]
+        end
+        if !header.blank?
           parsed[:email] = header.address
         end
         parsed
