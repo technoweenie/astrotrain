@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{astrotrain}
-  s.version = "0.4.2"
+  s.version = "0.4.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["technoweenie"]
-  s.date = %q{2009-09-26}
+  s.date = %q{2009-09-27}
   s.email = %q{technoweenie@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -63,6 +63,7 @@ Gem::Specification.new do |s|
      "test/fixtures/multiple_delivered_to.txt",
      "test/fixtures/multiple_with_body_recipients.txt",
      "test/fixtures/reply.txt",
+     "test/fixtures/undisclosed.txt",
      "test/fixtures/utf-8.txt",
      "test/logged_mail_test.rb",
      "test/mapping_test.rb",
