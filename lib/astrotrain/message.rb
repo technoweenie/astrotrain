@@ -7,7 +7,7 @@ module Astrotrain
   # Wrapper around a TMail object
   class Message
     attr_accessor :body
-    attr_reader :mail, :attachments
+    attr_reader :mail
 
     class << self
       attr_reader   :queue_path, :archive_path
@@ -184,17 +184,15 @@ module Astrotrain
     end
 
     def body
-      @body ||= begin
-        process_message_body
-        @body
-      end
+      @body ||= process_message_body(:body)
     end
 
     def html
-      @html ||= begin
-        process_message_body
-        @html
-      end
+      @html ||= process_message_body(:html)
+    end
+
+    def attachments
+      @attachments ||= process_message_body(:attachments)
     end
 
     def raw
@@ -202,28 +200,15 @@ module Astrotrain
     end
 
     def header(key)
-      @headers ||= {}
-      if !@headers.key?(key)
-        @headers[key] = if self.class.skipped_headers.include?(key)
-          nil
-        else
-          header = @mail.header[key]
-          begin
-            header.to_s
-          rescue
-            header.raw_body
-          end
-        end
-      end
-      @headers[key]
+      headers[key]
     end
 
     def headers
       @headers ||= begin
         h = {}
         @mail.header.each do |key, value|
-          header_value = header(key)
-          h[key] = header_value if header_value
+          next if self.class.skipped_headers.include?(key)
+          h[key] = read_header(key) 
         end
         h
       end
@@ -280,7 +265,16 @@ module Astrotrain
     end
 
   protected
-    def process_message_body
+    def read_header(key)
+      header = @mail.header[key]
+      begin
+        header.to_s
+      rescue
+        header.raw_body
+      end
+    end
+
+    def process_message_body(var = nil)
       if @mail.multipart?
         @attachments.clear
         @body, @html = [], []
@@ -295,6 +289,7 @@ module Astrotrain
         @body = convert_to_utf8(@body)
         @html = convert_to_utf8(@html)
       end
+      instance_variable_get "@#{var}" if var
     end
 
     def scan_parts(message)
