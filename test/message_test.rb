@@ -145,11 +145,8 @@ class Astrotrain::MessageTest < Astrotrain::TestCase
         @message = Astrotrain::Message.parse(@raw)
       end
 
-      it "parses message-id" do
+      it "parses message-id and headers" do
         assert_equal 'a16be7390810161014n52b603e9k1aa6bb803c6735aa@mail.gmail.com', @message.message_id
-      end
-
-      it "parses TMail::Mail headers" do
         expected = {'mime-version' => '1.0', 'content-type' => 'text/plain; charset=ISO-8859-1', 'to' => 'Processor <processor@astrotrain.com>',
           'x-custom' => 'reply', 'content-transfer-encoding' => '7bit', 'content-disposition' => 'inline', 'message-id' => '<a16be7390810161014n52b603e9k1aa6bb803c6735aa@mail.gmail.com>'}
         assert_equal expected, @message.headers
