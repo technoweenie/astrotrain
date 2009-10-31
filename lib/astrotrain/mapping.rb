@@ -45,7 +45,11 @@ module Astrotrain
           if mapping
             logged.recipient = recipient
             logged.mapping   = mapping
-            mapping.process(message, recipient)
+            begin
+              mapping.process(message, recipient)
+            rescue Astrotrain::ProcessingCancelled
+              logged.error_message = "Cancelled."
+            end
             logged.delivered_at = Time.now.utc
           end
           LoggedMail.log_processed # save successfully processed messages?
@@ -61,6 +65,7 @@ module Astrotrain
     def process(message, recipient)
       Astrotrain.callback(:pre_processing, message, self)
       Transport.process(message, self, recipient)
+    
     end
 
     # returns true if the email matches this mapping.  Wildcards in the name are allowed.

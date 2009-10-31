@@ -1,4 +1,6 @@
 module Astrotrain
+  class ProcessingCancelled < StandardError; end
+
   CALLBACK_TYPES = [:pre_mapping, :pre_processing, :post_processing]
   class << self
     attr_accessor :root, :lib_root, :callbacks

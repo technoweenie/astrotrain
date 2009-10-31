@@ -54,6 +54,7 @@ module Astrotrain
       Astrotrain.callback(:pre_mapping, message)
       Mapping.process(message, file)
       message
+    rescue Astrotrain::ProcessingCancelled
     end
 
     # Processes the given file.  It parses it by reading the contents, and optionally

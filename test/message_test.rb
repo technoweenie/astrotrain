@@ -42,6 +42,16 @@ class Astrotrain::MessageTest < Astrotrain::TestCase
           assert_equal callback_msg, @msg
         end
 
+        it "it allows pre_mapping callback to cancel processing" do
+          Astrotrain::LoggedMail.log_processed = true
+          Astrotrain.callback(:pre_mapping) do |message|
+            raise Astrotrain::ProcessingCancelled
+          end
+
+          @msg = Astrotrain::Message.receive(mail(:mapped))
+          assert_equal 0, Astrotrain::LoggedMail.count
+        end
+
         it "calls pre_processing callback" do
           Astrotrain::LoggedMail.log_processed = true
           callback_msg, callback_map = nil
@@ -54,6 +64,17 @@ class Astrotrain::MessageTest < Astrotrain::TestCase
           @log = Astrotrain::LoggedMail.first
           assert_equal callback_msg, @msg
           assert_equal callback_map, @log.mapping
+        end
+
+        it "it allows pre_processing callback to cancel processing" do
+          Astrotrain::LoggedMail.log_processed = true
+          Astrotrain.callback(:pre_processing) do |message, mapping|
+            raise Astrotrain::ProcessingCancelled
+          end
+
+          @msg = Astrotrain::Message.receive(mail(:mapped))
+          @log = Astrotrain::LoggedMail.first
+          assert_equal "Cancelled.", @log.error_message
         end
 
         it "calls post_processing callback" do
