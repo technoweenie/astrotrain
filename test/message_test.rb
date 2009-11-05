@@ -387,6 +387,21 @@ class Astrotrain::MessageTest < Astrotrain::TestCase
       end
     end
 
+    describe "with only HTML body in a multipart message" do
+      before :all do
+        @raw     = mail(:html_multipart)
+        @message = Astrotrain::Message.parse(@raw)
+      end
+
+      it "parses emtpy body" do
+        assert_equal '', @message.body
+      end
+
+      it "parses HTML body" do
+        assert_equal "<p>ABC</p>\n------", @message.html
+      end
+    end
+
     describe "with only HTML body" do
       before :all do
         @raw     = mail(:html)
@@ -398,7 +413,7 @@ class Astrotrain::MessageTest < Astrotrain::TestCase
       end
 
       it "parses HTML body" do
-        assert_equal "<p>ABC</p>\n------", @message.html
+        assert_equal "<p>ABC</p>", @message.html
       end
     end
 

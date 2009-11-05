@@ -4,7 +4,13 @@ To: xyz@astrotrain.com
 Message-ID: <11644553.1741252281981737.JavaMail.root@astrotrain>
 Subject: ABC DEF
 MIME-Version: 1.0
+Content-Type: multipart/mixed; 
+    boundary="----=_Part_1695_189596019.1252281981305"
+X-Mailer: Railo Mail
+
+------=_Part_1695_189596019.1252281981305
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
 <p>ABC</p>
+------=_Part_1695_189596019.1252281981305--

@@ -283,8 +283,13 @@ module Astrotrain
         @body = @body.join("\n")
         @html = @html.join("\n")
       else
-        @body = @mail.body
-        @html = ''
+        if @mail.content_type == 'text/html'
+          @html = @mail.body
+          @body = ''
+        else
+          @body = @mail.body
+          @html = ''
+        end
       end
       if !@mail.charset
         @body = convert_to_utf8(@body)
