@@ -134,10 +134,10 @@ module Astrotrain
         order = self.class.recipient_header_order if order.blank?
         recipients = []
 
-        parse_email_headers recipients_from_body, recipients
         order.each do |key|
           parse_email_headers(send("recipients_from_#{key}"), recipients)
         end
+        parse_email_headers recipients_from_body, recipients
 
         recipients.flatten!
         recipients.uniq!
