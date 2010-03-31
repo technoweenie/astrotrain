@@ -382,7 +382,7 @@ class Astrotrain::MessageTest < Astrotrain::TestCase
       end
 
       it "recognizes in-body emails and To: headers as recipients" do
-        assert_equal %w(processor+foobar@astrotrain.com processor+blah@astrotrain.com processor@astrotrain.com other@example.com), 
+        assert_equal %w(processor@astrotrain.com other@example.com processor+foobar@astrotrain.com processor+blah@astrotrain.com), 
           @message.recipients
       end
     end
