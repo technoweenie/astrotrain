@@ -42,6 +42,6 @@ It's far from perfect, but definitely usable.
 TODO
 ====
 
-Gem package - I realize the load paths could be simplified a bunch, so a gem package will come soon.
 Docs
-bounced emails
+bounced emails (i've been rolling with http://github.com/whatcould/bounce-email for now)
+Mail gem, TMail is old school
