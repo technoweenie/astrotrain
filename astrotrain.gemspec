@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{astrotrain}
-  s.version = "0.5.0"
+  s.version = "0.5.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["technoweenie"]
-  s.date = %q{2010-01-16}
+  s.date = %q{2010-03-31}
   s.email = %q{technoweenie@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -78,7 +78,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/entp/astrotrain}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.5}
+  s.rubygems_version = %q{1.3.6}
   s.summary = %q{email => http post}
   s.test_files = [
     "test/api_test.rb",
@@ -103,7 +103,8 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<dm-validations>, ["= 0.9.11"])
       s.add_development_dependency(%q<context>, [">= 0"])
       s.add_development_dependency(%q<rr>, [">= 0"])
-      s.add_development_dependency(%q<sinatra>, [">= 0"])
+      s.add_development_dependency(%q<sinatra>, ["~> 1.0.0"])
+      s.add_development_dependency(%q<rack-test>, [">= 0"])
       s.add_development_dependency(%q<xmppr4-simple>, [">= 0"])
     else
       s.add_dependency(%q<addressable>, ["= 2.0.2"])
@@ -115,7 +116,8 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<dm-validations>, ["= 0.9.11"])
       s.add_dependency(%q<context>, [">= 0"])
       s.add_dependency(%q<rr>, [">= 0"])
-      s.add_dependency(%q<sinatra>, [">= 0"])
+      s.add_dependency(%q<sinatra>, ["~> 1.0.0"])
+      s.add_dependency(%q<rack-test>, [">= 0"])
       s.add_dependency(%q<xmppr4-simple>, [">= 0"])
     end
   else
@@ -128,7 +130,8 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<dm-validations>, ["= 0.9.11"])
     s.add_dependency(%q<context>, [">= 0"])
     s.add_dependency(%q<rr>, [">= 0"])
-    s.add_dependency(%q<sinatra>, [">= 0"])
+    s.add_dependency(%q<sinatra>, ["~> 1.0.0"])
+    s.add_dependency(%q<rack-test>, [">= 0"])
     s.add_dependency(%q<xmppr4-simple>, [">= 0"])
   end
 end
