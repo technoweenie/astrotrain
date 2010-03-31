@@ -19,7 +19,8 @@ begin
     gem.add_runtime_dependency "dm-validations", dm_ver # Validation framework
     gem.add_development_dependency "context"
     gem.add_development_dependency "rr"
-    gem.add_development_dependency "sinatra"
+    gem.add_development_dependency "sinatra", "~> 1.0.0"
+    gem.add_development_dependency "rack-test"
     gem.add_development_dependency "xmppr4-simple"
   end
 

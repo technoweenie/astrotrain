@@ -7,22 +7,26 @@ class Astrotrain::ApiTest < Astrotrain::ApiTestCase
   end
 
   it "counts queue" do
-    assert_equal '2', get("/queue_size").body
+    get '/queue_size'
+    assert_equal '2', last_response.body
   end
 
   it "lists queue files" do
-    files = get("/queue").body.split("\n")
+    get '/queue'
+    files = last_response.body.split("\n")
     assert_equal 2, files.size
     assert files.include?(File.basename(@filename1))
     assert files.include?(File.basename(@filename2))
   end
 
   it "reads queue file" do
-    assert_equal 'boo!', get("/queue/#{File.basename(@filename1)}").body
+    get "/queue/#{File.basename(@filename1)}"
+    assert_equal 'boo!', last_response.body
   end
 
   it "does not read missing file" do
-    assert_equal "\"etc/passwd\" was not found.", get("/queue//etc/passwd").body
+    get "/queue//etc/passwd"
+    assert_equal "\"etc/passwd\" was not found.", last_response.body
   end
 end
 

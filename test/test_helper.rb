@@ -6,16 +6,11 @@ require "context"
 require 'rr'
 require 'astrotrain'
 require 'astrotrain/api'
-require 'sinatra/test'
+require 'rack/test'
 
 module Astrotrain
   load File.dirname(__FILE__) do
-    DataMapper.setup(:default, {
-      :adapter  => "mysql",
-      :database => "astrotrain_test",
-      :username => "root",
-      :host     => "localhost"
-    })
+    DataMapper.setup(:default, 'sqlite3::memory:')
   end
 
   LoggedMail.auto_migrate!
@@ -46,7 +41,11 @@ module Astrotrain
   end
 
   class ApiTestCase < TestCase
-    include Sinatra::Test
+    def app
+      Sinatra::Application
+    end
+
+    include Rack::Test::Methods
   end
 end
 
