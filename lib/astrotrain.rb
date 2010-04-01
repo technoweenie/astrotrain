@@ -9,8 +9,8 @@ module Astrotrain
   def self.load(root = Dir.pwd)
     self.root     = File.expand_path(root)
     self.lib_root = File.expand_path(File.dirname(__FILE__))
-    yield if block_given?
     load_dependencies
+    yield if block_given?
     %w(tmail message mapping logged_mail mapping/transport mapping/http_post mapping/jabber).each do |lib|
       require "astrotrain/#{lib}"
     end
