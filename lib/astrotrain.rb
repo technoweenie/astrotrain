@@ -9,8 +9,8 @@ module Astrotrain
   def self.load(root = Dir.pwd)
     self.root     = File.expand_path(root)
     self.lib_root = File.expand_path(File.dirname(__FILE__))
-    load_dependencies
     yield if block_given?
+    load_dependencies
     %w(tmail message mapping logged_mail mapping/transport mapping/http_post mapping/jabber).each do |lib|
       require "astrotrain/#{lib}"
     end
@@ -40,6 +40,8 @@ private
     gem 'addressable',   '2.0.2'
 
     dm_ver = "0.9.11"
+    gem "data_objects",   dm_ver
+    gem "do_mysql",       dm_ver
     gem "dm-core",        dm_ver # The datamapper ORM
     gem "dm-aggregates",  dm_ver # Provides your DM models with count, sum, avg, min, max, etc.
     gem "dm-timestamps",  dm_ver # Automatically populate created_at, created_on, etc. when those properties are present.
