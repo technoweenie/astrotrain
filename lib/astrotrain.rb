@@ -41,7 +41,6 @@ private
 
     dm_ver = "0.9.11"
     gem "data_objects",   dm_ver
-    gem "do_mysql",       dm_ver
     gem "dm-core",        dm_ver # The datamapper ORM
     gem "dm-aggregates",  dm_ver # Provides your DM models with count, sum, avg, min, max, etc.
     gem "dm-timestamps",  dm_ver # Automatically populate created_at, created_on, etc. when those properties are present.

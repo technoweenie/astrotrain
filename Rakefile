@@ -12,6 +12,7 @@ begin
     dm_ver = "0.9.11"
     gem.add_runtime_dependency 'addressable',   '2.0.2'
     gem.add_runtime_dependency "tmail",         "1.2.3.1"
+    gem.add_runtime_dependency "data_objects",   dm_ver
     gem.add_runtime_dependency "dm-core",        dm_ver # The datamapper ORM
     gem.add_runtime_dependency "dm-aggregates",  dm_ver # Provides your DM models with count, sum, avg, min, max, etc.
     gem.add_runtime_dependency "dm-timestamps",  dm_ver # Automatically populate created_at, created_on, etc. when those properties are present.
