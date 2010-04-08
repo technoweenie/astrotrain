@@ -1,3 +1,4 @@
+require 'mail'
 require 'set'
 
 module Astrotrain
