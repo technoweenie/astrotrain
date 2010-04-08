@@ -1,3 +1,4 @@
+require 'tmail'
 module Astrotrain
   # custom subclass of TMail::Mail that fixes some bugs.  The fixes were pushed upstream,
   # and this class will go away once the gem is released.
