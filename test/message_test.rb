@@ -9,7 +9,7 @@ class MessageParsingTest < Test::Unit::TestCase
     expected_header = "multipart/mixed; boundary=\"====boundary=\"===\"\""
 
     assert_equal expected_body,   msg.body
-    assert_equal expected_header, msg.header('content-type')
+    assert_equal expected_header, msg.headers['content-type']
   end
 
   test "basic email" do

@@ -8,17 +8,24 @@ module Astrotrain
     ICONV_CONVERSIONS = %w(utf-8 ISO-8859-1 ISO-8859-2 ISO-8859-3 ISO-8859-4 ISO-8859-5 ISO-8859-6 ISO-8859-7 ISO-8859-8 ISO-8859-9
       ISO-8859-15 GB2312)
 
-    attr_accessor :body
-    attr_reader   :mail
+    # Reference to the TMail::Mail object that parsed the raw email.
+    attr_reader :mail
 
     class << self
       attr_accessor :recipient_header_order, :skipped_headers
     end
 
+    # Astrotrain::Message#headers does not show these headers
     self.skipped_headers        = Set.new %w(date from subject delivered-to x-original-to received)
+
+    # This is the default order that Astrotrain will search for a matching recipient.
     self.recipient_header_order = %w(original_to delivered_to to)
 
     # Parses the raw email headers into a Astrotrain::Message instance.
+    #
+    # raw - String of the email content
+    #
+    # Returns Astrotrain::Mail instance.
     def self.parse(raw)
       new Mail.parse(raw)
     end
@@ -67,8 +74,8 @@ module Astrotrain
     end
 
     def initialize(mail)
+      @body = @html = nil
       @mail        = mail
-      @mapping     = nil
       @attachments = []
       @recipients  = {}
     end
@@ -128,7 +135,7 @@ module Astrotrain
     end
 
     def message_id
-      @message_id ||= header('message-id').to_s.gsub(/^<|>$/, '')
+      @message_id ||= headers['message-id'].to_s.gsub(/^<|>$/, '')
     end
 
     def body
@@ -145,10 +152,6 @@ module Astrotrain
 
     def raw
       @mail.port.to_s
-    end
-
-    def header(key)
-      headers[key]
     end
 
     def headers
