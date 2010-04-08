@@ -10,7 +10,8 @@ module Astrotrain
     self.lib_root = File.expand_path(File.dirname(__FILE__))
     yield if block_given?
     require 'tmail'
-    autoload :Message, 'astrotrain/message'
-    autoload :Mail,    'astrotrain/mail'
+    autoload :Attachment, 'astrotrain/attachment'
+    autoload :Message,    'astrotrain/message'
+    autoload :Mail,       'astrotrain/mail'
   end
 end
