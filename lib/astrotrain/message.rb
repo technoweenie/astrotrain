@@ -12,66 +12,11 @@ module Astrotrain
     attr_reader   :mail
 
     class << self
-      attr_reader   :queue_path, :archive_path
       attr_accessor :recipient_header_order, :skipped_headers
-    end
-
-    def self.queue_path=(path)
-      if path
-        path = File.expand_path(path)
-        FileUtils.mkdir_p path
-      end
-      @queue_path = path
-    end
-
-    def self.archive_path=(path)
-      if path
-        path = File.expand_path(path)
-        FileUtils.mkdir_p path
-      end
-      @archive_path = path
     end
 
     self.skipped_headers        = Set.new %w(date from subject delivered-to x-original-to received)
     self.recipient_header_order = %w(original_to delivered_to to)
-    self.queue_path             = File.join(Astrotrain.root, 'queue')
-
-    # Dumps the raw text into the queue_path.  Not really recommended, since you should
-    # set the queue_path to the directory your incoming emails are dumped into.
-    def self.queue(raw)
-      filename = nil
-      digest   = Digest::SHA1.hexdigest(raw)
-      while filename.nil? || File.exist?(filename)
-        filename = File.join(queue_path, Digest::SHA1.hexdigest(digest + rand.to_s))
-      end
-      File.open filename, 'wb' do |f|
-        f.write raw
-      end
-      filename
-    end
-
-    # Parses the given raw email text and processes it with a matching Mapping.
-    def self.receive(raw, file = nil)
-      message = parse(raw)
-      Astrotrain.callback(:pre_mapping, message)
-      Mapping.process(message, file)
-      message
-    rescue Astrotrain::ProcessingCancelled
-    end
-
-    # Processes the given file.  It parses it by reading the contents, and optionally
-    # archives or removes the original file.
-    def self.receive_file(path)
-      raw         = IO.read(path)
-      logged_path = path
-      if archive_path
-        daily_archive_path = archive_path / Time.now.year.to_s / Time.now.month.to_s / Time.now.day.to_s
-        FileUtils.mkdir_p(daily_archive_path)
-        logged_path = daily_archive_path / File.basename(path)
-        FileUtils.mv path, logged_path if path != logged_path
-      end
-      receive(raw, logged_path)
-    end
 
     # Parses the raw email headers into a Astrotrain::Message instance.
     def self.parse(raw)

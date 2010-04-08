@@ -5,14 +5,6 @@ require 'rr'
 require 'astrotrain'
 require 'test/unit'
 
-module Astrotrain
-  load File.dirname(__FILE__)
-
-  Message.queue_path = File.join(root, 'fixtures', 'queue')
-  FileUtils.rm_rf   Message.queue_path
-  FileUtils.mkdir_p Message.queue_path
-end
-
 class Test::Unit::TestCase
   include RR::Adapters::RRMethods
 
