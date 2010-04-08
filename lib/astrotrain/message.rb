@@ -8,6 +8,8 @@ module Astrotrain
     ICONV_CONVERSIONS = %w(utf-8 ISO-8859-1 ISO-8859-2 ISO-8859-3 ISO-8859-4 ISO-8859-5 ISO-8859-6 ISO-8859-7 ISO-8859-8 ISO-8859-9
       ISO-8859-15 GB2312)
 
+    EMAIL_REGEX = /[\w\.\_\%\+\-]+@[\w\-\_\.]+/
+
     # Reference to the TMail::Mail object that parsed the raw email.
     attr_reader :mail
 
@@ -23,11 +25,20 @@ module Astrotrain
 
     # Parses the raw email headers into a Astrotrain::Message instance.
     #
+    # raw - String path to the file.
+    #
+    # Returns Astrotrain::Message instance.
+    def self.read(raw)
+      new ::Mail.read(raw)
+    end
+
+    # Parses the raw email headers into a Astrotrain::Message instance.
+    #
     # raw - String of the email content
     #
     # Returns Astrotrain::Message instance.
     def self.parse(raw)
-      new Mail.parse(raw)
+      new ::Mail.new(raw)
     end
 
     def initialize(mail)
@@ -48,55 +59,38 @@ module Astrotrain
     def recipients(order = nil)
       if !@recipients.key?(order)
         order = self.class.recipient_header_order if order.blank?
+        order.push :body
         recipients = []
 
-        order.each do |key|
-          parse_email_headers(send("recipients_from_#{key}"), recipients)
+        emails = order.inject([]) do |memo, key|
+          memo.push *send("recipients_from_#{key}")
         end
-        parse_email_headers recipients_from_body, recipients
 
-        recipients.flatten!
-        recipients.uniq!
-        @recipients[order] = recipients
-      else
-        @recipients[order]
+        @recipients[order] = self.class.parse_email_addresses(emails)
       end
-    end
-
-    # Returns Array of full email addresses from the TO header.
-    #   ex: ["foo <foo@bar.com>"]
-    def recipients_from_to
-      @recipient_from_to ||= [@mail['to'].to_s]
-    end
-
-    # Returns Array of full email addresses from the Delivered-To header.
-    #   ex: ["foo <foo@bar.com>"]
-    def recipients_from_delivered_to
-      @recipient_from_delivered_to ||= begin
-        arr = @mail['Delivered-To']
-        arr ? arr.map { |a| a.to_s } : []
-      end
-    end
-
-    # Returns Array of full email addresses from the X-Original-To header.
-    #   ex: ["foo <foo@bar.com>"]
-    def recipients_from_original_to
-      @recipient_from_original_to ||= [@mail['X-Original-To'].to_s]
-    end
-
-    # Parses out all email addresses from the body of the email.
-    #
-    # Returns Array of full email addresses from the email body
-    #   ex: ["foo <foo@bar.com>"]
-    def recipients_from_body
-      @recipients_from_body ||= body.scan(/<[\w\.\_\%\+\-]+@[\w\-\_\.]+>/)
+      @recipients[order]
     end
 
     # Unquotes and converts the From header to UTF-8.
     #
     # Returns String
-    def sender
-      @sender ||= TMail::Unquoter.unquote_and_convert_to(@mail['from'].to_s, "utf-8")
+    def from
+      @from ||= unquoted_header(:from)
+    end
+    alias sender from
+
+    # Unquotes and converts the To header to UTF-8.
+    #
+    # Returns String
+    def to
+      @to ||= unquoted_header(:to)
+    end
+
+    # Unquotes and converts the Cc header to UTF-8.
+    #
+    # Returns String
+    def cc
+      @cc ||= unquoted_header(:cc)
     end
 
     # Unquotes and converts the Subject header to UTF-8.
@@ -104,8 +98,6 @@ module Astrotrain
     # Returns String
     def subject
       @mail.subject
-    rescue Iconv::InvalidCharacter
-      @mail.quoted_subject
     end
 
     # Gets the unique message-id for the email, with the surrounding < and > 
@@ -113,7 +105,7 @@ module Astrotrain
     #
     # Returns String
     def message_id
-      @message_id ||= headers['message-id'].to_s.gsub(/^<|>$/, '')
+      @mail.message_id
     end
 
     # Gets the plain/text body of the email.
@@ -132,17 +124,12 @@ module Astrotrain
       @html
     end
 
-    # 
+    # Gets the attachments in the email.
+    #
+    # Returns Array of Astrotrain::Attachment objects.
     def attachments
       process_message_body if !@attachments
       @attachments
-    end
-
-    # Gets the original email data.
-    #
-    # Returns String
-    def raw
-      @mail.port.to_s
     end
 
     # Builds a hash of headers, skipping the keys specified in
@@ -152,66 +139,96 @@ module Astrotrain
     # Returns Hash of the headers with String keys and values.
     def headers
       @headers ||= begin
-        h = {}
-        @mail.header.each do |key, value|
-          next if self.class.skipped_headers.include?(key)
-          h[key] = read_header(key) 
+        @mail.header.fields.inject({}) do |memo, field|
+          name = field.name.downcase
+          self.class.skipped_headers.include?(name) ?
+            memo :
+            memo.update(name => self.class.unescape(unquoted_header(name)))
         end
-        h
       end
     end
 
     # UTILITY METHODS
 
-    # Parses a comma separated list of emails.
-    #
-    #   parse_email_addresses("foo <foo@example.com>, bar@example.com")
-    #     # => [ "foo@example.com", "bar@example.com" ]
-    #
-    # value - String list of email addresses
-    #
-    # Returns Array of email addresses.
-    def self.parse_email_addresses(value)
-      emails     = value.split(",")
-      collection = []
-      emails.each do |addr|
-        addr.strip!
-        next if addr.blank?
-        header = parse_email_address(addr.to_s)
-        collection << unescape(header[:email]) if !header[:email].blank?
-      end
-      collection
+    # Returns Array of full email addresses from the TO header.
+    #   ex: ["foo <foo@bar.com>"]
+    def recipients_from_to
+      @mail.to
     end
 
-    # Parses a single email and splits out the name and actual email address.
-    #
-    #   parse_email_address("foo <foo@example.com>")
-    #     # => {:email => "foo@example.com", :name => 'foo'}
-    #
-    # email - String of the address to parse
-    #
-    # Returns Hash with :email and :name keys.
-    def self.parse_email_address(email)
-      return {} if email.blank?
-      begin
-        header = TMail::Address.parse(email)
-        parsed = {:name => header.name}
-        if header.is_a?(TMail::AddressGroup)
-          header = header[0]
-        end
-        if !header.blank?
-          parsed[:email] = header.address
-        end
-        parsed
-      rescue SyntaxError, TMail::SyntaxError
-        email = email.scan(/\<([^\>]+)\>/)[0]
-        if email.blank?
-          return {:name => nil, :email => nil}
-        else
-          email = email[0]
-          retry
-        end
+    # Returns Array of full email addresses from the Delivered-To header.
+    #   ex: ["foo <foo@bar.com>"]
+    def recipients_from_delivered_to
+      @recipients_from_delivered_to ||= begin
+        arr = [@mail['delivered-to']]
+        arr.compact!
+        arr.flatten!
+        arr.map! { |e| e.to_s }
       end
+    end
+
+    # Returns Array of full email addresses from the X-Original-To header.
+    #   ex: ["foo <foo@bar.com>"]
+    def recipients_from_original_to
+      @recipients_from_original_to ||= begin
+        arr = [@mail['x-original-to']]
+        arr.compact!
+        arr.flatten!
+        arr.map! { |e| e.to_s }
+      end
+    end
+
+    # Parses out all email addresses from the body of the email.
+    #
+    # Returns Array of full email addresses from the email body
+    #   ex: ["foo <foo@bar.com>"]
+    def recipients_from_body
+      @recipients_from_body ||= body.scan(EMAIL_REGEX)
+    end
+
+    # Parses the quoted header values: `=?...?=`.
+    #
+    # key - String header key
+    #
+    # Returns unquoted String.
+    def unquoted_header(key)
+      if header = @mail[key]
+        Mail::Encodings.value_decode(header.value)
+      else
+        ''
+      end
+    end
+
+    # Returns a clean set of email addresses from the array of email headers.
+    # Any blank or invalid emails are dropped.
+    #
+    # emails - Array of email headers.
+    #
+    # Returns Array of email addresses.
+    def self.parse_email_addresses(emails)
+      parsed = emails.inject([]) do |memo, email|
+        memo.push *parse_email_address(email)
+      end
+      parsed.flatten!
+      parsed.uniq!
+      parsed.delete_if { |email| !email || email.size.zero? }
+      parsed.each { |email| unescape(email) }
+    end
+
+    # Parses just the email address out of an email header.  In the case of a 
+    # parsing error, use a regex to pull any emails out.
+    #
+    #   Astrotrain::Message.parse_email_address("rick <rick@foo.com>") 
+    #     # => "rick@foo.com"
+    #
+    # email - header String
+    #
+    # Returns email String.
+    def self.parse_email_address(email)
+      list = Mail::AddressList.new(email).addresses.
+        map! { |a| a.address }
+    rescue Mail::Field::ParseError
+      email.scan(EMAIL_REGEX)
     end
 
     # Stolen from Rack/Camping, remove the "+" => " " translation
@@ -220,21 +237,6 @@ module Astrotrain
         [$1.delete('%')].pack('H*')
       }
       s
-    end
-
-    # Reads a header from the key and attempts to parse it.  If parsing
-    # fails, the raw header body is sent.
-    #
-    # key - String header key
-    #
-    # Returns the parsed String header value.
-    def read_header(key)
-      header = @mail.header[key]
-      begin
-        header.to_s
-      rescue
-        header.raw_body
-      end
     end
 
     # Parses the mail's parts, assembling the plain/HTML Strings, as well as
@@ -248,11 +250,11 @@ module Astrotrain
         @body = @body.join("\n")
         @html = @html.join("\n")
       else
-        if @mail.content_type == 'text/html'
-          @html = @mail.body
+        if @mail.content_type =~ /text\/html/
+          @html = @mail.body.to_s
           @body = ''
         else
-          @body = @mail.body
+          @body = @mail.body.to_s
           @html = ''
         end
       end
@@ -271,32 +273,16 @@ module Astrotrain
           scan_parts(part)
         else
           case part.content_type
-            when 'text/plain'
-              @body << part.body
-            when 'text/html'
-              @html << part.body
+            when /text\/plain/
+              @body << part.body.to_s
+            when /text\/html/
+              @html << part.body.to_s
             else
               att = Attachment.new(part)
               @attachments << att if att.attached?
           end
         end
       end
-    end
-
-    # Parses the given array of values and adds them to the collection.
-    #
-    # values     - Array of full email addresses: ["foo <foo@bar.com>", "bar@bar.com"]
-    # collection - Array of accumulated email addresses after going through
-    #              Astrotrain::Mail.parse_email_addresses: ["foo@bar.com", "bar@bar.com"]
-    #
-    # Returns the collection Array.
-    def parse_email_headers(values, collection)
-      values.each do |value|
-        if !value.blank?
-          collection.push *self.class.parse_email_addresses(value)
-        end
-      end
-      collection
     end
 
     # Converts a given String to utf-8 by trying various character sets.  TMail

@@ -12,7 +12,7 @@ class TransportTest < Test::Unit::TestCase
     assert_equal msg.body,             params[:body]
     assert_equal msg.recipients.first, params[:emails]
     assert_equal 'bandit.jpg',         params[:attachments][0].filename
-    assert_equal 'image/jpeg',         params[:attachments][0].content_type
+    assert_match 'image/jpeg',         params[:attachments][0].content_type
     assert_equal '<ddf0a08f0812091503x4696425eid0fa5910ad39bce1@mail.examle.com>', params[:headers]['message-id']
   end
 end

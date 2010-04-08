@@ -12,18 +12,14 @@ module Astrotrain
     end
 
     def filename
-      @filename ||= begin
-        f = @part.type_param("name") || @part.disposition_param('filename')
-        f.strip!
-        f
-      end
+      @part.filename
     end
+
+    alias path filename
 
     # For IO API compatibility when used with Rest-Client
     def close
     end
-
-    alias path filename
 
     def read(value = nil)
       if read?
@@ -39,7 +35,7 @@ module Astrotrain
     end
 
     def data
-      @part.body
+      @part.body.to_s
     end
 
     def attached?
