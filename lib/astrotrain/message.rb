@@ -25,68 +25,9 @@ module Astrotrain
     #
     # raw - String of the email content
     #
-    # Returns Astrotrain::Mail instance.
+    # Returns Astrotrain::Message instance.
     def self.parse(raw)
       new Mail.parse(raw)
-    end
-
-    # Parses a comma separated list of emails.
-    #
-    #   parse_email_addresses("foo <foo@example.com>, bar@example.com")
-    #     # => [ "foo@example.com", "bar@example.com" ]
-    #
-    # value - String list of email addresses
-    #
-    # Returns Array of email addresses.
-    def self.parse_email_addresses(value)
-      emails     = value.split(",")
-      collection = []
-      emails.each do |addr|
-        addr.strip!
-        next if addr.blank?
-        header = parse_email_address(addr.to_s)
-        collection << unescape(header[:email]) if !header[:email].blank?
-      end
-      collection
-    end
-
-    # Parses a single email and splits out the name and actual email address.
-    #
-    #   parse_email_address("foo <foo@example.com>")
-    #     # => {:email => "foo@example.com", :name => 'foo'}
-    #
-    # email - String of the address to parse
-    #
-    # Returns Hash with :email and :name keys.
-    def self.parse_email_address(email)
-      return {} if email.blank?
-      begin
-        header = TMail::Address.parse(email)
-        parsed = {:name => header.name}
-        if header.is_a?(TMail::AddressGroup)
-          header = header[0]
-        end
-        if !header.blank?
-          parsed[:email] = header.address
-        end
-        parsed
-      rescue SyntaxError, TMail::SyntaxError
-        email = email.scan(/\<([^\>]+)\>/)[0]
-        if email.blank?
-          return {:name => nil, :email => nil}
-        else
-          email = email[0]
-          retry
-        end
-      end
-    end
-
-    # Stolen from Rack/Camping, remove the "+" => " " translation
-    def self.unescape(s)
-      s.gsub!(/((?:%[0-9a-fA-F]{2})+)/n){
-        [$1.delete('%')].pack('H*')
-      }
-      s
     end
 
     def initialize(mail)
@@ -220,7 +161,67 @@ module Astrotrain
       end
     end
 
-  protected
+    # UTILITY METHODS
+
+    # Parses a comma separated list of emails.
+    #
+    #   parse_email_addresses("foo <foo@example.com>, bar@example.com")
+    #     # => [ "foo@example.com", "bar@example.com" ]
+    #
+    # value - String list of email addresses
+    #
+    # Returns Array of email addresses.
+    def self.parse_email_addresses(value)
+      emails     = value.split(",")
+      collection = []
+      emails.each do |addr|
+        addr.strip!
+        next if addr.blank?
+        header = parse_email_address(addr.to_s)
+        collection << unescape(header[:email]) if !header[:email].blank?
+      end
+      collection
+    end
+
+    # Parses a single email and splits out the name and actual email address.
+    #
+    #   parse_email_address("foo <foo@example.com>")
+    #     # => {:email => "foo@example.com", :name => 'foo'}
+    #
+    # email - String of the address to parse
+    #
+    # Returns Hash with :email and :name keys.
+    def self.parse_email_address(email)
+      return {} if email.blank?
+      begin
+        header = TMail::Address.parse(email)
+        parsed = {:name => header.name}
+        if header.is_a?(TMail::AddressGroup)
+          header = header[0]
+        end
+        if !header.blank?
+          parsed[:email] = header.address
+        end
+        parsed
+      rescue SyntaxError, TMail::SyntaxError
+        email = email.scan(/\<([^\>]+)\>/)[0]
+        if email.blank?
+          return {:name => nil, :email => nil}
+        else
+          email = email[0]
+          retry
+        end
+      end
+    end
+
+    # Stolen from Rack/Camping, remove the "+" => " " translation
+    def self.unescape(s)
+      s.gsub!(/((?:%[0-9a-fA-F]{2})+)/n){
+        [$1.delete('%')].pack('H*')
+      }
+      s
+    end
+
     # Reads a header from the key and attempts to parse it.  If parsing
     # fails, the raw header body is sent.
     #
