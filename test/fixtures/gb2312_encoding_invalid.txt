@@ -1,0 +1,15 @@
+Sender: sender@example.com
+Message-ID: <20090702215301207766@188.com>
+From: "2009-07-02 21:53:01" <sender@example.com>
+To: <info@example.com>
+Subject: spam
+Date: Thu, 2 Jul 2009 21:52:54 +0800
+MIME-Version: 1.0
+	charset="gb2312"
+Content-Transfer-Encoding: base64
+
+RGVhciBTaXJzLCANCldlIGFyZSBnaXZlbiB0byB1bmRlcnN0YW5kIHRoYXQg
+eW91IGFyZSAgTWFudWZhY3R1cmVyIG9mICBwbHN0aWMgIEJvdHRsZXMNCkFk
+ZKO6IGJsYWggQ2hpbmE=
+
+
