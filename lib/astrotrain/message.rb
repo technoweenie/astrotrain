@@ -179,7 +179,7 @@ module Astrotrain
     #
     # Returns String
     def body
-      process_message_body if @body
+      process_message_body if !@body
       @body
     end
 
@@ -187,13 +187,13 @@ module Astrotrain
     #
     # Returns String
     def html
-      process_message_body if @html
+      process_message_body if !@html
       @html
     end
 
     # 
     def attachments
-      process_message_body if @attachments
+      process_message_body if !@attachments
       @attachments
     end
 
@@ -242,8 +242,7 @@ module Astrotrain
     # Returns nothing.
     def process_message_body
       if @mail.multipart?
-        @attachments.clear
-        @body, @html = [], []
+        @attachments, @body, @html = [], [], []
         scan_parts(@mail)
         @body = @body.join("\n")
         @html = @html.join("\n")
