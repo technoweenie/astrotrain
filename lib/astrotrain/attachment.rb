@@ -1,4 +1,6 @@
 module Astrotrain
+  # Simple class that wraps a TMail part attachment in the IO API for 
+  # RestClient
   class Attachment
     def initialize(part)
       @part    = part
