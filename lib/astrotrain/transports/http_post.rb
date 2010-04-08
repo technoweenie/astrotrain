@@ -30,6 +30,7 @@ module Astrotrain
         message.attachments.each_with_index do |a, i|
           h[:attachments][i] = a
         end
+        h.delete(:attachments) if h[:attachments].empty?
         h
       end
     end

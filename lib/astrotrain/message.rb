@@ -245,8 +245,9 @@ module Astrotrain
     #
     # Returns nothing.
     def process_message_body
+      @attachments = []
       if @mail.multipart?
-        @attachments, @body, @html = [], [], []
+        @body, @html = [], []
         scan_parts(@mail)
         @body = @body.join("\n")
         @html = @html.join("\n")
