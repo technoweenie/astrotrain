@@ -18,7 +18,7 @@ class MessageParsingTest < Test::Unit::TestCase
     msg  = Astrotrain::Message.parse(raw)
 
     assert_equal 'a16be7390810161014n52b603e9k1aa6bb803c6735aa@mail.gmail.com', msg.message_id
-    expected = {'mime-version' => '1.0', 'content-type' => 'text/plain; charset=ISO-8859-1', 'to' => 'Processor <processor@astrotrain.com>',
+    expected = {'mime-version' => '1.0', 'content-type' => 'text/plain; charset=ISO-8859-1', 'to' => 'Processor <processor@astrotrain.com>', 'date' => "Thu, 16 Oct 2008 10:14:18 -0700",
       'x-custom' => 'reply', 'content-transfer-encoding' => '7bit', 'content-disposition' => 'inline', 'message-id' => '<a16be7390810161014n52b603e9k1aa6bb803c6735aa@mail.gmail.com>'}
     assert_equal expected, msg.headers
 
