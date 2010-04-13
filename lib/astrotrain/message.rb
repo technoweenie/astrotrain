@@ -154,29 +154,19 @@ module Astrotrain
     # Returns Array of full email addresses from the TO header.
     #   ex: ["foo <foo@bar.com>"]
     def recipients_from_to
-      @mail.to
+      to
     end
 
     # Returns Array of full email addresses from the Delivered-To header.
     #   ex: ["foo <foo@bar.com>"]
     def recipients_from_delivered_to
-      @recipients_from_delivered_to ||= begin
-        arr = [@mail['delivered-to']]
-        arr.compact!
-        arr.flatten!
-        arr.map! { |e| e.to_s }
-      end
+      @recipients_from_delivered_to ||= unquoted_address_header('delivered-to')
     end
 
     # Returns Array of full email addresses from the X-Original-To header.
     #   ex: ["foo <foo@bar.com>"]
     def recipients_from_original_to
-      @recipients_from_original_to ||= begin
-        arr = [@mail['x-original-to']]
-        arr.compact!
-        arr.flatten!
-        arr.map! { |e| e.to_s }
-      end
+      @recipients_from_original_to ||= unquoted_address_header('x-original-to')
     end
 
     # Parses out all email addresses from the body of the email.
@@ -184,7 +174,10 @@ module Astrotrain
     # Returns Array of full email addresses from the email body
     #   ex: ["foo <foo@bar.com>"]
     def recipients_from_body
-      @recipients_from_body ||= body.scan(EMAIL_REGEX)
+      @recipients_from_body ||= begin
+        emails_from_body = body.scan(EMAIL_REGEX)
+        address_list_for(emails_from_body * ", ")
+      end
     end
 
     # Parses the quoted header values: `=?...?=`.
@@ -200,10 +193,21 @@ module Astrotrain
       end
     end
 
+    def address_list_for(emails)
+      addrs = Mail::AddressList.new(self.class.unescape(emails))
+      addrs.addresses.each { |a| a.decoded }.uniq
+    rescue Mail::Field::ParseError
+      address_list_for(emails.scan(EMAIL_REGEX) * ", ")
+    end
+
     def unquoted_address_header(key)
       if header = @mail[key]
-        addrs = Mail::AddressList.new(header.value)
-        addrs.addresses.each { |a| a.decoded }
+        emails = if header.respond_to?(:value)
+          header.value
+        else
+          header.map { |h| h.value } * ", "
+        end
+        address_list_for(emails)
       else
         []
       end
@@ -216,29 +220,9 @@ module Astrotrain
     #
     # Returns Array of email addresses.
     def self.parse_email_addresses(emails)
-      parsed = emails.inject([]) do |memo, email|
-        memo.push *parse_email_address(email)
-      end
-      parsed.flatten!
-      parsed.uniq!
-      parsed.delete_if { |email| !email || email.size.zero? }
-      parsed.each { |email| unescape(email) }
-    end
-
-    # Parses just the email address out of an email header.  In the case of a 
-    # parsing error, use a regex to pull any emails out.
-    #
-    #   Astrotrain::Message.parse_email_address("rick <rick@foo.com>") 
-    #     # => "rick@foo.com"
-    #
-    # email - header String
-    #
-    # Returns email String.
-    def self.parse_email_address(email)
-      list = Mail::AddressList.new(email).addresses.
-        map! { |a| a.address }
-    rescue Mail::Field::ParseError
-      email.scan(EMAIL_REGEX)
+      addrs = emails.map { |a| a.address }
+      addrs.uniq!
+      addrs
     end
 
     # Stolen from Rack/Camping, remove the "+" => " " translation

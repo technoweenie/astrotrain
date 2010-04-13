@@ -162,20 +162,17 @@ class MessageParsingTest < Test::Unit::TestCase
   end
 
   test "with multiple Delivered To headers" do
-    raw     = mail(:multiple_delivered_to)
+    raw = mail(:multiple_delivered_to)
     msg = Astrotrain::Message.parse(raw)
 
     assert_equal %w(processor-reply-57@custom.com processor-delivered@astrotrain.com processor@astrotrain.com), msg.recipients
   end
 
   test "parsing invalid email collection" do
-    assert_equal %w(ricky@foo.com bobby@foo.com), 
-      Astrotrain::Message.parse_email_address("Ricky <ricky@foo.com>, Bobby:bobby@foo.com")
-  end
-
-  test "parsing invalid email" do
-    assert_equal(%w(email@server.com), 
-      Astrotrain::Message.parse_email_address("Name:email@server.com"))
+    raw = mail(:bad_email_format)
+    msg = Astrotrain::Message.parse(raw)
+    assert_equal 'ricky@foo.com', msg.from[0].address
+    assert_equal 'bobby@foo.com', msg.from[1].address
   end
 
   test "parsing undisclosed recipients" do
