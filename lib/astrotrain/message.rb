@@ -67,14 +67,15 @@ module Astrotrain
           memo.push *send("recipients_from_#{key}")
         end
 
-        @recipients[order] = self.class.parse_email_addresses(emails)
+        @recipients[order] = emails.map! { |em| em.address }
+        @recipients[order].uniq!
       end
       @recipients[order]
     end
 
     # Unquotes and converts the From header to UTF-8.
     #
-    # Returns String
+    # Returns Array of Mail::Address objects
     def from
       @from ||= unquoted_address_header(:from)
     end
@@ -82,14 +83,14 @@ module Astrotrain
 
     # Unquotes and converts the To header to UTF-8.
     #
-    # Returns String
+    # Returns Array of Mail::Address objects
     def to
       @to ||= unquoted_address_header(:to)
     end
 
     # Unquotes and converts the Cc header to UTF-8.
     #
-    # Returns String
+    # Returns Array of Mail::Address objects
     def cc
       @cc ||= unquoted_address_header(:cc)
     end
@@ -151,28 +152,30 @@ module Astrotrain
 
     # UTILITY METHODS
 
-    # Returns Array of full email addresses from the TO header.
-    #   ex: ["foo <foo@bar.com>"]
+    # Parses the 'To' header for email address.
+    #
+    # Returns Array of Mail::Address objects
     def recipients_from_to
       to
     end
 
-    # Returns Array of full email addresses from the Delivered-To header.
-    #   ex: ["foo <foo@bar.com>"]
+    # Parses the 'Delivered-To' header for email address.
+    #
+    # Returns Array of Mail::Address objects
     def recipients_from_delivered_to
       @recipients_from_delivered_to ||= unquoted_address_header('delivered-to')
     end
 
-    # Returns Array of full email addresses from the X-Original-To header.
-    #   ex: ["foo <foo@bar.com>"]
+    # Parses the 'X-Original-To' header for email address.
+    #
+    # Returns Array of Mail::Address objects
     def recipients_from_original_to
       @recipients_from_original_to ||= unquoted_address_header('x-original-to')
     end
 
     # Parses out all email addresses from the body of the email.
     #
-    # Returns Array of full email addresses from the email body
-    #   ex: ["foo <foo@bar.com>"]
+    # Returns Array of Mail::Address objects
     def recipients_from_body
       @recipients_from_body ||= begin
         emails_from_body = body.scan(EMAIL_REGEX)
@@ -182,7 +185,7 @@ module Astrotrain
 
     # Parses the quoted header values: `=?...?=`.
     #
-    # key - String header key
+    # key - String or Symbol header name
     #
     # Returns unquoted String.
     def unquoted_header(key)
@@ -193,13 +196,12 @@ module Astrotrain
       end
     end
 
-    def address_list_for(emails)
-      addrs = Mail::AddressList.new(self.class.unescape(emails))
-      addrs.addresses.each { |a| a.decoded }.uniq
-    rescue Mail::Field::ParseError
-      address_list_for(emails.scan(EMAIL_REGEX) * ", ")
-    end
-
+    # Parses the given header for email addresses. Handles the case where some
+    # keys return arrays if there are multiple values.
+    #
+    # key - String or Symbol header name
+    #
+    # Returns Array of Mail::Address objects
     def unquoted_address_header(key)
       if header = @mail[key]
         emails = if header.respond_to?(:value)
@@ -213,16 +215,16 @@ module Astrotrain
       end
     end
 
-    # Returns a clean set of email addresses from the array of email headers.
-    # Any blank or invalid emails are dropped.
+    # Uses Mail::AddressList to parse the given comma separated emails.
     #
-    # emails - Array of email headers.
-    #
-    # Returns Array of email addresses.
-    def self.parse_email_addresses(emails)
-      addrs = emails.map { |a| a.address }
-      addrs.uniq!
-      addrs
+    # emails - String of emails (foo@example.com, Bar <bar@example.com...)
+    # 
+    # Returns Array of Mail::Address objects
+    def address_list_for(emails)
+      addrs = Mail::AddressList.new(self.class.unescape(emails))
+      addrs.addresses.each { |a| a.decoded }.uniq
+    rescue Mail::Field::ParseError
+      address_list_for(emails.scan(EMAIL_REGEX) * ", ")
     end
 
     # Stolen from Rack/Camping, remove the "+" => " " translation
