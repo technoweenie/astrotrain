@@ -76,7 +76,7 @@ module Astrotrain
     #
     # Returns String
     def from
-      @from ||= unquoted_header(:from)
+      @from ||= unquoted_address_header(:from)
     end
     alias sender from
 
@@ -84,14 +84,14 @@ module Astrotrain
     #
     # Returns String
     def to
-      @to ||= unquoted_header(:to)
+      @to ||= unquoted_address_header(:to)
     end
 
     # Unquotes and converts the Cc header to UTF-8.
     #
     # Returns String
     def cc
-      @cc ||= unquoted_header(:cc)
+      @cc ||= unquoted_address_header(:cc)
     end
 
     # Unquotes and converts the Subject header to UTF-8.
@@ -197,6 +197,15 @@ module Astrotrain
         Mail::Encodings.value_decode(header.value)
       else
         ''
+      end
+    end
+
+    def unquoted_address_header(key)
+      if header = @mail[key]
+        addrs = Mail::AddressList.new(header.value)
+        addrs.addresses.each { |a| a.decoded }
+      else
+        []
       end
     end
 

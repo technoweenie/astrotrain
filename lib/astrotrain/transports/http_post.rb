@@ -23,14 +23,20 @@ module Astrotrain
       #
       # Returns a Hash for RestClient.post
       def self.create_hash(message, recipient)
-        all_emails = message.recipients - [recipient]
-        h = {:subject => message.subject, :to => recipient, :from => message.sender, 
-             :body => message.body, :emails => all_emails.join(", "), :html => message.html,
+        h = {:subject => message.subject, :to => {}, :from => {}, :cc => {},
+             :body => message.body, :emails => message.recipients.join(", "), :html => message.html,
              :headers => message.headers, :attachments => {}}
+        [:to, :from, :cc].each do |key|
+          message.send(key).each_with_index do |addr, i|
+            h[key][i] = {:name => addr.display_name, :address => addr.address}
+          end
+        end
         message.attachments.each_with_index do |a, i|
           h[:attachments][i] = a
         end
-        h.delete(:attachments) if h[:attachments].empty?
+        [:attachments, :to, :from, :cc].each do |key|
+          h.delete(key) if h[key].empty?
+        end
         h
       end
     end

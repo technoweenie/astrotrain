@@ -18,14 +18,16 @@ class MessageParsingTest < Test::Unit::TestCase
     msg  = Astrotrain::Message.parse(raw)
 
     assert_equal 'a16be7390810161014n52b603e9k1aa6bb803c6735aa@mail.gmail.com', msg.message_id
-    expected = {'mime-version' => '1.0', 'content-type' => 'text/plain; charset=ISO-8859-1', 'to' => 'Processor <processor@astrotrain.com>', 'date' => "Thu, 16 Oct 2008 10:14:18 -0700",
+    expected = {'mime-version' => '1.0', 'content-type' => 'text/plain; charset=ISO-8859-1', 'date' => "Thu, 16 Oct 2008 10:14:18 -0700",
       'x-custom' => 'reply', 'content-transfer-encoding' => '7bit', 'content-disposition' => 'inline', 'message-id' => '<a16be7390810161014n52b603e9k1aa6bb803c6735aa@mail.gmail.com>'}
     assert_equal expected, msg.headers
 
     assert_kind_of Mail::Message, msg.mail
 
     assert_equal %w(processor@astrotrain.com), msg.recipients
-    assert_equal %(Bob <user@example.com>),    msg.sender
+    assert_equal %(Bob <user@example.com>),    msg.sender.to_s
+    assert_equal %(Bob),                       msg.sender.first.display_name
+    assert_equal %(user@example.com),          msg.sender.first.address
     assert_equal 'Fwd: blah blah',             msg.subject
     assert_equal body,                         msg.body
   end
@@ -33,8 +35,10 @@ class MessageParsingTest < Test::Unit::TestCase
   test "iso 8859 1 encoded headers" do
     raw = mail("iso-8859-1")
     msg = Astrotrain::Message.parse(raw)
-    assert_equal "Matth\351w <user@example.com>", msg.sender
-    assert_equal "Matth\351w <cc@example.com>",   msg.cc
+    assert_equal "user@example.com", msg.sender.first.address
+    assert_equal "cc@example.com",   msg.cc.first.address
+    assert_equal "Matth\351w",       msg.sender.first.display_name
+    assert_equal "Matth\351w",       msg.cc.first.display_name
   end
 
   test "gb2312 encoded body" do
@@ -58,7 +62,8 @@ class MessageParsingTest < Test::Unit::TestCase
   test "utf-8 encoded headers" do
     raw = mail('utf-8')
     msg = Astrotrain::Message.parse(raw)
-    assert_equal "isnard naik\303\251 <user@example.com>", msg.sender
+    assert_equal "isnard naik\303\251", msg.sender.first.display_name
+    assert_equal "user@example.com",    msg.sender.first.address
   end
 
   test "multipart message with name property on Content Type" do
@@ -111,7 +116,8 @@ class MessageParsingTest < Test::Unit::TestCase
     assert_kind_of Mail::Message,                                msg.mail
     assert_equal %w(processor@astrotrain.com other@example.com), msg.recipients
     assert_equal %w(other@example.com processor@astrotrain.com), msg.recipients(%w(to original_to delivered_to))
-    assert_equal %(user@example.com, boss@example.com),          msg.sender
+    assert_equal %(user@example.com),                            msg.sender[0].address
+    assert_equal %(boss@example.com),                            msg.sender[1].address
     assert_equal 'Fwd: blah blah',                               msg.subject
     assert_equal body,                                           msg.body
   end
@@ -149,9 +155,10 @@ class MessageParsingTest < Test::Unit::TestCase
     assert_equal %w(processor-reply-57@custom.com processor-delivered@astrotrain.com processor@astrotrain.com), msg.recipients
     assert_equal %w(processor-delivered@astrotrain.com processor-reply-57@custom.com processor@astrotrain.com), msg.recipients(%w(delivered_to original_to to))
     assert_equal %w(processor@astrotrain.com processor-reply-57@custom.com processor-delivered@astrotrain.com), msg.recipients(%w(to original_to delivered_to))
-    assert_equal %(user@example.com, boss@example.com), msg.sender
-    assert_equal 'Fwd: blah blah',                      msg.subject
-    assert_equal body,                                  msg.body
+    assert_equal 'user@example.com', msg.sender[0].address
+    assert_equal 'boss@example.com', msg.sender[1].address
+    assert_equal 'Fwd: blah blah',   msg.subject
+    assert_equal body,               msg.body
   end
 
   test "with multiple Delivered To headers" do
