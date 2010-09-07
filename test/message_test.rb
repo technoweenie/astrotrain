@@ -55,7 +55,7 @@ class MessageParsingTest < Test::Unit::TestCase
     msg = Astrotrain::Message.parse(raw)
     # encoding problem?
     # "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd： blah China"
-    assert_equal "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd\302\243\302\272 blah China",
+    assert_equal "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd\243\272 blah China", 
       msg.body
   end
 
