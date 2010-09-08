@@ -36,7 +36,8 @@ Gem::Specification.new do |s|
   ## List your runtime dependencies here. Runtime dependencies are those
   ## that are needed for an end user to actually USE your code.
   s.add_dependency('mail',        ["~> 2.1.5"])
-  s.add_dependency('rest-client', ["~> 1.4.2"])
+  s.add_dependency('i18n',        ["~> 0.4.1"])
+  s.add_dependency('faraday',     ["~> 0.5.0"])
 
   ## List your development dependencies here. Development dependencies are
   ## those that are only needed during development

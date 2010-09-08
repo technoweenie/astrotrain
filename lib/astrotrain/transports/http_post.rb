@@ -3,6 +3,14 @@ require 'restclient'
 module Astrotrain
   module Transports
     module HttpPost
+      class << self
+        attr_writer :connection
+      end
+
+      def self.connection
+        @connection ||= Faraday.default_connection
+      end
+
       # Sends the message to the given address.
       #
       # url       - String address of the recipient service
@@ -13,7 +21,7 @@ module Astrotrain
       # Raises RestClient::Exception for any code not between 200..206 or 301..302
       def self.process(url, message, recipient = nil)
         recipient ||= message.recipients.first
-        RestClient.post url, create_hash(message, recipient)
+        connection.post url, create_hash(message, recipient)
       end
 
       # Creates a param hash for RestClient.

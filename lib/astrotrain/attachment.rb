@@ -1,6 +1,6 @@
 module Astrotrain
   # Simple class that wraps a TMail part attachment in the IO API for 
-  # RestClient
+  # Faraday
   class Attachment
     def initialize(part)
       @part    = part
@@ -15,11 +15,7 @@ module Astrotrain
       @part.filename
     end
 
-    alias path filename
-
-    # For IO API compatibility when used with Rest-Client
-    def close
-    end
+    alias local_path filename
 
     def read(value = nil)
       if read?
@@ -36,6 +32,10 @@ module Astrotrain
 
     def data
       @part.body.to_s
+    end
+
+    def length
+      @part.body.size
     end
 
     def attached?
