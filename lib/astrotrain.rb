@@ -1,8 +1,8 @@
 module Astrotrain
   VERSION = '0.6.0'
 
-  autoload :Attachment, 'astrotrain/attachment'
-  autoload :Message,    'astrotrain/message'
+  require 'astrotrain/attachment'
+  require 'astrotrain/message'
 
   # Transports are responsible for getting this email where it is supposed
   # to go.

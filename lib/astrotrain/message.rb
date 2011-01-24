@@ -5,10 +5,12 @@ require 'iconv'
 module Astrotrain
   # Wrapper around a TMail object
   class Message
-    # Attempts to run iconv conversions in common charsets to UTF-8.  Needed for 
-    # those crappy emails that don't properly specify a charset in the headers. 
-    ICONV_CONVERSIONS = %w(utf-8 ISO-8859-1 ISO-8859-2 ISO-8859-3 ISO-8859-4 ISO-8859-5 ISO-8859-6 ISO-8859-7 ISO-8859-8 ISO-8859-9
-      ISO-8859-15 GB2312)
+    # Attempts to run iconv conversions in common charsets to UTF-8.  Needed
+    # for those crappy emails that don't properly specify a charset in the
+    # headers.
+    ICONV_CONVERSIONS = %w(utf-8 ISO-8859-1 ISO-8859-2 ISO-8859-3 ISO-8859-4
+      ISO-8859-5 ISO-8859-6 ISO-8859-7 ISO-8859-8 ISO-8859-9 ISO-8859-15
+      GB2312)
 
     EMAIL_REGEX = /[\w\.\_\%\+\-]+@[\w\-\_\.]+/
 
@@ -20,27 +22,29 @@ module Astrotrain
     end
 
     # Astrotrain::Message#headers does not show these headers
-    self.skipped_headers        = Set.new %w(to cc from subject delivered-to x-original-to received)
+    self.skipped_headers = Set.new %w(to cc from subject delivered-to
+      x-original-to received)
 
-    # This is the default order that Astrotrain will search for a matching recipient.
+    # This is the default order that Astrotrain will search for a matching
+    # recipient.
     self.recipient_header_order = %w(original_to delivered_to to)
 
-    # Parses the raw email headers into a Astrotrain::Message instance.
+    # Public: Parses the raw email headers into a Astrotrain::Message instance.
     #
-    # raw - String path to the file.
+    # path - String path to the file.
     #
     # Returns Astrotrain::Message instance.
-    def self.read(raw)
-      new ::Mail.read(raw)
+    def self.read(path)
+      new(::Mail.read(path))
     end
 
-    # Parses the raw email headers into a Astrotrain::Message instance.
+    # Public: Parses the raw email headers into a Astrotrain::Message instance.
     #
     # raw - String of the email content
     #
     # Returns Astrotrain::Message instance.
     def self.parse(raw)
-      new ::Mail.new(raw)
+      new(::Mail.new(raw))
     end
 
     def initialize(mail)
@@ -49,12 +53,12 @@ module Astrotrain
       @recipients  = {}
     end
 
-    # Gets the recipients of an email using the To/Delivered-To/X-Original-To 
-    # headers.  It's not always straightforward which email we want when 
-    # dealing with filters and forward rules.
+    # Public: Gets the recipients of an email using the
+    # To/Delivered-To/X-Original-To headers.  It's not always straightforward
+    # which email we want when dealing with filters and forward rules.
     #
-    # order - Array of email header names that specifies the order that the 
-    #         list of recipient emails is assembled.  Valid strings are: 
+    # order - Array of email header names that specifies the order that the
+    #         list of recipient emails is assembled.  Valid strings are:
     #         'original_to', 'delivered_to', and 'to'.
     #
     # Returns Array of possible recipients.
@@ -74,7 +78,7 @@ module Astrotrain
       @recipients[order]
     end
 
-    # Unquotes and converts the From header to UTF-8.
+    # Public: Unquotes and converts the From header to UTF-8.
     #
     # Returns Array of Mail::Address objects
     def from
@@ -82,36 +86,36 @@ module Astrotrain
     end
     alias sender from
 
-    # Unquotes and converts the To header to UTF-8.
+    # Public: Unquotes and converts the To header to UTF-8.
     #
     # Returns Array of Mail::Address objects
     def to
       @to ||= unquoted_address_header(:to)
     end
 
-    # Unquotes and converts the Cc header to UTF-8.
+    # Public: Unquotes and converts the Cc header to UTF-8.
     #
     # Returns Array of Mail::Address objects
     def cc
       @cc ||= unquoted_address_header(:cc)
     end
 
-    # Unquotes and converts the Subject header to UTF-8.
+    # Public: Unquotes and converts the Subject header to UTF-8.
     #
     # Returns String
     def subject
       @mail.subject
     end
 
-    # Gets the unique message-id for the email, with the surrounding < and > 
-    # parsed out.
+    # Public: Gets the unique message-id for the email, with the surrounding
+    # `<` and `>` parsed out.
     #
     # Returns String
     def message_id
       @mail.message_id
     end
 
-    # Gets the plain/text body of the email.
+    # Public: Gets the plain/text body of the email.
     #
     # Returns String
     def body
@@ -119,7 +123,7 @@ module Astrotrain
       @body
     end
 
-    # Gets the html body of the email.
+    # Public: Gets the html body of the email.
     #
     # Returns String
     def html
@@ -127,7 +131,7 @@ module Astrotrain
       @html
     end
 
-    # Gets the attachments in the email.
+    # Public: Gets the attachments in the email.
     #
     # Returns Array of Astrotrain::Attachment objects.
     def attachments
@@ -135,7 +139,7 @@ module Astrotrain
       @attachments
     end
 
-    # Builds a hash of headers, skipping the keys specified in
+    # Public: Builds a hash of headers, skipping the keys specified in
     # #skipped_headers.  If header values cannot be parsed, the original
     # raw value is provided.
     #
@@ -219,7 +223,7 @@ module Astrotrain
     # Uses Mail::AddressList to parse the given comma separated emails.
     #
     # emails - String of emails (foo@example.com, Bar <bar@example.com...)
-    # 
+    #
     # Returns Array of Mail::Address objects
     def address_list_for(emails)
       addrs = Mail::AddressList.new(self.class.unescape(emails))

@@ -11,14 +11,15 @@ module Astrotrain
         @connection ||= Faraday.default_connection
       end
 
-      # Sends the message to the given address.
+      # Public: Sends the message to the given address.
       #
       # url       - String address of the recipient service
       # message   - Astrotrain::Message instance
       # recipient - optional String email of the main recipient
       #
       # Returns a RestClient::Response object for responses between 200..206
-      # Raises RestClient::Exception for any code not between 200..206 or 301..302
+      # Raises RestClient::Exception for any code not between 200..206 or
+      # 301..302
       def self.process(url, message, recipient = nil)
         recipient ||= message.recipients.first
         connection.post url, create_hash(message, recipient)
