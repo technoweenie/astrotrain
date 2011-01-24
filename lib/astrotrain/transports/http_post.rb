@@ -1,4 +1,4 @@
-require 'restclient'
+require 'faraday'
 
 module Astrotrain
   module Transports
