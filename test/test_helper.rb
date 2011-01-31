@@ -1,13 +1,10 @@
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 
 require 'rubygems'
-require 'rr'
 require 'astrotrain'
 require 'test/unit'
 
 class Test::Unit::TestCase
-  include RR::Adapters::RRMethods
-
   ##
   # test/spec/mini
   # http://gist.github.com/307649
