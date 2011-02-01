@@ -11,12 +11,14 @@ module Astrotrain
       #             "QUEUE:KLASS"
       # message   - Astrotrain::Message instance
       # recipient - optional String email of the main recipient
+      # extra     - Optional Hash to be merged with the payload
       #
       # Returns a queued Resque::Job instance.
-      def self.process(destination, message, recipient = nil)
+      def self.process(destination, message, recipient = nil, extra = nil)
         recipient ||= message.recipients.first
         queue, *job = destination.split(":")
         payload     = create_hash(message, recipient)
+        payload.update(extra) if extra
         ::Resque::Job.create(queue, job.join(":"), payload)
       end
 

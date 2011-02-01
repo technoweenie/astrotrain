@@ -18,13 +18,16 @@ module Astrotrain
       # url       - String address of the recipient service
       # message   - Astrotrain::Message instance
       # recipient - optional String email of the main recipient
+      # extra     - Optional Hash to be merged with the payload
       #
       # Returns a RestClient::Response object for responses between 200..206
       # Raises RestClient::Exception for any code not between 200..206 or
       # 301..302
-      def self.process(url, message, recipient = nil)
+      def self.process(url, message, recipient = nil, extra = nil)
         recipient ||= message.recipients.first
-        connection.post url, create_hash(message, recipient)
+        payload     = create_hash(message, recipient)
+        payload.update(extra) if extra
+        connection.post(url, payload)
       end
 
       # Creates a param hash for RestClient.

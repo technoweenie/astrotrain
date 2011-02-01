@@ -42,10 +42,11 @@ class TransportTest < Test::Unit::TestCase
     klass = "TransportTest::Job"
     raw   = mail(:basic)
     msg   = Astrotrain::Message.parse(raw)
-    Astrotrain.process(:resque, "#{queue}:#{klass}", msg)
+    Astrotrain.process(:resque, "#{queue}:#{klass}", msg, :payload => {:a => 1})
     job = Resque.reserve(queue)
     assert_equal TransportTest::Job, job.payload_class
     payload = job.args[0]
+    assert_equal 1,                          payload['a']
     assert_equal 'processor@astrotrain.com', payload['to'][0]['address']
     assert_equal 'Processor',                payload['to'][0]['name']
     assert_equal 'user@example.com',         payload['from'][0]['address']
