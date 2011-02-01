@@ -3,6 +3,8 @@ require 'faraday'
 module Astrotrain
   module Transports
     module HttpPost
+      Astrotrain::Transports::MAP[:http] = self
+
       class << self
         attr_writer :connection
       end

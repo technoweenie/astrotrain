@@ -67,7 +67,7 @@ class MessageParsingTest < Test::Unit::TestCase
       # ruby 1.9 tried its best
       "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd\243\272 blah China"
     else
-      # ruby 1.8 
+      # ruby 1.8 ignores the weird crap
       "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd blah China"
     end
     assert_equal s, msg.body
