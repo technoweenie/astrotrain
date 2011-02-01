@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require File.expand_path(File.join(File.dirname(__FILE__), "test_helper"))
 
 class MessageParsingTest < Test::Unit::TestCase
@@ -35,10 +36,11 @@ class MessageParsingTest < Test::Unit::TestCase
   test "iso 8859 1 encoded headers" do
     raw = mail("iso-8859-1")
     msg = Astrotrain::Message.parse(raw)
+    s   = Object.const_defined?(:Encoding) ? "Matthéw" :  "Matth\351w"
     assert_equal "user@example.com", msg.sender.first.address
     assert_equal "cc@example.com",   msg.cc.first.address
-    assert_equal "Matth\351w",       msg.sender.first.display_name
-    assert_equal "Matth\351w",       msg.cc.first.display_name
+    assert_equal s,       msg.sender.first.display_name
+    assert_equal s,       msg.cc.first.display_name
   end
 
   test "gb2312 encoded body" do
@@ -46,8 +48,12 @@ class MessageParsingTest < Test::Unit::TestCase
     msg = Astrotrain::Message.parse(raw)
     # encoding problem?
     # "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd： blah China"
-    assert_equal "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd\243\272 blah China", 
-      msg.body
+    s = if Object.const_defined?(:Encoding)
+      "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd： blah China"
+    else
+      "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd\243\272 blah China"
+    end
+    assert_equal s, msg.body
   end
 
   test "gb2312 encoded body with invalid charset in mime version header" do
@@ -55,8 +61,8 @@ class MessageParsingTest < Test::Unit::TestCase
     msg = Astrotrain::Message.parse(raw)
     # encoding problem?
     # "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd： blah China"
-    assert_equal "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd\243\272 blah China", 
-      msg.body
+    s =  "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd\243\272 blah China"
+    assert_equal s, msg.body
   end
 
   test "utf-8 encoded headers" do

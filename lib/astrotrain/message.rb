@@ -1,6 +1,9 @@
+# encoding: UTF-8
+
 require 'mail'
 require 'set'
 require 'iconv'
+
 
 module Astrotrain
   # Wrapper around a TMail object
@@ -147,7 +150,8 @@ module Astrotrain
     def headers
       @headers ||= begin
         @mail.header.fields.inject({}) do |memo, field|
-          name = field.name.downcase
+          name = field.name.downcase.to_s
+          header = unquoted_header(name)
           self.class.skipped_headers.include?(name) ?
             memo :
             memo.update(name => self.class.unescape(unquoted_header(name)))
@@ -260,7 +264,14 @@ module Astrotrain
           @html = ''
         end
       end
-      if !@mail.charset
+
+      has_encoding = Object.const_defined?(:Encoding)
+      if has_encoding && @mail.charset
+        @body.force_encoding(@mail.charset)
+        @html.force_encoding(@mail.charset)
+      end
+
+      if has_encoding || !@mail.charset
         @body = convert_to_utf8(@body)
         @html = convert_to_utf8(@html)
       end
@@ -293,13 +304,20 @@ module Astrotrain
     # s - unconverted String in the wrong character set
     #
     # Returns converted String.
-    def convert_to_utf8(s)
-      ICONV_CONVERSIONS.each do |from|
-        begin
-          return Iconv.iconv(ICONV_CONVERSIONS[0], from, s).join("")
-        rescue Iconv::IllegalSequence
-        ensure
-          s
+    if Object.const_defined?(:Encoding)
+      Encoding.default_internal = "utf-8"
+      def convert_to_utf8(s)
+        s.encode(Encoding.default_internal)
+      end
+    else
+      def convert_to_utf8(s)
+        ICONV_CONVERSIONS.each do |from|
+          begin
+            return Iconv.iconv(ICONV_CONVERSIONS[0], from, s).join("")
+          rescue Iconv::IllegalSequence
+          ensure
+            s
+          end
         end
       end
     end
