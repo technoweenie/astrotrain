@@ -296,7 +296,7 @@ module Astrotrain
     def convert_to_utf8(s)
       ICONV_CONVERSIONS.each do |from|
         begin
-          return Iconv.iconv(ICONV_CONVERSIONS[0], from, s).to_s
+          return Iconv.iconv(ICONV_CONVERSIONS[0], from, s).join("")
         rescue Iconv::IllegalSequence
         ensure
           s
