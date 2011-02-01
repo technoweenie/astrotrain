@@ -8,13 +8,6 @@ require 'iconv'
 module Astrotrain
   # Wrapper around a TMail object
   class Message
-    # Attempts to run iconv conversions in common charsets to UTF-8.  Needed
-    # for those crappy emails that don't properly specify a charset in the
-    # headers.
-    ICONV_CONVERSIONS = %w(utf-8 ISO-8859-1 ISO-8859-2 ISO-8859-3 ISO-8859-4
-      ISO-8859-5 ISO-8859-6 ISO-8859-7 ISO-8859-8 ISO-8859-9 ISO-8859-15
-      GB2312)
-
     EMAIL_REGEX = /[\w\.\_\%\+\-]+@[\w\-\_\.]+/
 
     # Reference to the TMail::Mail object that parsed the raw email.
@@ -267,16 +260,8 @@ module Astrotrain
         end
       end
 
-      has_encoding = Object.const_defined?(:Encoding)
-      if has_encoding && @mail.charset
-        @body.force_encoding(@mail.charset)
-        @html.force_encoding(@mail.charset)
-      end
-
-      if has_encoding || !@mail.charset
-        @body = convert_to_utf8(@body)
-        @html = convert_to_utf8(@html)
-      end
+      @body = convert_to_utf8(@body)
+      @html = convert_to_utf8(@html)
     end
 
     # Recursive method to scan all the parts of the given part.
@@ -309,18 +294,12 @@ module Astrotrain
     if Object.const_defined?(:Encoding)
       Encoding.default_internal = "utf-8"
       def convert_to_utf8(s)
-        s.encode(Encoding.default_internal)
+        s.force_encoding(@mail.charset) if @mail.charset
+        s.encode!(Encoding.default_internal)
       end
     else
       def convert_to_utf8(s)
-        ICONV_CONVERSIONS.each do |from|
-          begin
-            return Iconv.iconv(ICONV_CONVERSIONS[0], from, s).join("")
-          rescue Iconv::IllegalSequence
-          ensure
-            s
-          end
-        end
+        Iconv.iconv("UTF-8//IGNORE", @mail.charset || "UTF-8", s).join("")
       end
     end
   end

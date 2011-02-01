@@ -49,9 +49,11 @@ class MessageParsingTest < Test::Unit::TestCase
     # encoding problem?
     # "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd： blah China"
     s = if Object.const_defined?(:Encoding)
+      # ruby 1.9 is our bro
       "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd： blah China"
     else
-      "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd\243\272 blah China"
+      # ruby 1.8 gets messed up crap
+      "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd\357\274\232 blah China"
     end
     assert_equal s, msg.body
   end
@@ -61,7 +63,13 @@ class MessageParsingTest < Test::Unit::TestCase
     msg = Astrotrain::Message.parse(raw)
     # encoding problem?
     # "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd： blah China"
-    s =  "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd\243\272 blah China"
+    s = if Object.const_defined?(:Encoding)
+      # ruby 1.9 tried its best
+      "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd\243\272 blah China"
+    else
+      # ruby 1.8 
+      "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd blah China"
+    end
     assert_equal s, msg.body
   end
 
