@@ -230,8 +230,10 @@ module Astrotrain
     #
     # Returns Array of Mail::Address objects
     def address_list_for(emails)
-      addrs = Mail::AddressList.new(self.class.unescape(emails))
-      addrs.addresses.each { |a| a.decoded }.uniq
+      list  = Mail::AddressList.new(self.class.unescape(emails))
+      addrs = list.addresses.each { |a| a.decoded }
+      addrs.uniq!
+      addrs
     rescue Mail::Field::ParseError
       address_list_for(emails.scan(EMAIL_REGEX) * ", ")
     end

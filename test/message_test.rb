@@ -26,7 +26,7 @@ class MessageParsingTest < Test::Unit::TestCase
     assert_kind_of Mail::Message, msg.mail
 
     assert_equal %w(processor@astrotrain.com), msg.recipients
-    assert_equal %(Bob <user@example.com>),    msg.sender.to_s
+    assert_equal %(Bob <user@example.com>),    msg.sender.join
     assert_equal %(Bob),                       msg.sender.first.display_name
     assert_equal %(user@example.com),          msg.sender.first.address
     assert_equal 'Fwd: blah blah',             msg.subject
