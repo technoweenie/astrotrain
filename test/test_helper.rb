@@ -20,6 +20,11 @@ class Test::Unit::TestCase
   def mail(filename)
     IO.read(File.join(File.dirname(__FILE__), 'fixtures', "#{filename}.txt"))
   end
+
+  PARSED = {}
+  def astrotrain(filename)
+    PARSED[filename] ||= Astrotrain::Message.parse(mail(filename))
+  end
 end
 
 begin

@@ -12,8 +12,7 @@ class TransportTest < Test::Unit::TestCase
   end
 
   test "posts email to webhook" do
-    raw = mail(:multipart)
-    msg = Astrotrain::Message.parse(raw)
+    msg = astrotrain(:multipart)
 
     stub_http
     Astrotrain.deliver(msg, "http://localhost/foo", 
@@ -34,8 +33,7 @@ class TransportTest < Test::Unit::TestCase
   test "queues email in resque" do
     queue = "astrotrain-test"
     klass = "TransportTest::Job"
-    raw   = mail(:basic)
-    msg   = Astrotrain::Message.parse(raw)
+    msg   = astrotrain(:basic)
     Astrotrain.deliver(msg, "resque://#{queue}/#{klass}", :payload => {:a => 1})
     job = Resque.reserve(queue)
     assert_equal TransportTest::Job, job.payload_class
@@ -53,8 +51,7 @@ class TransportTest < Test::Unit::TestCase
   end
 
   test "building http params with attachment" do
-    raw = mail(:multipart)
-    msg = Astrotrain::Message.parse(raw)
+    msg = astrotrain(:multipart)
     params = Astrotrain::Transports::HttpPost.create_hash(msg, 'bar@example.com')
 
     assert_equal 'foo@example.com',    params[:to][0][:address]
@@ -69,8 +66,7 @@ class TransportTest < Test::Unit::TestCase
   end
 
   test "building http params without attachment" do
-    raw = mail(:basic)
-    msg = Astrotrain::Message.parse(raw)
+    msg = astrotrain(:basic)
     params = Astrotrain::Transports::HttpPost.create_hash(msg, 'bar@example.com')
 
     assert_equal 'processor@astrotrain.com', params[:to][0][:address]
@@ -86,8 +82,7 @@ class TransportTest < Test::Unit::TestCase
   end
 
   test "building resque params" do
-    raw = mail(:basic)
-    msg = Astrotrain::Message.parse(raw)
+    msg = astrotrain(:basic)
     params = Astrotrain::Transports::Resque.create_hash(msg, 'bar@example.com')
 
     assert_equal 'processor@astrotrain.com', params[:to][0][:address]
