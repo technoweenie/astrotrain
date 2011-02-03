@@ -16,7 +16,7 @@ class TransportTest < Test::Unit::TestCase
     msg = Astrotrain::Message.parse(raw)
 
     stub_http
-    Astrotrain.process(:http, "http://localhost/foo", msg, 
+    Astrotrain.deliver(msg, "http://localhost/foo", 
                        :payload => {:a => 1})
     params = @last_http_env[:body]
     assert_equal 1,                    params[:a]
@@ -30,35 +30,13 @@ class TransportTest < Test::Unit::TestCase
     assert_match 'image/jpeg',         params[:attachments][0].content_type
     assert_equal '<ddf0a08f0812091503x4696425eid0fa5910ad39bce1@mail.examle.com>', params[:headers]['message-id']
   end
-  test "posts email to webhook with just url" do
-    raw = mail(:basic)
-    msg = Astrotrain::Message.parse(raw)
-
-    stub_http
-    Astrotrain.process("http://localhost/foo", msg,
-                       :payload => {:a => 1})
-    params = @last_http_env[:body]
-    assert_equal 1, params[:a]
-  end
-
-  test "queues email in resque with just url" do
-    queue = "astrotrain-test"
-    klass = "TransportTest::Job"
-    raw   = mail(:basic)
-    msg   = Astrotrain::Message.parse(raw)
-    Astrotrain.process("resque://#{queue}/#{klass}", msg, :payload => {:a => 1})
-    job = Resque.reserve(queue)
-    assert_equal TransportTest::Job, job.payload_class
-    payload = job.args[0]
-    assert_equal 1,                          payload['a']
-  end
 
   test "queues email in resque" do
     queue = "astrotrain-test"
     klass = "TransportTest::Job"
     raw   = mail(:basic)
     msg   = Astrotrain::Message.parse(raw)
-    Astrotrain.process(:resque, "#{queue}/#{klass}", msg, :payload => {:a => 1})
+    Astrotrain.deliver(msg, "resque://#{queue}/#{klass}", :payload => {:a => 1})
     job = Resque.reserve(queue)
     assert_equal TransportTest::Job, job.payload_class
     payload = job.args[0]

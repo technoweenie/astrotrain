@@ -7,31 +7,20 @@ module Astrotrain
 
   # Processes an Astrotrain message.
   #
-  # transport_key - Either a symbol mapping to a Transport class, or a 
-  #                 Transport class.
-  # destination   - String destination (URL or address) for the message.
   # message       - Astrotrain::Message instance.
+  # destination   - String URL to deliver the message.  The scheme selects 
+  #                 which Transport module to use (http://, resque://)
   # options       - Optional hash of options:
   #                 :recipient - The main String recipient of the email.
   #                 :payload   - Optional hash to be sent with the request.
   #
   # Returns nothing.
-  def self.process(transport_key, destination, message, options = {})
-    transport = if transport_key.respond_to?(:process)
-      transport_key
-    else
-      klass = Transports::MAP[transport_key]
-      if !klass
-        uri = Addressable::URI.parse(transport_key.to_s)
-        if klass = uri.scheme && Transports.load(uri.scheme.to_sym)
-          options     = message
-          message     = destination
-          destination = uri
-        end
-      end
-      klass || raise(ArgumentError, "invalid transport: #{transport_key}")
-    end
-    transport.process(destination, message, options[:recipient], options[:payload])
+  def self.deliver(message, destination, options = {})
+    uri   = Addressable::URI.parse(destination.to_s)
+    klass = Transports.load(uri.scheme)
+    klass.deliver(message, destination, 
+                  :recipient => options[:recipient],
+                  :extra     => options[:payload])
   end
 
   # Transports are responsible for getting this email where it is supposed
@@ -45,6 +34,7 @@ module Astrotrain
     MAP = {:http => :http_post, :resque => :resque}
 
     def self.load(key)
+      key   = key.to_sym if key
       value = MAP[key]
       if !value
         raise ArgumentError, "No transport #{key.inspect} found in #{MAP.keys.inspect}"

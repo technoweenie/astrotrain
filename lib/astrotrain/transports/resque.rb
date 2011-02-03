@@ -8,18 +8,19 @@ module Astrotrain
 
       # Public: Sends the message to the given address.
       #
+      # message   - Astrotrain::Message instance
       # url       - String address of the Resque in this form:
       #             "QUEUE/KLASS"
-      # message   - Astrotrain::Message instance
-      # recipient - optional String email of the main recipient
-      # extra     - Optional Hash to be merged with the payload
+      # options   - Optional Hash:
+      #             :recipient - String email of the main recipient
+      #             :extra     - Hash to be merged with the payload
       #
       # Returns a queued Resque::Job instance.
-      def self.process(destination, message, recipient = nil, extra = nil)
-        recipient ||= message.recipients.first
-        uri         = destination.is_a?(Addressable::URI) ?
-          destination :
-          Addressable::URI.parse(destination)
+      def self.deliver(message, url, options = {})
+        recipient = options[:recipient] || message.recipients.first
+        uri       = url.is_a?(Addressable::URI) ?
+          url :
+          Addressable::URI.parse(url)
         path = uri.path.dup
         path.sub! /^\//, ''
         queue, *job = path.split("/")
@@ -28,7 +29,9 @@ module Astrotrain
           queue = qu
         end
         payload = create_hash(message, recipient)
-        payload.update(extra) if extra
+        if extra = options[:extra]
+          payload.update(extra)
+        end
         ::Resque::Job.create(queue, job.join("/"), payload)
       end
 
@@ -48,6 +51,11 @@ module Astrotrain
           end
         end
         h
+      end
+
+      # kept for backwards compatibility
+      def self.process(url, message, recipient = nil, extra = nil)
+        deliver(message, url, :recipient => recipient, :extra => extra)
       end
     end
   end
