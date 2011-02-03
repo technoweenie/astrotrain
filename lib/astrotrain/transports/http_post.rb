@@ -1,9 +1,9 @@
-require 'faraday'
-
 module Astrotrain
   module Transports
     module HttpPost
-      Astrotrain::Transports::MAP[:http] = self
+      Astrotrain::Transports::MAP.update \
+        :http  => self,
+        :https => self
 
       class << self
         attr_writer :connection

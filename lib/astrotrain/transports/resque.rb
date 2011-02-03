@@ -3,12 +3,13 @@ require 'resque'
 module Astrotrain
   module Transports
     module Resque
+      # resque://QUEUE/KLASS
       Astrotrain::Transports::MAP[:resque] = self
 
       # Public: Sends the message to the given address.
       #
       # url       - String address of the Resque in this form:
-      #             "QUEUE:KLASS"
+      #             "QUEUE/KLASS"
       # message   - Astrotrain::Message instance
       # recipient - optional String email of the main recipient
       # extra     - Optional Hash to be merged with the payload
@@ -16,10 +17,19 @@ module Astrotrain
       # Returns a queued Resque::Job instance.
       def self.process(destination, message, recipient = nil, extra = nil)
         recipient ||= message.recipients.first
-        queue, *job = destination.split(":")
-        payload     = create_hash(message, recipient)
+        uri         = destination.is_a?(Addressable::URI) ?
+          destination :
+          Addressable::URI.parse(destination)
+        path = uri.path.dup
+        path.sub! /^\//, ''
+        queue, *job = path.split("/")
+        if qu = uri.host
+          job.unshift(queue)
+          queue = qu
+        end
+        payload = create_hash(message, recipient)
         payload.update(extra) if extra
-        ::Resque::Job.create(queue, job.join(":"), payload)
+        ::Resque::Job.create(queue, job.join("/"), payload)
       end
 
       # Creates a param hash for RestClient.

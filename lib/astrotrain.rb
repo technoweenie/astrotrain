@@ -1,6 +1,7 @@
 module Astrotrain
   VERSION = '0.6.0'
 
+  require 'faraday'
   require 'astrotrain/attachment'
   require 'astrotrain/message'
 
@@ -20,6 +21,14 @@ module Astrotrain
       transport_key
     else
       klass = Transports::MAP[transport_key]
+      if !klass
+        uri = Addressable::URI.parse(transport_key.to_s)
+        if klass = uri.scheme && Transports.load(uri.scheme.to_sym)
+          options     = message
+          message     = destination
+          destination = uri
+        end
+      end
       klass || raise(ArgumentError, "invalid transport: #{transport_key}")
     end
     transport.process(destination, message, options[:recipient], options[:payload])
@@ -33,8 +42,18 @@ module Astrotrain
   #   Transports::HttpPost.process(address, message, main_recipient, extra_payload={})
   #
   module Transports
-    MAP = {}
-    autoload :HttpPost, 'astrotrain/transports/http_post'
-    autoload :Resque,   'astrotrain/transports/resque'
+    MAP = {:http => :http_post, :resque => :resque}
+
+    def self.load(key)
+      value = MAP[key]
+      if !value
+        raise ArgumentError, "No transport #{key.inspect} found in #{MAP.keys.inspect}"
+      elsif value.is_a?(Module)
+        value
+      else
+        require "astrotrain/transports/#{value}"
+        MAP[key]
+      end
+    end
   end
 end
