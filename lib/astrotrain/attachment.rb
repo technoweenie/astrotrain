@@ -3,6 +3,7 @@ module Astrotrain
   # Faraday
   class Attachment
     def initialize(part)
+      @data    = nil
       @part    = part
       @is_read = false
     end
@@ -16,6 +17,7 @@ module Astrotrain
     end
 
     alias local_path filename
+    alias original_filename filename
 
     def read(value = nil)
       if read?
@@ -31,11 +33,11 @@ module Astrotrain
     end
 
     def data
-      @part.body.to_s
+      @data ||= @part.body.to_s
     end
 
     def length
-      @part.body.size
+      data.size
     end
 
     def attached?
