@@ -7,12 +7,12 @@ module Astrotrain
 
   # Processes an Astrotrain message.
   #
-  # message       - Astrotrain::Message instance.
-  # destination   - String URL to deliver the message.  The scheme selects 
-  #                 which Transport module to use (http://, resque://)
-  # options       - Optional hash of options:
-  #                 :recipient - The main String recipient of the email.
-  #                 :payload   - Optional hash to be sent with the request.
+  # message     - Astrotrain::Message instance.
+  # destination - String URL to deliver the message.  The scheme selects
+  #               which Transport module to use (http://, resque://)
+  # options     - Optional hash of options:
+  #               :recipient - The main String recipient of the email.
+  #               :payload   - Optional hash to be sent with the request.
   #
   # Returns nothing.
   def self.deliver(message, destination, options = {})
