@@ -1,6 +1,7 @@
 module Astrotrain
   VERSION = '0.6.0'
 
+  require 'addressable/uri'
   require 'faraday'
   require 'astrotrain/attachment'
   require 'astrotrain/message'
