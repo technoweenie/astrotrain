@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   ## the sub! line in the Rakefile
   s.name              = 'astrotrain'
   s.version           = '0.6.0'
-  s.date              = '2010-04-08'
+  s.date              = '2011-02-10'
   s.rubyforge_project = 'astrotrain'
 
   ## Make sure your summary is short. The description may be as long
@@ -38,7 +38,7 @@ Gem::Specification.new do |s|
   s.add_dependency('mail',        ["~> 2.2.14"])
   s.add_dependency('i18n',        ["~> 0.4.1"])
   s.add_dependency('faraday',     ["~> 0.5.0"])
-  s.add_dependency('addressable', ['~> 2.2.4"])
+  s.add_dependency('addressable', ["~> 2.2.4"])
 
   ## List your development dependencies here. Development dependencies are
   ## those that are only needed during development
@@ -56,8 +56,10 @@ Gem::Specification.new do |s|
     lib/astrotrain/attachment.rb
     lib/astrotrain/message.rb
     lib/astrotrain/transports/http_post.rb
+    lib/astrotrain/transports/resque.rb
     test/fixtures/apple_multipart.txt
     test/fixtures/bad_content_type.txt
+    test/fixtures/bad_email_format.txt
     test/fixtures/basic.txt
     test/fixtures/custom.txt
     test/fixtures/fwd.txt
