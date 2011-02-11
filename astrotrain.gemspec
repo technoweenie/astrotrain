@@ -38,6 +38,7 @@ Gem::Specification.new do |s|
   s.add_dependency('mail',        ["~> 2.2.14"])
   s.add_dependency('i18n',        ["~> 0.4.1"])
   s.add_dependency('faraday',     ["~> 0.5.0"])
+  s.add_dependency('addressable', ['~> 2.2.4"])
 
   ## List your development dependencies here. Development dependencies are
   ## those that are only needed during development
