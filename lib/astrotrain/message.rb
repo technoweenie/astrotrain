@@ -10,8 +10,11 @@ module Astrotrain
   class Message
     EMAIL_REGEX = /[\w\.\_\%\+\-]+@[\w\-\_\.]+/
 
-    # Reference to the TMail::Mail object that parsed the raw email.
+    # Reference to the internal Mail object that parsed the raw email.
     attr_reader :mail
+
+    # Refebrence to the original file that this Mail came from.
+    attr_reader :path
 
     class << self
       attr_accessor :recipient_header_order, :skipped_headers
@@ -31,7 +34,7 @@ module Astrotrain
     #
     # Returns Astrotrain::Message instance.
     def self.read(path)
-      new(::Mail.read(path))
+      new(::Mail.read(path), path)
     end
 
     # Public: Parses the raw email headers into a Astrotrain::Message instance.
@@ -43,8 +46,9 @@ module Astrotrain
       new(::Mail.new(raw))
     end
 
-    def initialize(mail)
+    def initialize(mail, path = nil)
       @body = @html = @attachments = nil
+      @path        = path
       @mail        = mail
       @recipients  = {}
     end

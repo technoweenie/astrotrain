@@ -18,12 +18,12 @@ class Test::Unit::TestCase
   def self.teardown(&block) define_method(:teardown, &block) end
 
   def mail(filename)
-    IO.read(File.join(File.dirname(__FILE__), 'fixtures', "#{filename}.txt"))
+    File.join(File.dirname(__FILE__), 'fixtures', "#{filename}.txt")
   end
 
   PARSED = {}
   def astrotrain(filename)
-    PARSED[filename] ||= Astrotrain::Message.parse(mail(filename))
+    PARSED[filename] ||= Astrotrain::Message.read(mail(filename))
   end
 end
 

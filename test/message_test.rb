@@ -177,4 +177,10 @@ class MessageParsingTest < Test::Unit::TestCase
     msg = astrotrain(:undisclosed)
     assert_equal([], msg.recipients_from_to)
   end
+
+  test "saves path of parsed email" do
+    path = mail(:basic)
+    msg  = Astrotrain::Message.read(path)
+    assert_equal path, msg.path
+  end
 end
