@@ -196,7 +196,10 @@ module Astrotrain
     # Returns unquoted String.
     def unquoted_header(key)
       if header = @mail[key]
-        Mail::Encodings.value_decode(header.value)
+        value = header.respond_to?(:map) ?
+          header.map { |h| h.value }.join("\n") :
+          header.value
+        Mail::Encodings.value_decode(value)
       else
         ''
       end
