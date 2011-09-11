@@ -185,7 +185,7 @@ module Astrotrain
     def recipients_from_body
       @recipients_from_body ||= begin
         emails_from_body = body.scan(EMAIL_REGEX)
-        address_list_for(emails_from_body * ", ")
+        address_list_for(emails_from_body)
       end
     end
 
@@ -214,9 +214,9 @@ module Astrotrain
     def unquoted_address_header(key)
       if header = @mail[key]
         emails = if header.respond_to?(:value)
-          header.value
+          [header.value]
         else
-          header.map { |h| h.value } * ", "
+          header.map { |h| h.value }
         end
         address_list_for(emails)
       else
@@ -226,16 +226,17 @@ module Astrotrain
 
     # Uses Mail::AddressList to parse the given comma separated emails.
     #
-    # emails - String of emails (foo@example.com, Bar <bar@example.com...)
+    # emails - Array of String emails (foo@example.com, Bar <bar@example.com...)
     #
     # Returns Array of Mail::Address objects
     def address_list_for(emails)
+      emails = emails * ", "
       list  = Mail::AddressList.new(self.class.unescape(emails))
       addrs = list.addresses.each { |a| a.decoded }
       addrs.uniq!
       addrs
     rescue Mail::Field::ParseError
-      address_list_for(emails.scan(EMAIL_REGEX) * ", ")
+      address_list_for(emails.scan(EMAIL_REGEX))
     end
 
     # Stolen from Rack/Camping, remove the "+" => " " translation
