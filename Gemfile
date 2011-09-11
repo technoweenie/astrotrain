@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'mail', '~> 2.2.14'
+gem 'mail', '~> 2.3.0'
 gem 'i18n', '~> 0.4.1'
 gem 'faraday', '~> 0.5.0'
 gem 'addressable', '~> 2.2.4'
