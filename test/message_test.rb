@@ -169,8 +169,9 @@ class MessageParsingTest < Test::Unit::TestCase
 
   test "parsing invalid email collection" do
     msg = astrotrain(:bad_email_format)
-    assert_equal 'ricky@foo.com', msg.from[0].address
+    assert_equal 'ricky.bobby@foo.com', msg.from[0].address
     assert_equal 'bobby@foo.com', msg.from[1].address
+    assert_equal 2, msg.from.size
   end
 
   test "parsing undisclosed recipients" do

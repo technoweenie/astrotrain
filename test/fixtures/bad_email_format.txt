@@ -1,7 +1,7 @@
 Delivered-To: "Processor" <processor@astrotrain.com>
 Message-ID: <a16be7390810161014n52b603e9k1aa6bb803c6735aa@mail.gmail.com>
 Date: Thu, 16 Oct 2008 10:14:18 -0700
-From: Ricky <ricky@foo.com>, Bobby:bobby@foo.com
+From: Ricky <ricky.bobby@foo.com>, Bobby:bobby@foo.com, reply....@foo.com
 To: Processor <processor@astrotrain.com>
 Cc: Fred <fred@example.com>
 Subject: Fwd: blah blah

@@ -8,7 +8,7 @@ require 'iconv'
 module Astrotrain
   # Wrapper around a TMail object
   class Message
-    EMAIL_REGEX = /[\w\.\_\%\+\-]+@[\w\-\_\.]+/
+    EMAIL_REGEX = /[\w\.\_\%\+\-]+[^\.]@[\w\-\_\.]+/
 
     # Reference to the internal Mail object that parsed the raw email.
     attr_reader :mail
@@ -231,8 +231,8 @@ module Astrotrain
     # Returns Array of Mail::Address objects
     def address_list_for(emails)
       emails = emails * ", "
-      list  = Mail::AddressList.new(self.class.unescape(emails))
-      addrs = list.addresses.each { |a| a.decoded }
+      list   = Mail::AddressList.new(self.class.unescape(emails))
+      addrs  = list.addresses.each { |a| a.decoded }
       addrs.uniq!
       addrs
     rescue Mail::Field::ParseError
