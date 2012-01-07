@@ -58,13 +58,7 @@ class MessageParsingTest < Test::Unit::TestCase
     msg = astrotrain(:gb2312_encoding_invalid)
     # encoding problem?
     # "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd： blah China"
-    s = if Object.const_defined?(:Encoding)
-      # ruby 1.9 tried its best
-      "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd\243\272 blah China"
-    else
-      # ruby 1.8 ignores the weird crap
-      "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd blah China"
-    end
+    s = "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd?? blah China"
     assert_equal s, msg.body
   end
 
