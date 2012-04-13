@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   ## the sub! line in the Rakefile
   s.name              = 'astrotrain'
   s.version           = '0.6.0'
-  s.date              = '2011-02-10'
+  s.date              = '2012-04-13'
   s.rubyforge_project = 'astrotrain'
 
   ## Make sure your summary is short. The description may be as long
@@ -51,6 +51,7 @@ Gem::Specification.new do |s|
   ## THE MANIFEST COMMENTS, they are used as delimiters by the task.
   # = MANIFEST =
   s.files = %w[
+    Gemfile
     LICENSE
     Rakefile
     astrotrain.gemspec
