@@ -293,22 +293,36 @@ module Astrotrain
       end
     end
 
-    # Converts a given String to utf-8 by trying various character sets.  TMail
-    # does this automatically, so it is only needed if no charset is set.
+    # Converts a given String to UTF-8.
+    # If the message has no charset assigned, we'll attempt to detect it
+    # then convert it to UTF-8.
     #
     # s - unconverted String in the wrong character set
     #
     # Returns converted String.
-    if Object.const_defined?(:Encoding)
-      Encoding.default_internal = "utf-8"
-      def convert_to_utf8(s)
-        s.force_encoding(@mail.charset) if @mail.charset
-        s.encode!(Encoding.default_internal)
+    def convert_to_utf8(s)
+      # If this string is already valid UTF-8 just hand it back
+      return s if s.as_utf8.valid?
+
+      # First lets try to detect the encoding if the message didn't specify
+      if !@mail.charset && detection = CharlockHolmes::EncodingDetector.detect(s)
+        @mail.charset = detection[:encoding]
       end
-    else
-      def convert_to_utf8(s)
-        Iconv.iconv("UTF-8//IGNORE", @mail.charset || "UTF-8", s).join("")
+
+      # if the encoding was already set or we just detected it AND it's not already
+      # set to UTF-8 - try to transcode the body into UTF-8
+      if @mail.charset && @mail.charset != 'UTF-8'
+        s = CharlockHolmes::Converter.convert s, @mail.charset, 'UTF-8'
       end
+
+      # By the time we get here, `s` is either UTF-8 or we need to force it to be
+      # But, even if it's UTF-8 we could be in the case where the charset on the
+      # message was set to UTF-8 but is in fact invalid.
+      # So for either case, we want to make sure the output is valid UTF-8 - even
+      # if it means mutating the invalid string.
+      # Also we're not reusing the String::UTF8 version of `s` from above here
+      # because by this point, it may be a new string.
+      s.as_utf8.clean.as_raw
     end
   end
 end

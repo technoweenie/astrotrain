@@ -1,6 +1,8 @@
 module Astrotrain
   VERSION = '0.6.0'
 
+  require 'utf8'
+  require 'charlock_holmes'
   require 'addressable/uri'
   require 'faraday'
   require 'astrotrain/attachment'
