@@ -2,8 +2,6 @@
 
 require 'mail'
 require 'set'
-require 'iconv'
-
 
 module Astrotrain
   # Wrapper around a TMail object
