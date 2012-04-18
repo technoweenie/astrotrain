@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
   s.name              = 'astrotrain'
-  s.version           = '0.6.1'
-  s.date              = '2012-04-13'
+  s.version           = '0.6.2'
+  s.date              = '2012-04-18'
   s.rubyforge_project = 'astrotrain'
 
   ## Make sure your summary is short. The description may be as long
@@ -65,6 +65,7 @@ Gem::Specification.new do |s|
     test/fixtures/bad_email_format.txt
     test/fixtures/basic.txt
     test/fixtures/custom.txt
+    test/fixtures/email_in_body.txt
     test/fixtures/fwd.txt
     test/fixtures/gb2312_encoding.txt
     test/fixtures/gb2312_encoding_invalid.txt

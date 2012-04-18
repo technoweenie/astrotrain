@@ -1,5 +1,5 @@
 module Astrotrain
-  VERSION = '0.6.1'
+  VERSION = '0.6.2'
 
   require 'utf8'
   require 'charlock_holmes'
@@ -21,7 +21,7 @@ module Astrotrain
   def self.deliver(message, destination, options = {})
     uri   = Addressable::URI.parse(destination.to_s)
     klass = Transports.load(uri.scheme)
-    klass.deliver(message, destination, 
+    klass.deliver(message, destination,
                   :recipient => options[:recipient],
                   :extra     => options[:payload])
   end
