@@ -124,7 +124,7 @@ class MessageParsingTest < Test::Unit::TestCase
     msg = astrotrain(:multiple_with_body_recipients)
 
     assert_equal %w(processor@astrotrain.com other@example.com processor+foobar@astrotrain.com processor+blah@astrotrain.com), 
-      msg.recipients
+      msg.recipients(Astrotrain::Message.recipient_header_order + %w(body))
   end
 
   test "with only HTML body in a multipart message" do

@@ -23,7 +23,8 @@ module Astrotrain
       x-original-to received)
 
     # This is the default order that Astrotrain will search for a matching
-    # recipient.
+    # recipient.  Set this to a different order.  Add "body" to the list if
+    # you want to scan the body for email addresses with EMAIL_REGEX.
     self.recipient_header_order = %w(original_to delivered_to to)
 
     # Public: Parses the raw email headers into a Astrotrain::Message instance.
@@ -63,7 +64,6 @@ module Astrotrain
     def recipients(order = nil)
       if !@recipients.key?(order)
         order = self.class.recipient_header_order if order.blank?
-        order.push :body
         recipients = []
 
         emails = order.inject([]) do |memo, key|
