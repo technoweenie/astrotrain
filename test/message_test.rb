@@ -173,6 +173,11 @@ class MessageParsingTest < Test::Unit::TestCase
     assert_equal([], msg.recipients_from_to)
   end
 
+  test "parsing emails from body" do
+    msg = astrotrain :email_in_body
+    assert_equal %w(foo@bar.com), msg.recipients_from_body.map(&:address)
+  end
+
   test "saves path of parsed email" do
     path = mail(:basic)
     msg  = Astrotrain::Message.read(path)

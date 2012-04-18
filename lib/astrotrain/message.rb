@@ -6,7 +6,7 @@ require 'set'
 module Astrotrain
   # Wrapper around a TMail object
   class Message
-    EMAIL_REGEX = /[\w\.\_\%\+\-]+[^\.]@[\w\-\_\.]+/
+    EMAIL_REGEX = /[\w\.\_\%\+\-]+[^\s\.]@[\w\-\_\.]+/
 
     # Reference to the internal Mail object that parsed the raw email.
     attr_reader :mail
@@ -183,7 +183,9 @@ module Astrotrain
     def recipients_from_body
       @recipients_from_body ||= begin
         emails_from_body = body.scan(EMAIL_REGEX)
-        address_list_for(emails_from_body)
+        address_list_for(emails_from_body, true)
+      rescue Mail::Field::ParseError
+        []
       end
     end
 
@@ -224,17 +226,22 @@ module Astrotrain
 
     # Uses Mail::AddressList to parse the given comma separated emails.
     #
-    # emails - Array of String emails (foo@example.com, Bar <bar@example.com...)
+    # emails - Array of String email headers.
+    #          Example: ["foo@example.com, Bar <bar@example.com>", ...]
     #
     # Returns Array of Mail::Address objects
-    def address_list_for(emails)
+    def address_list_for(emails, retried = false)
       emails = emails * ", "
       list   = Mail::AddressList.new(self.class.unescape(emails))
       addrs  = list.addresses.each { |a| a.decoded }
       addrs.uniq!
       addrs
     rescue Mail::Field::ParseError
-      address_list_for(emails.scan(EMAIL_REGEX))
+      if retried
+        raise
+      else
+        address_list_for(emails.scan(EMAIL_REGEX), true)
+      end
     end
 
     # Stolen from Rack/Camping, remove the "+" => " " translation
