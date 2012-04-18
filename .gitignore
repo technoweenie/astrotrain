@@ -25,3 +25,5 @@ merb/custom.rb
 test/fixtures/queue
 messages
 test/messages
+.bundle
+bin
