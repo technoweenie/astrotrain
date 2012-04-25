@@ -52,6 +52,7 @@ class MessageParsingTest < Test::Unit::TestCase
       "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd\357\274\232 blah China"
     end
     assert_equal s, msg.body
+    assert_mail_utf8 msg
   end
 
   test "gb2312 encoded body with invalid charset in mime version header" do
@@ -60,6 +61,7 @@ class MessageParsingTest < Test::Unit::TestCase
     # "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd： blah China"
     s = "Dear Sirs, \r\nWe are given to understand that you are  Manufacturer of  plstic  Bottles\r\nAdd?? blah China"
     assert_equal s, msg.body
+    assert_mail_utf8 msg
   end
 
   test "utf-8 encoded headers" do
@@ -182,5 +184,21 @@ class MessageParsingTest < Test::Unit::TestCase
     path = mail(:basic)
     msg  = Astrotrain::Message.read(path)
     assert_equal path, msg.path
+  end
+
+  test "parses and transcodes email with utf-8" do
+    path = mail(:utf8)
+    msg = Astrotrain::Message.read(path)
+    assert_mail_utf8 msg
+  end
+
+  def assert_mail_utf8(mail)
+    [:html, :body].each do |attr|
+      str = mail.send(attr)
+      assert str.as_utf8.valid?
+      if str.respond_to?(:encoding)
+        assert_equal "UTF-8", str.encoding.name
+      end
+    end
   end
 end

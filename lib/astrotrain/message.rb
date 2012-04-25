@@ -307,7 +307,10 @@ module Astrotrain
     # Returns converted String.
     def convert_to_utf8(s)
       # If this string is already valid UTF-8 just hand it back
-      return s if s.as_utf8.valid?
+      if s.as_utf8.valid?
+        s.force_encoding("UTF-8") if s.respond_to?(:force_encoding)
+        return s
+      end
 
       # First lets try to detect the encoding if the message didn't specify
       if !@mail.charset && detection = CharlockHolmes::EncodingDetector.detect(s)
