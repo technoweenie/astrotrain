@@ -192,6 +192,13 @@ class MessageParsingTest < Test::Unit::TestCase
     assert_mail_utf8 msg
   end
 
+  test "deals with bad ascii" do
+    path = mail(:bad_ascii)
+    msg = Astrotrain::Message.read(path)
+    assert_mail_utf8 msg
+    assert msg.headers['message-id'].as_utf8.valid?
+  end
+
   def assert_mail_utf8(mail)
     [:html, :body].each do |attr|
       str = mail.send(attr)

@@ -146,10 +146,10 @@ module Astrotrain
       @headers ||= begin
         @mail.header.fields.inject({}) do |memo, field|
           name = field.name.downcase.to_s
+          next memo if self.class.skipped_headers.include?(name)
+
           header = unquoted_header(name)
-          self.class.skipped_headers.include?(name) ?
-            memo :
-            memo.update(name => self.class.unescape(unquoted_header(name)))
+          memo.update(name => self.class.unescape(header))
         end
       end
     end
@@ -246,9 +246,11 @@ module Astrotrain
 
     # Stolen from Rack/Camping, remove the "+" => " " translation
     def self.unescape(s)
-      s.gsub!(/((?:%[0-9a-fA-F]{2})+)/n){
-        [$1.delete('%')].pack('H*')
-      }
+      s.gsub!(/((?:%[0-9a-fA-F]{2})+)/n) do
+        original = $1.dup
+        replacement = [$1.delete('%')].pack('H*')
+        replacement.as_utf8.valid? ? replacement : original
+      end
       s
     end
 

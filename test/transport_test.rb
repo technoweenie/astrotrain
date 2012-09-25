@@ -100,6 +100,22 @@ class TransportTest < Test::Unit::TestCase
     assert !params.key?(:attachments)
   end
 
+  test "encoding bad ascii" do
+    extend Resque::Helpers
+
+    msg = astrotrain(:bad_ascii)
+    params = Astrotrain::Transports::Resque.create_hash(msg, 'bar@example.com')
+    params = decode(encode(params))
+
+    assert_equal 'processor@astrotrain.com', params['to'][0]['address']
+    assert_equal 'Processor',                params['to'][0]['name']
+    assert_equal 'user@example.com',         params['from'][0]['address']
+    assert_equal 'Bob',                      params['from'][0]['name']
+    assert_equal msg.subject,                params['subject']
+    assert_equal msg.body,                   params['body']
+    assert !params.key?('attachments')
+  end
+
   def stub_http
     Astrotrain::Transports::HttpPost.connection =
       Faraday::Connection.new do |builder|

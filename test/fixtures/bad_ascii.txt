@@ -1,0 +1,38 @@
+Return-Path: <user@example.com>
+X-Original-To: reply@reply.github.com
+Delivered-To: reply@reply.github.com
+From: Bob <user@example.com>
+To: Processor <processor@astrotrain.com>
+Subject: Sup
+Date: Tue, 25 Sep 2012 14:45:37 +0000
+Message-ID: <CC871184.427E3%abc.def@ghi.com>
+Content-Type: multipart/alternative;
+	boundary="_000_CC871184427E3_"
+
+--_000_CC871184427E3_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+Sup
+
+--_000_CC871184427E3_
+Content-Type: text/html; charset="us-ascii"
+Content-ID: <4CD4FB706F8DDB4EBE9DEC869CBB1D20@namprd06.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
+>
+</head>
+<body style=3D"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-lin=
+e-break: after-white-space; color: rgb(0, 0, 0); font-size: 14px; font-fami=
+ly: Calibri, sans-serif; ">
+<div>Sup</div>
+<br clear=3Dall> =
+
+</body>
+</html>
+
+
+--_000_CC871184427E3_--
