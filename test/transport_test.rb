@@ -2,6 +2,9 @@ require File.expand_path(File.join(File.dirname(__FILE__), "test_helper"))
 
 Astrotrain::Transports.load :http
 Astrotrain::Transports.load :resque
+if redis_url = ENV['GH_REDIS_URL'] || ENV['REDIS_URL']
+  Resque.redis = redis_url
+end
 
 class TransportTest < Test::Unit::TestCase
   class Job
