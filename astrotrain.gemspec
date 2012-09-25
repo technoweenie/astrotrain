@@ -38,7 +38,7 @@ Gem::Specification.new do |s|
   s.add_dependency('utf8',            ["~> 0.1.8"])
   s.add_dependency('mail',            ["~> 2.4.0"])
   s.add_dependency('i18n',            ["~> 0.6.0"])
-  s.add_dependency('faraday',         ["~> 0.5.0"])
+  s.add_dependency('faraday',         ["~> 0.8.4"])
   s.add_dependency('addressable',     ["~> 2.2.4"])
   s.add_dependency('charlock_holmes', ["~> 0.6.8"])
 
