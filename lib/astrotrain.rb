@@ -1,5 +1,5 @@
 module Astrotrain
-  VERSION = '0.6.4'
+  VERSION = '0.7.0'
 
   require 'utf8'
   require 'charlock_holmes'
