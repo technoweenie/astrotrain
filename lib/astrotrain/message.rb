@@ -19,8 +19,8 @@ module Astrotrain
     end
 
     # Astrotrain::Message#headers does not show these headers
-    self.skipped_headers = Set.new %w(to cc from subject delivered-to
-      x-original-to received)
+    self.skipped_headers = Set.new %w(to cc from subject
+      x-original-to)
 
     # This is the default order that Astrotrain will search for a matching
     # recipient.  Set this to a different order.  Add "body" to the list if
