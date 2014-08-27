@@ -40,7 +40,7 @@ Gem::Specification.new do |s|
   s.add_dependency('i18n',            ["~> 0.6.0"])
   s.add_dependency('faraday',         ["~> 0.8.4"])
   s.add_dependency('addressable',     ["~> 2.2.4"])
-  s.add_dependency('charlock_holmes', ["~> 0.6.8"])
+  s.add_dependency('charlock_holmes', ["~> 0.7.2"])
 
   ## List your development dependencies here. Development dependencies are
   ## those that are only needed during development
