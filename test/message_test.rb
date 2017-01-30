@@ -1,5 +1,4 @@
 # encoding: UTF-8
-require 'nkf'
 require File.expand_path(File.join(File.dirname(__FILE__), "test_helper"))
 
 class MessageParsingTest < Test::Unit::TestCase
