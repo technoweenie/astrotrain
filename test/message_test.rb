@@ -1,4 +1,5 @@
 # encoding: UTF-8
+require 'nkf'
 require File.expand_path(File.join(File.dirname(__FILE__), "test_helper"))
 
 class MessageParsingTest < Test::Unit::TestCase
@@ -207,5 +208,11 @@ class MessageParsingTest < Test::Unit::TestCase
         assert_equal "UTF-8", str.encoding.name
       end
     end
+  end
+
+  test "iso 2022 jp encoded subject and body" do
+    msg = astrotrain "iso-2022-jp"
+    assert_mail_utf8 msg
+    assert_equal "投稿テスト\n--\nyamada@example.jp", msg.body
   end
 end
