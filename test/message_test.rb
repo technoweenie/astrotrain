@@ -208,4 +208,10 @@ class MessageParsingTest < Test::Unit::TestCase
       end
     end
   end
+
+  test "iso 2022 jp encoded subject and body" do
+    msg = astrotrain "iso-2022-jp"
+    assert_mail_utf8 msg
+    assert_equal "投稿テスト\n--\nyamada@example.jp", msg.body
+  end
 end

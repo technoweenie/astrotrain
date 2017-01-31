@@ -1,0 +1,16 @@
+X-Account-Key: account2
+X-UIDL: Sj!#!TDi"!QpG!!2V>!!
+Return-Path: <yamada@example.jp>
+Message-ID: <49D416F1.8070504@oiax.jp>
+Date: Thu, 02 Apr 2009 10:37:53 +0900
+From: Taro Yamada <yamada@example.jp>
+MIME-Version: 1.0
+To: alpha.all@clubee.jp
+Subject: =?ISO-2022-JP?B?GyRCRWo5RhsoQjA=?=
+Content-Type: text/plain; charset=ISO-2022-JP
+Content-Transfer-Encoding: 7bit
+X-UIDL: Sj!#!TDi"!QpG!!2V>!!
+
+投稿テスト
+--
+yamada@example.jp
