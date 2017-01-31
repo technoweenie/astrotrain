@@ -5,7 +5,7 @@ class MessageParsingTest < Test::Unit::TestCase
   test "bad content type header" do
     msg = astrotrain :bad_content_type
 
-    expected_body   = "This message is being generated automatically to notify you\nthat PowerMTA has crashed on mtasv.net.\n\nAs the information below is likely to be essential for debugging\nthe problem, please forward this message to <support@port25.com>.\nThank you.\nYo"
+    expected_body   = "This message is being generated automatically to notify you\nthat PowerMTA has crashed on mtasv.net.\n\nAs the information below is likely to be essential for debugging\nthe problem, please forward this message to <support@port25.com>.\nThank you.\n\nYo"
     expected_header = "multipart/mixed; boundary=\"====boundary====\""
 
     assert_equal expected_body,   msg.body
@@ -28,7 +28,7 @@ class MessageParsingTest < Test::Unit::TestCase
     assert_equal %(Bob),                       msg.sender.first.display_name
     assert_equal %(user@example.com),          msg.sender.first.address
     assert_equal 'Fwd: blah blah',             msg.subject
-    assert_equal body,                         msg.body
+    assert_equal body + "\n",                  msg.body
   end
 
   test "iso 8859 1 encoded headers" do
@@ -76,7 +76,7 @@ class MessageParsingTest < Test::Unit::TestCase
     assert_kind_of Mail::Message, msg.mail
 
     assert_equal %w(foo@example.com), msg.recipients
-    assert_equal "Testing out rich emails with attachments!\nThis one has a name property on Content-Type.\n[state:hold responsible:rick]",
+    assert_equal "Testing out rich emails with attachments!\nThis one has a name property on Content-Type.\n[state:hold responsible:rick]\n",
       msg.body
     assert_equal 1,            msg.attachments.size
     assert_equal 'bandit.jpg', msg.attachments.first.filename
@@ -89,7 +89,7 @@ class MessageParsingTest < Test::Unit::TestCase
     assert_kind_of Mail::Message, msg.mail
 
     assert_equal %w(foo@example.com), msg.recipients
-    assert_equal "Testing out rich emails with attachments!\nThis one has NO name property on Content-Type.\n[state:hold responsible:rick]",
+    assert_equal "Testing out rich emails with attachments!\nThis one has NO name property on Content-Type.\n[state:hold responsible:rick]\n",
       msg.body
     assert_equal 1,            msg.attachments.size
     assert_equal 'bandit.jpg', msg.attachments.first.filename
@@ -102,7 +102,7 @@ class MessageParsingTest < Test::Unit::TestCase
     assert_kind_of Mail::Message, msg.mail
 
     assert_equal %w(foo@example.com), msg.recipients
-    assert_equal "Let's have a test here:\nYum\n\n\nOn Feb 10, 2009, at 3:37 PM, Tender Support wrote:\n\n> // Add your reply above here\n> ==================================================\n> From: Tyler Durden\n> Subject: Email attachments and file upload\n>\n> not at the moment ... let me test\n>\n> View this Discussion online: http://foobar.com\n> .", 
+    assert_equal "Let's have a test here:\n\n\nYum\n\n\nOn Feb 10, 2009, at 3:37 PM, Tender Support wrote:\n\n> // Add your reply above here\n> ==================================================\n> From: Tyler Durden\n> Subject: Email attachments and file upload\n>\n> not at the moment ... let me test\n>\n> View this Discussion online: http://foobar.com\n> .\n\n\n\n",
       msg.body
     assert_equal 1,           msg.attachments.size
     assert_equal 'logo.gif',  msg.attachments.first.filename
@@ -125,7 +125,7 @@ class MessageParsingTest < Test::Unit::TestCase
   test "recipients in the body" do
     msg = astrotrain(:multiple_with_body_recipients)
 
-    assert_equal %w(processor@astrotrain.com other@example.com processor+foobar@astrotrain.com processor+blah@astrotrain.com), 
+    assert_equal %w(processor@astrotrain.com other@example.com processor+foobar@astrotrain.com processor+blah@astrotrain.com),
       msg.recipients(Astrotrain::Message.recipient_header_order + %w(body))
   end
 

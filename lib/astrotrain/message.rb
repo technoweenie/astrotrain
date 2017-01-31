@@ -63,7 +63,8 @@ module Astrotrain
     # Returns Array of possible recipients.
     def recipients(order = nil)
       if !@recipients.key?(order)
-        order = self.class.recipient_header_order if order.blank?
+        order = Array(order)
+        order = self.class.recipient_header_order if order.empty?
         recipients = []
 
         emails = order.inject([]) do |memo, key|
